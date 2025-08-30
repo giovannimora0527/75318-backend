@@ -4,6 +4,7 @@ import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.service.UsuarioService;
 import java.util.List;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,13 +15,31 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class UsuarioApiController implements UsuarioApi {
-    
+
     @Autowired
     private UsuarioService usuarioService;
 
     @Override
-    public ResponseEntity<List<Usuario>> obtenerUsuarios() {
-        return ResponseEntity.ok(this.usuarioService.obtenerUsuarios());
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        return ResponseEntity.ok(this.usuarioService.listarTodosLosUsuarios());
     }
-    
+
+    @Override
+    public ResponseEntity<List<Usuario>> listarUsuariosPorRol(String rol) {
+        return ResponseEntity.ok(this.usuarioService.encontrarPorRol(rol));
+    }
+
+    @Override
+    public ResponseEntity<Usuario> buscarUsuarioPorNombre(String nombre) 
+            throws BadRequestException{
+        return ResponseEntity.ok(this.usuarioService.encontrarPorNombre(nombre));
+    }
+
+    @Override
+    public ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(Integer activo) 
+            throws BadRequestException {
+        return ResponseEntity.ok(this
+                .usuarioService.buscarPorEstado(activo));
+    }
+
 }
