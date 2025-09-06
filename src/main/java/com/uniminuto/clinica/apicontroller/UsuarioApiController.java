@@ -2,6 +2,8 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.model.UsuarioRq;
 import com.uniminuto.clinica.service.UsuarioService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -30,16 +32,21 @@ public class UsuarioApiController implements UsuarioApi {
     }
 
     @Override
-    public ResponseEntity<Usuario> buscarUsuarioPorNombre(String nombre) 
-            throws BadRequestException{
+    public ResponseEntity<Usuario> buscarUsuarioPorNombre(String nombre)
+            throws BadRequestException {
         return ResponseEntity.ok(this.usuarioService.encontrarPorNombre(nombre));
     }
 
     @Override
-    public ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(Integer activo) 
+    public ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(Integer activo)
             throws BadRequestException {
-        return ResponseEntity.ok(this
-                .usuarioService.buscarPorEstado(activo));
+        return ResponseEntity.ok(this.usuarioService.buscarPorEstado(activo));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuarioNuevo));
     }
 
 }
