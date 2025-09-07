@@ -1,6 +1,6 @@
 package com.uniminuto.clinica.api;
 
-import com.uniminuto.clinica.entity.Especializacion;
+import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
- * @author lmora
+ * @author 1079977_JavierCuervo
  */
 @CrossOrigin(origins = "*")
-@RequestMapping("/especializacion")
-public interface EspecializacionApi {
-    
+@RequestMapping("/paciente")
+public interface PacienteApi {
+ 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Especializacion>> listarEspecializaciones();
+    ResponseEntity<List<Paciente>> listarPaciente();
     
-    
-    @RequestMapping(value = "/buscar-por-codigo",
+    @RequestMapping(value = "/buscar-numero_documento",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<Especializacion> buscarPorCodigo(
-      @RequestParam String codigo
+    ResponseEntity<Paciente> buscarPacientePorNumeroDocumento(
+       @RequestParam String numero_documento
     ) throws BadRequestException;
+       
 }

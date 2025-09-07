@@ -1,7 +1,6 @@
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,36 +11,39 @@ import lombok.Data;
 
 /**
  *
- * @author lmora
+ * @author 1079977_JavierCuervo
  */
 @Data
 @Entity
-@Table(name="usuario")
-public class Usuario implements Serializable {
-    
+@Table(name="paciente")
+public class Paciente implements Serializable {
+
     /**
      * Id serializable.
      */
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     
-    @Column(name = "username")
-    private String username;
+    @Column(name = "tipo_documento")
+    private String tipoDocumento;
     
-    @Column(name = "password_hash")
-    private String password;
+    @Column(name = "numero_documento")
+    private String documento;
     
-    @Column(name = "rol")
-    private String rol;
+    @Column(name = "nombres")
+    private String nombres;
     
-    @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion;
+    @Column(name = "apellidos")
+    private String apellidos;
     
-    @Column(name = "activo")
-    private boolean activo;
+    @Column(name = "genero")
+    private String genero;
+    
+    @Column(name = "telefono")
+    private String telefono;
     
 }
