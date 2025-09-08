@@ -6,6 +6,7 @@ import com.uniminuto.clinica.service.UsuarioService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 /**
  *
@@ -13,13 +14,17 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Override
     public List<Usuario> obtenerUsuarios() {
-        return this.usuarioRepository.findAll();
+        return usuarioRepository.findAll();
     }
-    
+
+    @Override
+    public Optional<Usuario> buscarPorDocumento(String documento) {
+        return usuarioRepository.findByDocumento(documento);
+    }
 }

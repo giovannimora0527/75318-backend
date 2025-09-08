@@ -42,4 +42,7 @@ public class Usuario implements Serializable {
     
     @Column(name = "activo")
     private boolean activo;
+    
+     @Column(name = "documento", nullable = false, unique = true, length = 20)
+    private String documento;
 }

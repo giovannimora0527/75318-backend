@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -14,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @CrossOrigin(origins = "*")
 @RequestMapping("/usuario")
 public interface UsuarioApi {
-    
+
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> obtenerUsuarios();
-    
+
+    @RequestMapping(value = "/buscar/{documento}",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Usuario> buscarPorDocumento(@PathVariable("documento") String documento);
 }
