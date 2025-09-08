@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
@@ -17,7 +18,11 @@ import lombok.Data;
 
 /**
  *
+<<<<<<< HEAD
  * @author crash
+=======
+ * @author lmora
+>>>>>>> gmora
  */
 @Data
 @Entity
@@ -25,6 +30,7 @@ import lombok.Data;
 public class Medico implements Serializable{
     private static final long serialVersionUID = 1L;
     
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -51,4 +57,5 @@ public class Medico implements Serializable{
     @ManyToOne
     @JoinColumn(name = "especializacion_id")
     private Especializacion especializacion;
+
 }
