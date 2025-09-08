@@ -45,6 +45,15 @@ public interface UsuarioApi {
        @RequestParam String nombre
     ) throws BadRequestException;
     
+        //Encontrar por ID usuario
+
+    @RequestMapping(value = "/buscar-id",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Usuario> encontrarPorId(
+       @RequestParam Long id
+    ) throws BadRequestException;
     
     
     @RequestMapping(value = "/buscar-estado",

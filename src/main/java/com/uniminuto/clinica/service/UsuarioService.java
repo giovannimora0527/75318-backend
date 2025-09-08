@@ -20,4 +20,8 @@ public interface UsuarioService {
   List<Usuario> buscarPorEstado(Integer estado);
   
   RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
+      //Encontrar por ID usuario
+
+  Usuario encontrarPorId(Long id) throws BadRequestException;
+
 }
