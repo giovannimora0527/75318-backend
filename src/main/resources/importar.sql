@@ -1,0 +1,12 @@
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Juan', 'Pérez', '123456789', 30);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('María', 'Gómez', '987654321', 25);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Carlos', 'López', '555555555', 40);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Juan', 'Pérez', '123456789', 30);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('María', 'Gómez', '987654321', 25);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Carlos', 'López', '555555555', 40);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Juan', 'Pérez', '123456789', 30);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('María', 'Gómez', '987654321', 25);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Carlos', 'López', '555555555', 40);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Juan', 'Pérez', '123456789', 30);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('María', 'Gómez', '987654321', 25);
+INSERT INTO paciente (nombre, apellido, documento, edad) VALUES ('Carlos', 'López', '555555555', 40);
