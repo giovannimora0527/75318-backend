@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 @RestController
-public abstract class PacienteApiController implements PacienteApi {
+public class PacienteApiController implements PacienteApi {
 
     @Autowired
     private PacienteService pacienteService;

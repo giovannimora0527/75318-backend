@@ -8,16 +8,15 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long>{
-    List<Paciente> findByRol(String rol);
     
     Optional<Paciente> findByNumeroDocumento(String numero_documento);
 
-   List<Paciente> findByDocument(String numero_documento);
+   List<Paciente> findByDocumento(String numero_documento);
         
     
 }

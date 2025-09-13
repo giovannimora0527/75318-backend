@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.coyote.BadRequestException;
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 public interface PacienteService {
   List<Paciente> listarTodosLosPacientes();

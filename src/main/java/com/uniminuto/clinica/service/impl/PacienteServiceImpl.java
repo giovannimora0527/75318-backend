@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author JAVIER-CUERVO
  */
 @Service
-public abstract class PacienteServiceImpl implements PacienteService {
+public class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
