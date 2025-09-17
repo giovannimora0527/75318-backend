@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 @Service
 public abstract class PacienteServiceImpl implements PacienteService {
@@ -19,11 +19,21 @@ public abstract class PacienteServiceImpl implements PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
     
+    /**
+     *
+     * @return
+     */
     @Override
     public List<Paciente> listarTodosLosPacientes() {
         return this.pacienteRepository.findAll();
     }
 
+    /**
+     *
+     * @param numero_documento
+     * @return
+     * @throws BadRequestException
+     */
     @Override
     public Paciente encontrarPorNumeroDocumento(String numero_documento)
             throws BadRequestException {
