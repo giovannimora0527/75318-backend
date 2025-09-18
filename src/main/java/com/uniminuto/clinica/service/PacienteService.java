@@ -17,4 +17,5 @@ public interface PacienteService {
 //Funcion buscar por documento identidad
     Paciente encontrarPorDocumentoIdentidad(String numeroDocumento) throws BadRequestException;
 
+    List<Paciente> listarPacientesDes();
 }

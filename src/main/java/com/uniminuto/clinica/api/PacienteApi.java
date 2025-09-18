@@ -4,6 +4,7 @@
  */
 package com.uniminuto.clinica.api;
 
+
 import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -34,4 +35,10 @@ public interface PacienteApi {
     ResponseEntity<Paciente> encontrarPorDocumentoIdentidad(
        @RequestParam String numeroDocumento
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/listarEdadDes",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacientesDes();
 }

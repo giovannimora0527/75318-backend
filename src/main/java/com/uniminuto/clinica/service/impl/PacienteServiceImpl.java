@@ -4,6 +4,7 @@
  */
 package com.uniminuto.clinica.service.impl;
 
+
 import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.PacienteService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 /**
  *
+ *
+ *
  * @author crash
  */
 @Service
@@ -22,6 +25,14 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private PacienteRepository PacienteRepository;
+
+    @Override
+    public List<Paciente> listarPacientesDes() {
+        return PacienteRepository.findAll()
+                .stream()
+                .sorted((m1, m2) -> m1.getFechaNacimiento().compareTo(m2.getFechaNacimiento()))
+                .toList();
+    }
 
     @Override
     public List<Paciente> listarTodo() {

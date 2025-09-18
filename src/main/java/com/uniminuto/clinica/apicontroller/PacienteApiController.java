@@ -24,6 +24,11 @@ public class PacienteApiController implements PacienteApi {
     private PacienteService pacienteService;
 
     @Override
+    public ResponseEntity<List<Paciente>> listarPacientesDes() {
+        return ResponseEntity.ok(this.pacienteService.listarPacientesDes());
+    }
+
+    @Override
     public ResponseEntity<List<Paciente>> listarPacientes() {
         return ResponseEntity.ok(this.pacienteService.listarTodo());
     }
