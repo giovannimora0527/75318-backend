@@ -9,6 +9,7 @@ import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.CitaService;
+import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,10 @@ public class CitaServiceImpl implements CitaService {
         }
         if (citaNueva.getEstado() == null || citaNueva.getEstado().isBlank()) {
             throw new BadRequestException("El campo 'estado' es obligatorio.");
-        }
+        }  
+    }
+    @Override
+    public List<Cita> listarCitasRecientes() {
+        return citaRepository.findAllByOrderByFechaHoraDesc();
     }
 }

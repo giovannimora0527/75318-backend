@@ -1,7 +1,9 @@
 package com.uniminuto.clinica.api;
 
+import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.CitaRq;
+import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,4 +22,9 @@ public interface CitaApi {
     ResponseEntity<RespuestaRs> guardarCita(
             @RequestBody CitaRq citaNueva
     ) throws BadRequestException;
+    
+    @RequestMapping(value = "/listar-recientes",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Cita>> listarCitasRecientes();
 }

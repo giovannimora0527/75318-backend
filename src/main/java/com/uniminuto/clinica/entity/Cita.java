@@ -5,6 +5,7 @@ import lombok.Data;
 import java.sql.Date;
 import java.sql.Time;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore; // Importa esta clase
 
 @Data
 @Entity
@@ -17,10 +18,12 @@ public class Cita implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore // Ignora este campo al serializar a JSON
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
+    @JsonIgnore // Ignora este campo al serializar a JSON
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
