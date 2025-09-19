@@ -6,6 +6,8 @@ import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.PacienteService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -29,10 +31,6 @@ public class PacienteServiceImpl implements PacienteService {
         return this.pacienteRepository.findAll();
     }
 
-    @Override
-    public List<Paciente> findByNumeroDocumento(String numeroDocumento) {
-        return List.of();
-    }
 
     @Override
     public Paciente encontrarPorDocumento(String numeroDocumento)
@@ -44,6 +42,14 @@ public class PacienteServiceImpl implements PacienteService {
         }
 
         return optUser.get();
+    }
+
+    @Override
+    public List<Paciente> listarPacientePorFechaNacimiento(String orden) {
+        Sort.Direction direccion = "asc".equalsIgnoreCase(orden)
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return pacienteRepository.findAll(Sort.by(direccion, "fechaNacimiento"));
     }
 
 }

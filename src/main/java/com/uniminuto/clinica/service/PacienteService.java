@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public interface PacienteService {
     List<Paciente> listarLosPacientes();
-
-    List<Paciente> findByNumeroDocumento(String numeroDocumento);
-
+    List<Paciente> listarPacientePorFechaNacimiento(String orden);
     Paciente encontrarPorDocumento(String numeroDocumento) throws BadRequestException;
+
+
 }
