@@ -3,6 +3,7 @@ package com.uniminuto.clinica.service.impl;
 import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.PacienteService;
+import org.springframework.beans.factory.annotation.Autowired; // <--- Importación necesaria
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -35,4 +36,10 @@ public class PacienteServiceImpl implements PacienteService {
     public void eliminar(Long id) {
         pacienteRepository.deleteById(id);
     }
+    
+     @Override
+    public List<Paciente> obtenerPacientesOrdenadosPorFechaNacimiento() {
+        return pacienteRepository.findAllByOrderByFechaNacimientoDesc();
+    }
+    
 }

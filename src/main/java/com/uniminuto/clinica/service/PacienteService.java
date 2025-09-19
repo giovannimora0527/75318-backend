@@ -9,4 +9,8 @@ public interface PacienteService {
     Optional<Paciente> buscarPorDocumento(String documento);
     Paciente guardar(Paciente paciente);
     void eliminar(Long id);
+    List<Paciente> obtenerPacientesOrdenadosPorFechaNacimiento();
 }
+
+
+

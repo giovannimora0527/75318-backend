@@ -20,4 +20,7 @@ public interface PacienteApi {
 
     @DeleteMapping("/{id}")
     void eliminar(@PathVariable Long id);
+    
+    @GetMapping("/ordenados-por-nacimiento")
+    List<Paciente> obtenerPacientesOrdenadosPorFechaNacimiento();
 }

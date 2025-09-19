@@ -36,4 +36,9 @@ public class PacienteController implements PacienteApi {
     public void eliminar(Long id) {
         pacienteService.eliminar(id);
     }
+
+    @Override
+    public List<Paciente> obtenerPacientesOrdenadosPorFechaNacimiento() {
+        return pacienteService.obtenerPacientesOrdenadosPorFechaNacimiento();
+    }
 }
