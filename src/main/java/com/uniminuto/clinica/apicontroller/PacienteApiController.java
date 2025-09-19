@@ -6,9 +6,6 @@ import com.uniminuto.clinica.service.PacienteService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +16,6 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/paciente")
 public class PacienteApiController implements PacienteApi {
 
     @Autowired
@@ -38,10 +34,8 @@ public class PacienteApiController implements PacienteApi {
                 .encontrarPorDocumento(numero_documento));
     }
 
-    @GetMapping("/por-fecha-nacimiento")
-    public ResponseEntity<List<Paciente>> listarPacientePorFechaNacimiento(
-            @RequestParam (defaultValue = "asc") String orden) {
-        List<Paciente> pacientes = pacienteService.listarPacientePorFechaNacimiento(orden);
-        return ResponseEntity.ok(pacientes);
+    @Override
+    public ResponseEntity<List<Paciente>> listarPacientePorFechaNacimiento(String orden) {
+        return ResponseEntity.ok(this.pacienteService.listarPacientePorFechaNacimiento(orden));
     }
 }

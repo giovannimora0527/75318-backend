@@ -33,4 +33,10 @@ public interface PacienteApi {
             @RequestParam String numeroDocumento
     ) throws BadRequestException;
 
+    @RequestMapping(value = "/por-fecha-nacimiento",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacientePorFechaNacimiento(
+            @RequestParam(defaultValue = "asc") String orden);
+
 }
