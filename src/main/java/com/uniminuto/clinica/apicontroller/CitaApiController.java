@@ -3,6 +3,7 @@ package com.uniminuto.clinica.apicontroller;
 import com.uniminuto.clinica.api.CitaApi;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.CitaRq;
 import com.uniminuto.clinica.service.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,9 @@ public class CitaApiController implements CitaApi {
     private CitaService citaService;
 
     @Override
-    public ResponseEntity<Cita> guardarCita(Long pacienteId, Long medicoId, Cita cita){
-        Cita nuevaCita = citaService.guardarCita(pacienteId, medicoId, cita);
-        return ResponseEntity.ok(nuevaCita);
+    public ResponseEntity<Cita> guardarCita(CitaRq citaRq) {
+        Cita cita = citaService.guardarCita(citaRq);
+        return ResponseEntity.ok(cita);
     }
 
     @Override
