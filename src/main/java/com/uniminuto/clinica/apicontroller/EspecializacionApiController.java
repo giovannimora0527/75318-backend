@@ -1,34 +1,35 @@
 package com.uniminuto.clinica.apicontroller;
 
-import com.uniminuto.clinica.api.EspecializacionApi;
-import com.uniminuto.clinica.entity.Especializacion;
-import com.uniminuto.clinica.service.EspecializacionService;
-import java.util.List;
+import com.uniminuto.clinica.api.MedicamentoApi;
+import com.uniminuto.clinica.entity.Medicamento;
+import com.uniminuto.clinica.model.MedicamentoRq;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.service.MedicamentoService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author lmora
- */
+import java.util.List;
+
 @RestController
-public class EspecializacionApiController implements EspecializacionApi {
-    
+public class MedicamentoApiController implements MedicamentoApi {
+
     @Autowired
-    private EspecializacionService servicio;
+    private MedicamentoService medicamentoService;
 
     @Override
-    public ResponseEntity<List<Especializacion>> listarEspecializaciones() {
-        return ResponseEntity.ok(this.servicio.listarTodo());
+    public ResponseEntity<List<Medicamento>> listarMedicamentos() {
+        return ResponseEntity.ok(this.medicamentoService.listarMedicamentos());
     }
 
     @Override
-    public ResponseEntity<Especializacion> buscarPorCodigo(String codigo) 
-            throws BadRequestException {
-        return ResponseEntity.ok(this.servicio
-                .buscarEspecializacionPorCod(codigo));
+    public ResponseEntity<RespuestaRs> guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
+        return ResponseEntity.ok(medicamentoService.guardarMedicamento(medicamentoRq));
     }
-    
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
+        return ResponseEntity.ok(medicamentoService.actualizarMedicamento(medicamentoRq));
+    }
 }
