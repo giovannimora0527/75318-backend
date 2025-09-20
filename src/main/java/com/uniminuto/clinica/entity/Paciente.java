@@ -1,13 +1,19 @@
 package com.uniminuto.clinica.entity;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import java.sql.Date; 
+import javax.persistence.*;
+import java.sql.Date;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "paciente") 
-public class Paciente {
+@Table(name = "paciente")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Paciente implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +43,11 @@ public class Paciente {
     @Column(name = "telefono", length = 20)
     private String telefono;
 
-    @Lob 
+    @Lob
     @Column(name = "direccion")
     private String direccion;
+
+    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("paciente")
+    private List<Cita> citas;
 }

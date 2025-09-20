@@ -12,6 +12,8 @@ import com.uniminuto.clinica.service.RecetaService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,7 +27,7 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Autowired
     private MedicamentoRepository medicamentoRepository;
-
+    
     @Override
     public RespuestaRs guardarReceta(RecetaRq recetaNueva) throws BadRequestException {
         // 1. Validar que la cita y el medicamento existan
@@ -45,6 +47,7 @@ public class RecetaServiceImpl implements RecetaService {
         nuevaReceta.setMedicamento(medicamento.get());
         nuevaReceta.setDosis(recetaNueva.getDosis());
         nuevaReceta.setIndicaciones(recetaNueva.getIndicaciones());
+        nuevaReceta.setFechaCreacionRegistro(LocalDateTime.now());
 
         // 3. Guardar la receta
         this.recetaRepository.save(nuevaReceta);
@@ -54,5 +57,10 @@ public class RecetaServiceImpl implements RecetaService {
         rta.setMensaje("La receta se ha guardado correctamente.");
         rta.setStatus(200);
         return rta;
+    }
+
+    @Override
+    public List<Receta> listarRecetas() {
+        return this.recetaRepository.findAll();
     }
 }
