@@ -102,4 +102,13 @@ private void validarCampos(CitaRq citaRq)
         throw new BadRequestException("El campo Motivo es obligatorio.");
     }
 }
+
+    @Override
+    public List<Cita> listarCitasDesc() {
+        return citaRepository.findAll()
+                .stream()
+                .sorted((c1, c2) -> c2.getFechaHora().compareTo(c1.getFechaHora())) // ✅ Orden descendente (más recientes primero)
+                .toList();
+    }
+
 }

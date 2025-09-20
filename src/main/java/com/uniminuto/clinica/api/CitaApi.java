@@ -36,9 +36,8 @@ public interface CitaApi {
             @RequestBody CitaRq citaNuevo
     ) throws BadRequestException;
 
+    @RequestMapping(value = "/listar-desc",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Cita>> listarCitasDesc();
 }
-
-
-/*
-
-* */

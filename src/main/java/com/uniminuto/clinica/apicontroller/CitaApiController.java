@@ -40,4 +40,9 @@ public class CitaApiController implements CitaApi {
         return ResponseEntity.ok(this.citaService.guardarCita(citaNuevo));
     }
 
+    @Override
+    public ResponseEntity<List<Cita>> listarCitasDesc() {
+        return ResponseEntity.ok(this.citaService.listarCitasDesc());
+    }
+
 }
