@@ -45,3 +45,25 @@ public class Usuario implements Serializable {
     private boolean activo;
     
 }
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    
+    @Column(name = "username")
+    private String username;
+    
+    @Column(name = "password_hash")
+    private String password;
+    
+    @Column(name = "rol")
+    private String rol;
+    
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
+    
+    @Column(name = "activo")
+    private boolean activo;
+    
+}
