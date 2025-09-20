@@ -1,5 +1,4 @@
 package com.uniminuto.clinica.apicontroller;
-
 import com.uniminuto.clinica.api.CitaApi;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.service.CitaService;
