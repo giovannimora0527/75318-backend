@@ -8,6 +8,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid; // Asegúrate de tener esta importación
 
 @RestController
 public class RecetaApiController implements RecetaApi {
@@ -16,7 +17,7 @@ public class RecetaApiController implements RecetaApi {
     private RecetaService recetaService;
 
     @Override
-    public ResponseEntity<RespuestaRs> guardarReceta(RecetaRq recetaNueva) throws BadRequestException {
+    public ResponseEntity<RespuestaRs> guardarReceta(@Valid RecetaRq recetaNueva) throws BadRequestException {
         return ResponseEntity.ok(this.recetaService.guardarReceta(recetaNueva));
     }
 }

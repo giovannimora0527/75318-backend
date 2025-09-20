@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import javax.validation.Valid;
 
 @CrossOrigin(origins = "*")
 @RequestMapping("/receta")
 public interface RecetaApi {
 
     @PostMapping("/guardar")
-    ResponseEntity<RespuestaRs> guardarReceta(@RequestBody RecetaRq recetaNueva) throws BadRequestException;
+    ResponseEntity<RespuestaRs> guardarReceta(@Valid @RequestBody RecetaRq recetaNueva) throws BadRequestException;
 }
