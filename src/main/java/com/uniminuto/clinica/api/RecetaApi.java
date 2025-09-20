@@ -28,4 +28,12 @@ public interface RecetaApi {
     ResponseEntity<List<Receta>> listarPorReceta(
             @RequestParam Long citaId
     );
+
+    @RequestMapping(
+            value = "/recetas",
+            method = RequestMethod.GET,
+            produces = {"application/json"}
+    )
+    ResponseEntity<List<Receta>> listaRecetas();
+
 }

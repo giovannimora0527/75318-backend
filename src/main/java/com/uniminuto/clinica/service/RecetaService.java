@@ -9,4 +9,7 @@ import java.util.List;
 public interface RecetaService {
     Receta guardarReceta(Long citaId, Receta receta);
     List<Receta> listarPorCita(Long citaId);
+
+    List<Receta> listaRecetas();
+
 }
