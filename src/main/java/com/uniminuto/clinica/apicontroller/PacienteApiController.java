@@ -1,33 +1,46 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.uniminuto.clinica.apicontroller;
-
-import java.util.List;
 
 import com.uniminuto.clinica.api.PacienteApi;
 import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.service.PacienteService;
+import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ * @author crash
+ */
 @RestController
 public class PacienteApiController implements PacienteApi {
-
+    
     @Autowired
     private PacienteService pacienteService;
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientes() {
-        return ResponseEntity.ok(this.pacienteService.listarPacientes());
+    public ResponseEntity<List<Paciente>> listarPacientesDes() {
+        return ResponseEntity.ok(this.pacienteService.listarPacientesDes());
     }
 
     @Override
-    public ResponseEntity<Paciente> buscarPorDocumento(String numeroDocumento)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.pacienteService.buscarPorDocumento(numeroDocumento));
+    public ResponseEntity<List<Paciente>> listarPacientes() {
+        return ResponseEntity.ok(this.pacienteService.listarTodo());
     }
+    //Funcion buscar por documento identidad
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesPorEdadAsc() {
-        return ResponseEntity.ok(pacienteService.listarPacientesPorEdadAsc());
+    public ResponseEntity<Paciente> encontrarPorDocumentoIdentidad(String numeroDocumento)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.pacienteService.encontrarPorDocumentoIdentidad(numeroDocumento));
+    }
+
+    @Override
+    public ResponseEntity<Paciente> buscarPacienteId(Long id) throws BadRequestException {
+        return ResponseEntity.ok(this.pacienteService.buscarPacienteId(id));
     }
 }
