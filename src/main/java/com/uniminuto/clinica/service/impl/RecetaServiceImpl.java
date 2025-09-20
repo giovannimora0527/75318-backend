@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ import java.util.Optional;
             receta.setMedicamento(medicamento);
             receta.setDosis(recetaRq.getDosis());
             receta.setIndicaciones(recetaRq.getIndicaciones());
+            receta.setFechaCreacionRegistro(LocalDateTime.now());
 
             // 3. Guardar la cita
             Receta guardada = recetaRepository.save(receta);
