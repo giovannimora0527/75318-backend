@@ -29,7 +29,7 @@ public class Cita implements Serializable {
     private Medico medico;
 
     @Column(name = "fecha_hora", nullable = false)
-    private Date fechaHora;
+    private java.time.LocalDateTime fechaHora;
 
     @Column(name = "estado", nullable = false)
     private String estado;
