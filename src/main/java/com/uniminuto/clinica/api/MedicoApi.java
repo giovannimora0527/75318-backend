@@ -36,4 +36,12 @@ public interface MedicoApi {
     ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
       @RequestParam String codigo
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/buscar-x-id",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Medico> buscarMedicoId(
+      @RequestParam Long id
+    ) throws BadRequestException;
 }

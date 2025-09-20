@@ -36,4 +36,10 @@ public class MedicoApiController implements MedicoApi{
         return ResponseEntity.ok(this.medicoService
                 .buscarPorEspecialidad(codigo));
     }
+
+    @Override
+    public ResponseEntity<Medico> buscarMedicoId(Long id)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.buscarMedicoId(id));
+    }
 }

@@ -38,4 +38,9 @@ public class PacienteApiController implements PacienteApi {
             throws BadRequestException {
         return ResponseEntity.ok(this.pacienteService.encontrarPorDocumentoIdentidad(numeroDocumento));
     }
+
+    @Override
+    public ResponseEntity<Paciente> buscarPacienteId(Long id) throws BadRequestException {
+        return ResponseEntity.ok(this.pacienteService.buscarPacienteId(id));
+    }
 }

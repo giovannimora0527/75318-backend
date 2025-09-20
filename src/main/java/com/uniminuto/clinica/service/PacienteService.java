@@ -18,4 +18,6 @@ public interface PacienteService {
     Paciente encontrarPorDocumentoIdentidad(String numeroDocumento) throws BadRequestException;
 
     List<Paciente> listarPacientesDes();
+
+    Paciente buscarPacienteId(Long id) throws BadRequestException;
 }

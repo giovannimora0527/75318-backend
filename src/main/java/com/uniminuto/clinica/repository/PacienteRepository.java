@@ -18,4 +18,5 @@ public interface PacienteRepository extends JpaRepository<Paciente, Integer>{
     //Funcion buscar por documento identidad
     Optional<Paciente> findByNumeroDocumento(String numeroDocumento);
 
+    Optional<Paciente> findById(Long id);
 }

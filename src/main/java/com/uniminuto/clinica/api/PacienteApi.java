@@ -41,4 +41,12 @@ public interface PacienteApi {
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPacientesDes();
+
+    @RequestMapping(value = "buscar-por-id",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Paciente> buscarPacienteId(
+       @RequestParam Long id
+    ) throws BadRequestException;
 }

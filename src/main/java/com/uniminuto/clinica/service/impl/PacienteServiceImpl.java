@@ -50,4 +50,14 @@ public class PacienteServiceImpl implements PacienteService {
 
         return optUser.get();
     }
+
+    @Override
+    public Paciente buscarPacienteId(Long id) throws BadRequestException {
+        Optional<Paciente> optUser = this.PacienteRepository.findById(id);
+        if (!optUser.isPresent()) {
+            throw new BadRequestException("No existe el usuario con el id: " + id);
+        }
+
+        return optUser.get();
+    }
 }
