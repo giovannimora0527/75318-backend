@@ -34,7 +34,7 @@ public class Cita implements Serializable {
     private LocalDateTime fechaHora;
 
     @Column(name = "estado", length = 20, nullable = false)
-    private String estado; // Podrías usar un Enum para mayor control
+    private String estado;
 
     @Column(columnDefinition = "TEXT")
     private String motivo;

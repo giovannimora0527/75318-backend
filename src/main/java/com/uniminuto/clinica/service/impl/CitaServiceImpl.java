@@ -8,8 +8,10 @@ import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,5 +38,13 @@ public class CitaServiceImpl implements CitaService {
         cita.setMedico(medicoOpcional.get());
 
         return citaRepository.save(cita);
+    }
+
+    @Override
+    public List<Cita> listarCitaPorFecha(String orden) {
+        Sort.Direction direccion = "asc".equalsIgnoreCase(orden)
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return citaRepository.findAll(Sort.by(direccion, "fechaHora"));
     }
 }

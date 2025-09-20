@@ -4,6 +4,8 @@ import com.uniminuto.clinica.entity.Cita;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  *
  * @author jartunduaga
@@ -22,4 +24,10 @@ public interface CitaApi {
             @RequestParam Long medicoId,
             @RequestBody Cita cita
     );
+
+    @RequestMapping(value = "/por-fecha",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Cita>> listarCitaPorFecha(
+            @RequestParam(defaultValue = "asc") String orden);
 }
