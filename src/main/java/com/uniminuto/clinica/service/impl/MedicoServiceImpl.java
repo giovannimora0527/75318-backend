@@ -40,4 +40,12 @@ public class MedicoServiceImpl implements MedicoService {
         }
     }
 
+    @Override
+    public Medico buscarMedicoId(Long id)
+            throws BadRequestException {
+        return this.medicoRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(
+                        "No se encontró el médico con id: " + id));
+    }
+
 }
