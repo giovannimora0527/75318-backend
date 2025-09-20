@@ -111,4 +111,9 @@ private void validarCampos(CitaRq citaRq)
                 .toList();
     }
 
+    @Override
+    public Cita buscarCitaPorId(Long id) throws BadRequestException {
+        return citaRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("No existe la cita con id: " + id));
+    }
 }

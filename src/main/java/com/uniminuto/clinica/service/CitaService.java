@@ -17,5 +17,7 @@ public interface CitaService {
     RespuestaRs guardarCita(CitaRq CitaNuevo) throws BadRequestException;
 
     List<Cita> listarCitasDesc();
+
+    Cita buscarCitaPorId(Long id) throws BadRequestException;
 }
 
