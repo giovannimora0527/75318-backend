@@ -15,6 +15,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -62,23 +63,10 @@ public class CitaServiceImpl implements CitaService {
      */
 
     @Override
-    public List<Cita> buscarPorPaciente(Long id)
-            throws BadRequestException {
-        /**
-         * Validación previa de existencia del paciente
-         * Lanza excepción descriptiva si no existe
-         */
-        try {
-            Paciente e = this.pacienteService
-                    .buscarPacienteId(id);
-            /**
-             * Búsqueda directa por ID de paciente en la tabla cita
-             * Utiliza consulta derivada de Spring Data JPA
-             */
-            return this.citaRepository.findByPacienteId(e);
-        } catch (BadRequestException e) {
-            throw e;
-        }
+    public List<Cita> buscarPorPaciente(Long id) throws BadRequestException {
+        // ✅ CORREGIDO: Validar que el paciente existe y luego buscar por ID
+        pacienteService.buscarPacienteId(id); // Lanza excepción si no existe
+        return citaRepository.findByPacienteId(id); // ✅ Ahora pasa el ID directamente
     }
     /**
      * {@inheritDoc}
@@ -87,18 +75,10 @@ public class CitaServiceImpl implements CitaService {
      * Garantiza que solo se busquen citas de médicos existentes.
      */
     @Override
-    public List<Cita> buscarPorMedico(Long id)
-            throws BadRequestException {
-        /**
-         * Validación de existencia del médico antes de la búsqueda
-         */
-        try {
-            Medico e = this.medicoService
-                    .buscarMedicoId(id);
-            return this.citaRepository.findByMedicoId(e);
-        } catch (BadRequestException e) {
-            throw e;
-        }
+    public List<Cita> buscarPorMedico(Long id) throws BadRequestException {
+        // ✅ CORREGIDO: Validar que el médico existe y luego buscar por ID
+        medicoService.buscarMedicoId(id); // Lanza excepción si no existe
+        return citaRepository.findByMedicoId(id); // ✅ Ahora pasa el ID directamente
     }
 
     /**
@@ -120,7 +100,10 @@ public class CitaServiceImpl implements CitaService {
         Paciente paciente = pacienteService.buscarPacienteId(citaRq.getIdPaciente()); // Lanza error si no existe
         Medico medico = medicoService.buscarMedicoId(citaRq.getIdMedico()); // ...
     // Paso 4. Creo la cita y seteo los campos que lleguen del post
-    Cita nuevo = new Cita();
+        validarCitaDuplicada(citaRq);
+
+
+        Cita nuevo = new Cita();
 
         nuevo.setPaciente(paciente);  // ✅ Asignar objeto Paciente
         nuevo.setMedico(medico);    // ✅ Asignar objeto Medico
@@ -142,11 +125,35 @@ public class CitaServiceImpl implements CitaService {
 }
 
     /**
+     * Valida que no exista una cita similar (mismo paciente + médico + motivo)
+     * en una ventana de tiempo de 20 minutos hacia atrás desde ahora.
+     *
+     /* @param citaRq CitaRq datos de la nueva cita a validar
+     /* @throws BadRequestException si existe una cita similar reciente
+     */
+    private void validarCitaDuplicada(CitaRq citaRq) throws BadRequestException {
+        // Buscar citas idénticas (mismo paciente, médico, motivo y fecha/hora)
+        List<Cita> citasIdenticas = citaRepository.findCitasIdenticas(
+                citaRq.getIdPaciente(),
+                citaRq.getIdMedico(),
+                citaRq.getMotivo(),
+                citaRq.getFechaHora()
+        );
+
+        if (!citasIdenticas.isEmpty()) {
+            throw new BadRequestException(
+                    "Ya existe una cita idéntica (mismo paciente, médico, motivo y fecha/hora). " +
+                            "No se permite duplicar citas exactas."
+            );
+        }
+    }
+
+    /**
      * Método privado que valida que todos los campos obligatorios del request
      * estén presentes y contengan valores válidos.
      *
-     * @param citaRq CitaRq objeto a validar
-     * @throws BadRequestException si algún campo obligatorio es nulo, vacío o inválido
+     /* @param citaRq CitaRq objeto a validar
+     /* @throws BadRequestException si algún campo obligatorio es nulo, vacío o inválido
      */
 
 private void validarCampos(CitaRq citaRq)

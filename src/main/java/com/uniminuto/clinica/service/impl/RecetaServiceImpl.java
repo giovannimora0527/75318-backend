@@ -141,6 +141,8 @@ public class RecetaServiceImpl implements RecetaService {
         // Reutilizamos el método de CitaService para obtener la cita completa
         Cita cita = buscarCitaPorId(recetaRq.getIdCita());
 
+        validarRecetaDuplicada(recetaRq);
+
         // Paso 3: Crear nueva receta y asignar valores
         Receta nuevaReceta = new Receta();
         nuevaReceta.setCita(cita); //Asignación de relación JPA con Cita (Many-to-One) - Establece la referencia completa al objeto Cita
@@ -161,11 +163,42 @@ public class RecetaServiceImpl implements RecetaService {
     }
 
     /**
+     * Valida que no exista una receta similar (misma cita + medicamento + dosis)
+     * en una ventana de tiempo de 30 minutos hacia atrás desde ahora.
+     *
+     * @param recetaRq RecetaRq datos de la nueva receta a validar
+     * @throws BadRequestException si existe una receta similar reciente
+     */
+    private void validarRecetaDuplicada(RecetaRq recetaRq) throws BadRequestException {
+        // Calcular ventana de tiempo: 30 minutos hacia atrás desde ahora
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime hace30Minutos = ahora.minusMinutes(30);
+
+        // Buscar recetas similares en los últimos 30 minutos
+        List<Receta> recetasSimilares = recetaRepository.findRecetasSimilares(
+                recetaRq.getIdCita(),
+                recetaRq.getMedicamentoId(),
+                recetaRq.getDosis(),
+                hace30Minutos,
+                ahora
+        );
+
+        // Si hay recetas similares, lanzar excepción
+        if (!recetasSimilares.isEmpty()) {
+            throw new BadRequestException(
+                    "Ya existe una receta similar (misma cita, medicamento y dosis) " +
+                            "creada en los últimos 30 minutos. " +
+                            "Por favor, espere antes de crear una receta idéntica."
+            );
+        }
+    }
+
+    /**
      * Método privado de validación que verifica la integridad y completitud
      * de los datos requeridos para crear una nueva receta.
      *
-     * @param recetaRq RecetaRq objeto request a validar
-     * @throws BadRequestException si algún campo obligatorio es inválido
+     /* @param recetaRq RecetaRq objeto request a validar
+     /* @throws BadRequestException si algún campo obligatorio es inválido
      */
     private void validarCampos(RecetaRq recetaRq) throws BadRequestException {
         if (recetaRq.getIdCita() == null) { //Validación de ID de cita asociada
