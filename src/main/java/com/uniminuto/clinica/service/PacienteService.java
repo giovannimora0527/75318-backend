@@ -6,4 +6,6 @@ import java.util.List;
 public interface PacienteService {
     List<Paciente> listarPacientes();
     Paciente encontrarPorNumeroDocumento(String numeroDocumento);
+    List<Paciente> listarPacientesPorFechaNacimientoDesc();
+    
 }

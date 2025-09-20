@@ -23,4 +23,9 @@ public class PacienteServiceImpl implements PacienteService {
         return pacienteRepository.findByNumeroDocumento(numeroDocumento)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
     }
+    
+    @Override
+    public List<Paciente> listarPacientesPorFechaNacimientoDesc() {
+        return pacienteRepository.findAllByOrderByFechaNacimientoDesc();
+    }
 }

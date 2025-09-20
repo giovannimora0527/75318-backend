@@ -24,4 +24,9 @@ public class PacienteApiController {
     public ResponseEntity<Paciente> findByNumeroDocumento(@PathVariable String numeroDocumento) {
         return ResponseEntity.ok(pacienteService.encontrarPorNumeroDocumento(numeroDocumento));
     }
+
+    @GetMapping("/fechaNacimiento")
+    public ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoAsc() {
+        return ResponseEntity.ok(pacienteService.listarPacientesPorFechaNacimientoDesc());
+    }
 }

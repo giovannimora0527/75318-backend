@@ -12,15 +12,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/paciente")
 public interface PacienteApi {
 
-    @RequestMapping(value = "/listar",
+    @RequestMapping(
+            value = "/listar",
             produces = {"application/json"},
-            method = RequestMethod.GET)
+            method = RequestMethod.GET
+    )
     ResponseEntity<List<Paciente>> listarPacientes();
 
-    @RequestMapping(value = "/buscar",
+    @RequestMapping(
+            value = "/buscar",
             produces = {"application/json"},
-            method = RequestMethod.GET)
+            method = RequestMethod.GET
+    )
     ResponseEntity<Paciente> buscarPorNumeroDocumento(
             @RequestParam String numeroDocumento
     );
+
+    @RequestMapping(
+            value = "/fechaNacimiento",
+            produces = {"application/json"},
+            method = RequestMethod.GET
+    )
+    ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoDesc();
 }
