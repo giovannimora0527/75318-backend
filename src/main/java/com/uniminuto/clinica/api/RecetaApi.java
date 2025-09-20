@@ -1,22 +1,16 @@
 package com.uniminuto.clinica.api;
+
 import com.uniminuto.clinica.entity.Receta;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import java.util.List;
 
 public interface RecetaApi {
 
-    Receta crearReceta(Receta receta);
+    ResponseEntity<?> crearReceta(Receta receta);
 
     List<Receta> listarReceta();
 
-    Receta obtenerRecetaPorId(Long id);
-    
-    @RequestMapping(
-            value = "/fechaCreacion",
-            produces = {"application/json"},
-            method = RequestMethod.GET
-    )
+    ResponseEntity<Receta> obtenerRecetaPorId(Long id);
+
     ResponseEntity<List<Receta>> listarRecetaPorFechaCreacionDesc();
 }

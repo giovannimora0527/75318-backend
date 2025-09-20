@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 public interface CitaApi {
 
-    Cita crearCita(Cita cita);
+    ResponseEntity<?> crearCita(Cita cita);
 
     List<Cita> listarCitas();
 
-    Cita obtenerCitaPorId(Long id);
-    
+    ResponseEntity<Cita> obtenerCitaPorId(Long id);
+
     @RequestMapping(
             value = "/fechaHora",
             produces = {"application/json"},

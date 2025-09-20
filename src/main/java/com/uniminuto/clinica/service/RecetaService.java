@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RecetaService {
 
-    Receta guardarReceta(Receta Receta);
+    Receta guardarReceta(Receta Receta) throws Exception;
     List<Receta> obtenerTodas();
     Receta obtenerPorId(Long id);
     List<Receta> listarRecetaPorFechaCreacionDesc();

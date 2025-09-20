@@ -1,4 +1,5 @@
 package com.uniminuto.clinica.entity;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class Receta implements Serializable {
     @Column(name = "cita_id", nullable = false)
     private Long citaId;
 
-    @Column(columnDefinition = "TEXT", nullable = false )
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String dosis;
 
     @Column(columnDefinition = "TEXT", nullable = true)
@@ -26,9 +27,8 @@ public class Receta implements Serializable {
 
     @Column(name = "medicamento_id", nullable = false)
     private Integer medicamentoId;
-    
+
     @Column(name = "fecha_creacion_registro", nullable = false)
     private LocalDateTime fechaCreacion;
-    
 
 }
