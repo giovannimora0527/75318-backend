@@ -16,19 +16,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 @CrossOrigin(origins = "*")
 @RequestMapping("/paciente")
 public interface PacienteApi {
- 
+
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPaciente();
-    
+
     @RequestMapping(value = "/buscar-numero_documento",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Paciente> buscarPacientePorNumeroDocumento(
-       @RequestParam String numero_documento
+            @RequestParam String numero_documento
     ) throws BadRequestException;
-       
+
+    @RequestMapping(value = "/buscar-fecha_nacimiento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Paciente> buscarPacientePorFechaNacimiento(
+            @RequestParam String fecha_nacimiento
+    ) throws BadRequestException;
+
+    @RequestMapping(value = "/buscar-fecha_nacimiento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    List<Paciente> obtenerPacientesOrdenados();
+
 }

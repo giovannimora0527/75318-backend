@@ -1,6 +1,8 @@
 package com.uniminuto.clinica.entity;
 
+import com.uniminuto.clinica.api.PacienteApi;
 import java.io.Serializable;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import lombok.Data;
  * @author 1079977_JavierCuervo
  */
 @Data
-@Entity
+
 @Table(name="paciente")
 public class Paciente implements Serializable {
 
@@ -45,5 +47,9 @@ public class Paciente implements Serializable {
     
     @Column(name = "telefono")
     private String telefono;
+ 
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private LocalDate fechaNacimiento;
     
+   
 }

@@ -18,7 +18,7 @@ public abstract class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
-    
+
     /**
      *
      * @return
@@ -34,7 +34,7 @@ public abstract class PacienteServiceImpl implements PacienteService {
      * @return
      * @throws BadRequestException
      */
-    @Override
+    
     public Paciente encontrarPorNumeroDocumento(String numero_documento)
             throws BadRequestException {
         Optional<Paciente> optDocument = this.pacienteRepository
@@ -43,5 +43,9 @@ public abstract class PacienteServiceImpl implements PacienteService {
             throw new BadRequestException("No existe el paciente");
         }
         return optDocument.get();
+    }
+
+    public List<Paciente> listarPorEdadDescendente() {
+        return this.pacienteRepository.findAllByFechaNacimientoDesc();
     }
 }

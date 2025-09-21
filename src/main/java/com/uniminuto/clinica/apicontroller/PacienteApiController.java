@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author 1079977_JavierCuervo
- */
+
 @RestController
 public abstract class PacienteApiController implements PacienteApi {
 
@@ -21,12 +18,12 @@ public abstract class PacienteApiController implements PacienteApi {
 
     @Override
     public ResponseEntity<List<Paciente>> listarPaciente() {
-        return ResponseEntity.ok(this.pacienteService.listarTodosLosPacientes());
+        return ResponseEntity.ok(pacienteService.listarTodosLosPacientes());
     }
-    @Override
-    public ResponseEntity<Paciente> buscarPacientePorNumeroDocumento(String numero_documento)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.pacienteService.encontrarPorNumeroDocumento(numero_documento));
+    public ResponseEntity<PacienteService> buscarPorFechaNacimiento(String fecha_nacimiento)
+            throws BadRequestException {   
+        return null;
     }
-   
+    
 }
+
