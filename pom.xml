@@ -88,39 +88,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <scope>test</scope>
-            <version>2.44.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opera</groupId>
-            <artifactId>operadriver</artifactId>
-            <scope>test</scope>
-            <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium-remote-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>4.11</version>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.constructor</groupId>
-            <artifactId>override_2.10</artifactId>
-            <version>3.0.0</version>
-            <type>jar</type>
-        </dependency>
-=======
->>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
     </dependencies>
     <build>
         <plugins>

@@ -1,26 +1,28 @@
 package com.uniminuto.clinica.model;
 
+import com.uniminuto.clinica.entity.Cita;
 import lombok.Data;
 
 /**
  *
- * @author lmora
+ * @author JAVIER-CUERVO
+ * @param <T>
  */
 @Data
-public class UsuarioRq {
-    private String username;
-    private String pass;
-    private String rol;
+public class CitaRs<T> {
+    private int status;
+    private String mensaje;
+    private T data;
 
-    public Object getUsername() {
+    public void setStatus(int i) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public String getPass() {
+    public void setMensaje(String cita_guardada_exitosamente) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public Object getRol() {
+    public void setData(Cita citaGuardada) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
