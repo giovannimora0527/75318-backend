@@ -4,6 +4,7 @@ import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.CitaRs; 
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
@@ -11,6 +12,7 @@ import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.CitaService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors; 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,10 +75,41 @@ public class CitaServiceImpl implements CitaService {
         }
         if (citaNueva.getEstado() == null || citaNueva.getEstado().isBlank()) {
             throw new BadRequestException("El campo 'estado' es obligatorio.");
-        }  
+        }
     }
+
     @Override
-    public List<Cita> listarCitasRecientes() {
-        return citaRepository.findAllByOrderByFechaHoraDesc();
+    public List<CitaRs> listarCitasRecientes() {
+        // 1. Obtiene las entidades de la base de datos
+        List<Cita> citas = citaRepository.findAllByOrderByFechaHoraDesc();
+        
+        // 2. Mapea (transforma) las entidades a DTOs
+        return citas.stream()
+                    .map(this::mapToCitaRs)
+                    .collect(Collectors.toList());
+    }
+    
+    /**
+     * Método auxiliar para transformar una entidad Cita a un DTO CitaRs.
+     * @param cita La entidad Cita a mapear.
+     * @return El DTO CitaRs resultante.
+     */
+    private CitaRs mapToCitaRs(Cita cita) {
+        CitaRs dto = new CitaRs();
+        dto.setId(cita.getId());
+        dto.setFechaHora(cita.getFechaHora());
+        dto.setEstado(cita.getEstado());
+        dto.setMotivo(cita.getMotivo());
+        
+        // Aquí extraes solo la información que necesitas de las relaciones
+        if (cita.getPaciente() != null) {
+            dto.setPacienteId(cita.getPaciente().getId());
+            dto.setNombreCompletoPaciente(cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos());
+        }
+        if (cita.getMedico() != null) {
+            dto.setMedicoId(cita.getMedico().getId());
+            dto.setNombreCompletoMedico(cita.getMedico().getNombres() + " " + cita.getMedico().getApellidos());
+        }
+        return dto;
     }
 }

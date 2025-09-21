@@ -1,6 +1,6 @@
 package com.uniminuto.clinica.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <-- Nueva importación
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
 import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "medicamento")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // <-- Anotación a nivel de clase
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class Medicamento implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,8 +42,8 @@ public class Medicamento implements Serializable {
     @Column(name = "fecha_modificacion_registro")
     private LocalDateTime fechaModificacionRegistro;
     
-    // Si tienes una lista de recetas asociadas a este medicamento, agrega esta línea
+   
     @OneToMany(mappedBy = "medicamento", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("medicamento") // <-- Anotación en la relación
+    @JsonIgnoreProperties("medicamento") 
     private List<Receta> recetas;
 }

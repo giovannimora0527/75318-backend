@@ -1,8 +1,9 @@
 package com.uniminuto.clinica.api;
 
-import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.PacienteRs;
 import org.springframework.web.bind.annotation.*;
-
+import org.apache.coyote.BadRequestException; 
 import java.util.List;
 import java.util.Optional;
 
@@ -10,17 +11,17 @@ import java.util.Optional;
 public interface PacienteApi {
 
     @GetMapping
-    List<Paciente> obtenerTodos();
+    List<PacienteRs> obtenerTodos();
 
     @GetMapping("/{documento}")
-    Optional<Paciente> buscarPorDocumento(@PathVariable String documento);
+    Optional<PacienteRs> buscarPorDocumento(@PathVariable String documento);
 
     @PostMapping
-    Paciente guardar(@RequestBody Paciente paciente);
+    PacienteRs guardar(@RequestBody PacienteRq paciente) throws BadRequestException; 
 
     @DeleteMapping("/{id}")
     void eliminar(@PathVariable Long id);
     
     @GetMapping("/ordenados-por-nacimiento")
-    List<Paciente> obtenerPacientesOrdenadosPorFechaNacimiento();
+    List<PacienteRs> obtenerPacientesOrdenadosPorFechaNacimiento();
 }

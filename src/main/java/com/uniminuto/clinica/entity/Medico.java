@@ -49,8 +49,5 @@ public class Medico implements Serializable {
     @JsonIgnoreProperties("medicos")
     private Especializacion especializacion;
 
-    // Si Medico tiene una lista de Citas, agrega esto para evitar el bucle
-    // @OneToMany(mappedBy = "medico", fetch = FetchType.LAZY)
-    // @JsonIgnoreProperties("medico")
-    // private List<Cita> citas;
+
 }

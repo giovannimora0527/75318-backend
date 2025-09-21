@@ -1,10 +1,11 @@
 package com.uniminuto.clinica.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import javax.persistence.*;
-import java.sql.Date;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -35,10 +36,11 @@ public class Paciente implements Serializable {
     private String apellidos;
 
     @Column(name = "fecha_nacimiento", nullable = false)
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     @Column(name = "genero", length = 1)
     private Character genero;
+
 
     @Column(name = "telefono", length = 20)
     private String telefono;
@@ -48,6 +50,6 @@ public class Paciente implements Serializable {
     private String direccion;
 
     @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("paciente")
+    @JsonIgnore
     private List<Cita> citas;
 }

@@ -6,10 +6,7 @@ import com.uniminuto.clinica.model.UsuarioRq;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 
-/**
- *
- * @author lmora
- */
+
 public interface UsuarioService {
   List<Usuario> listarTodosLosUsuarios();
   

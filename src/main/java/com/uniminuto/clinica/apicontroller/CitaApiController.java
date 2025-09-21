@@ -1,8 +1,8 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.CitaApi;
-import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.CitaRs; 
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.CitaService;
 import java.util.List;
@@ -21,8 +21,10 @@ public class CitaApiController implements CitaApi {
     public ResponseEntity<RespuestaRs> guardarCita(CitaRq citaNueva) throws BadRequestException {
         return ResponseEntity.ok(this.citaService.guardarCita(citaNueva));
     }
+    
+    // El tipo de retorno se cambia a List<CitaRs> para una respuesta limpia y optimizada
     @Override
-    public ResponseEntity<List<Cita>> listarCitasRecientes() {
+    public ResponseEntity<List<CitaRs>> listarCitasRecientes() {
         return ResponseEntity.ok(this.citaService.listarCitasRecientes());
     }
 }

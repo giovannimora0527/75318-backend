@@ -4,6 +4,7 @@ import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
 import com.uniminuto.clinica.model.RecetaRq;
+import com.uniminuto.clinica.model.RecetaRs; // <--- Importación necesaria para el DTO de respuesta
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.repository.MedicamentoRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors; // <--- Importación necesaria para el stream
 
 @Service
 public class RecetaServiceImpl implements RecetaService {
@@ -59,8 +61,40 @@ public class RecetaServiceImpl implements RecetaService {
         return rta;
     }
 
+    /**
+     * @Override
+     * Método para listar todas las recetas y devolverlas como DTOs optimizados.
+     * Esta es la clave para evitar la serialización excesiva.
+     */
     @Override
-    public List<Receta> listarRecetas() {
-        return this.recetaRepository.findAll();
+    public List<RecetaRs> listarRecetas() {
+        // 1. Obtiene las entidades de la base de datos
+        List<Receta> recetas = recetaRepository.findAll();
+        
+        // 2. Mapea (transforma) las entidades a DTOs
+        return recetas.stream()
+                      .map(this::mapToRecetaRs)
+                      .collect(Collectors.toList());
+    }
+    
+    /**
+     * Método auxiliar para transformar una entidad Receta a un DTO RecetaRs.
+     * @param receta La entidad Receta a mapear.
+     * @return El DTO RecetaRs resultante.
+     */
+    private RecetaRs mapToRecetaRs(Receta receta) {
+        RecetaRs dto = new RecetaRs();
+        dto.setId(receta.getId());
+        dto.setFechaCreacionRegistro(receta.getFechaCreacionRegistro());
+        dto.setDosis(receta.getDosis());
+        dto.setIndicaciones(receta.getIndicaciones());
+        
+        if (receta.getCita() != null) {
+            dto.setCitaId(receta.getCita().getId());
+        }
+        if (receta.getMedicamento() != null) {
+            dto.setNombreMedicamento(receta.getMedicamento().getNombre());
+        }
+        return dto;
     }
 }
