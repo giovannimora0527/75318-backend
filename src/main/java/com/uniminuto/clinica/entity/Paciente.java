@@ -13,7 +13,7 @@ import lombok.Data;
 
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 @Data
 

@@ -1,13 +1,19 @@
 package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Usuario;
+<<<<<<< HEAD
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
+=======
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestBody;
+=======
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,6 +60,7 @@ public interface UsuarioApi {
     ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(
        @RequestParam Integer activo
     ) throws BadRequestException;
+<<<<<<< HEAD
     
     
     @RequestMapping(value = "/guardar",
@@ -64,3 +71,6 @@ public interface UsuarioApi {
        @RequestBody UsuarioRq usuarioNuevo
     ) throws BadRequestException;
 }
+=======
+}
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8

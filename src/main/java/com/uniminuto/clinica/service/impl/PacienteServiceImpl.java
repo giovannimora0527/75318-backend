@@ -14,11 +14,15 @@ import org.springframework.stereotype.Service;
  * @author JAVIER-CUERVO
  */
 @Service
-public abstract class PacienteServiceImpl implements PacienteService {
+public class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
     /**
      *
      * @return
@@ -34,7 +38,11 @@ public abstract class PacienteServiceImpl implements PacienteService {
      * @return
      * @throws BadRequestException
      */
+<<<<<<< HEAD
     
+=======
+    @Override
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
     public Paciente encontrarPorNumeroDocumento(String numero_documento)
             throws BadRequestException {
         Optional<Paciente> optDocument = this.pacienteRepository

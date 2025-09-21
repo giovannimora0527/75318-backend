@@ -9,9 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+<<<<<<< HEAD
 
+=======
+/**
+ *
+ * @author JAVIER-CUERVO
+ */
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
 @RestController
-public abstract class PacienteApiController implements PacienteApi {
+public class PacienteApiController implements PacienteApi {
 
     @Autowired
     private PacienteService pacienteService;

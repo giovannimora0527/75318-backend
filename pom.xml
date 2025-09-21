@@ -88,6 +88,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -118,6 +119,8 @@
             <version>3.0.0</version>
             <type>jar</type>
         </dependency>
+=======
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
     </dependencies>
     <build>
         <plugins>

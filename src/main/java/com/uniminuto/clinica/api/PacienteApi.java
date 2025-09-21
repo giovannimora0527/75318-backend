@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
- * @author 1079977_JavierCuervo
+ * @author JAVIER-CUERVO
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/paciente")

@@ -1,6 +1,7 @@
 package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.Usuario;
+<<<<<<< HEAD
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
 import com.uniminuto.clinica.repository.UsuarioRepository;
@@ -8,6 +9,10 @@ import com.uniminuto.clinica.service.UsuarioService;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+=======
+import com.uniminuto.clinica.repository.UsuarioRepository;
+import com.uniminuto.clinica.service.UsuarioService;
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
 import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
@@ -20,7 +25,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -35,19 +44,28 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+<<<<<<< HEAD
     public Usuario encontrarPorNombre(String nombreUsuario)
+=======
+    public Usuario encontrarPorNombre(String nombreUsuario) 
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
             throws BadRequestException {
         Optional<Usuario> optUser = this.usuarioRepository
                 .findByUsername(nombreUsuario);
         if (!optUser.isPresent()) {
             throw new BadRequestException("No existe el usuario");
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
         return optUser.get();
     }
 
     @Override
     public List<Usuario> buscarPorEstado(Integer estado) {
+<<<<<<< HEAD
         boolean activo = estado == 1 ? true : false;
         return this.usuarioRepository.findByActivo(activo);
     }
@@ -118,4 +136,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
+=======
+        boolean activo = estado == 1? true : false;
+        return this.usuarioRepository.findByActivo(activo);
+    }
+    
+>>>>>>> 6ddb292738158152aa065f4d15449b4ce3a7c0c8
 }
