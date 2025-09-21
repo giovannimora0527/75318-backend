@@ -8,7 +8,9 @@ import com.uniminuto.clinica.repository.RecetaRepository;
 import com.uniminuto.clinica.service.RecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +29,17 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Override
     public Receta guardarReceta(RecetaRq recetaRq) {
-        Optional<Cita> citaOpcional = citaRepository.findById(recetaRq.getCitaId());
-        if (!citaOpcional.isPresent()) {
-            throw new RuntimeException("La cita con ID " + recetaRq.getCitaId() + " no existe");
+        if (recetaRq.getCitaId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo citaId es obligatorio.");
         }
 
+        Cita cita = citaRepository.findById(recetaRq.getCitaId())
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "La cita con ID " + recetaRq.getCitaId() + " no existe"));
+
         Receta receta = new Receta();
-        receta.setCita(citaOpcional.get());
+        receta.setCita(cita);
         receta.setMedicamentoId(recetaRq.getMedicamentoId());
         receta.setDosis(recetaRq.getDosis());
         receta.setIndicaciones(recetaRq.getIndicaciones());
