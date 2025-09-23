@@ -8,9 +8,14 @@ import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
 
 /**
- *
  * @author Usuario
  */
 public interface PacienteService {
-    List<Paciente> obtenerPacientes();
+
+    /**
+     * Obtiene todos los pacientes ordenados por fecha de nacimiento 
+     */
+    List<Paciente> listarPacientesPorFechaNacimiento();
+    
+     List<Paciente> listarPacientes();
 }

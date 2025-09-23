@@ -22,7 +22,13 @@ public class PacienteServiceImpl implements PacienteService {
     private PacienteRepository pacienteRepository;
 
     @Override
-    public List<Paciente> obtenerPacientes() {
-        return pacienteRepository.findAll();
+    public List<Paciente> listarPacientesPorFechaNacimiento() {
+        return pacienteRepository.findAllByOrderByFechaNacimientoAsc();
     }
+    
+    @Override
+   public List<Paciente> listarPacientes() {
+    return pacienteRepository.findAll();
 }
+}
+

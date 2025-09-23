@@ -4,20 +4,13 @@
  */
 package com.uniminuto.clinica.repository;
 
-import com.uniminuto.clinica.entity.Paciente;
-import java.util.List;
+import com.uniminuto.clinica.entity.Receta;
+import com.uniminuto.clinica.entity.Cita;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author Usuario
- */
 @Repository
-public interface PacienteRepository extends JpaRepository<Paciente, Long> {
-    
-    /**
-     * Lista todos los pacientes ordenados de mayor a menor por fecha de nacimiento
-     */
-    List<Paciente> findAllByOrderByFechaNacimientoAsc();
+public interface RecetaRepository extends JpaRepository<Receta, Long> {
+
+    boolean existsByCita(Cita cita);
 }
