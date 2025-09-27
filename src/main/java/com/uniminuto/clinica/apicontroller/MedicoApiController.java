@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+=======
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.MedicoApi;
@@ -11,11 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
+<<<<<<< HEAD
+<<<<<<< HEAD
+ * @author crash
+ */
+@RestController
+public class MedicoApiController implements MedicoApi{   
+=======
  * @author lmora
  */
 @RestController
 public class MedicoApiController implements MedicoApi {
 
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
     @Autowired
     private MedicoService medicoService;
 
@@ -32,4 +48,12 @@ public class MedicoApiController implements MedicoApi {
                 .buscarPorEspecialidad(codigo));
     }
 
+<<<<<<< HEAD
+    @Override
+    public ResponseEntity<Medico> buscarMedicoId(Long id)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.buscarMedicoId(id));
+    }
+=======
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 }
