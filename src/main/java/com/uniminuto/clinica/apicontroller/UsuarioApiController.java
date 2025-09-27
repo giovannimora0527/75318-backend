@@ -36,6 +36,15 @@ public class UsuarioApiController implements UsuarioApi {
             throws BadRequestException {
         return ResponseEntity.ok(this.usuarioService.encontrarPorNombre(nombre));
     }
+<<<<<<< HEAD
+    //Encontrar por ID usuario
+    @Override
+    public ResponseEntity<Usuario> encontrarPorId(Long id)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.encontrarPorId(id));
+    }
+=======
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 
     @Override
     public ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(Integer activo)
@@ -43,6 +52,7 @@ public class UsuarioApiController implements UsuarioApi {
         return ResponseEntity.ok(this.usuarioService.buscarPorEstado(activo));
     }
 
+<<<<<<< HEAD
     @Override
     public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo)
             throws BadRequestException {
@@ -50,3 +60,15 @@ public class UsuarioApiController implements UsuarioApi {
     }
 
 }
+=======
+
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo) 
+            throws BadRequestException {
+                return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuarioNuevo));
+
+    }
+
+}
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
