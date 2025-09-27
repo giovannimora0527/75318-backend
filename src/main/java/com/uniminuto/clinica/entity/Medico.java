@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+=======
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
@@ -13,17 +21,31 @@ import lombok.Data;
 
 /**
  *
+<<<<<<< HEAD
+<<<<<<< HEAD
+ * @author crash
+=======
  * @author lmora
+>>>>>>> gmora
+=======
+ * @author lmora
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
  */
 @Data
 @Entity
 @Table(name = "medico")
+<<<<<<< HEAD
+public class Medico implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
+=======
 public class Medico implements Serializable {
 
     /**
      * Id serializable.
      */
     private static final long serialVersionUID = 1L;
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
