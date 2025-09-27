@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+=======
+>>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.Especializacion;
