@@ -49,4 +49,10 @@ public class UsuarioApiController implements UsuarioApi {
         return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuarioNuevo));
     }
 
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarrUsuario(UsuarioRq usuario)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
+    }
+
 }

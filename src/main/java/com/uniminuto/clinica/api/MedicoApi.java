@@ -31,4 +31,13 @@ public interface MedicoApi {
     ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
       @RequestParam String codigo
     ) throws BadRequestException;
+
+    /**
+     * TODO Agregar medodo para guardar medico.
+     */
+
+
+    /**
+     * TODO agregar metodo para actualizar medico.
+     */
 }
