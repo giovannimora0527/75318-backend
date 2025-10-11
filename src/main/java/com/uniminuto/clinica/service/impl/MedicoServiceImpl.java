@@ -6,6 +6,8 @@ import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
 import java.util.List;
+import java.util.Optional;
+
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,17 @@ public class MedicoServiceImpl implements MedicoService {
     public List<Medico> listarMedicos() {
         return this.medicoRepository.findAll();
     }
+
+
+    @Override
+    public Medico buscarMedicoPorDocumento(String documento) throws BadRequestException {
+        Optional<Medico> optMedico = this.medicoRepository.findByDocumento(documento);
+        if (!optMedico.isPresent()) {
+            throw new BadRequestException("No se encuentra el medico");
+        }
+        return optMedico.get();
+    }
+
 
     @Override
     public List<Medico> buscarPorEspecialidad(String codigo)

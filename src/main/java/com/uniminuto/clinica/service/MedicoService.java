@@ -13,4 +13,7 @@ public interface MedicoService {
    
    List<Medico> buscarPorEspecialidad(String codigo) 
            throws BadRequestException;
+
+   Medico buscarMedicoPorDocumento(String documento) throws BadRequestException;
+
 }

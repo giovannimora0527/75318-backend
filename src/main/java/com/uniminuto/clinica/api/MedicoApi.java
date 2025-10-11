@@ -2,6 +2,7 @@ package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Medico;
 import java.util.List;
+
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,6 +32,15 @@ public interface MedicoApi {
     ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
       @RequestParam String codigo
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/buscar-medico-documento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Medico> buscarMedicoPorDocumento(
+            @RequestParam String documento)
+            throws BadRequestException;
+
 
     /**
      * TODO Agregar medodo para guardar medico.
