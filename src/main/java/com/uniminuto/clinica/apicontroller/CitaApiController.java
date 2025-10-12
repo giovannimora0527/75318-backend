@@ -1,18 +1,19 @@
 package com.uniminuto.clinica.apicontroller;
 
-import com.uniminuto.clinica.api.CitaApi;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.service.CitaService;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
+import com.uniminuto.clinica.model.CitaRq;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/citas")
-public class CitaApiController implements CitaApi {
+@RequestMapping("/citas")
+public class CitaApiController {
 
     private final CitaService citaService;
     private final PacienteRepository pacienteRepository;
@@ -26,40 +27,42 @@ public class CitaApiController implements CitaApi {
         this.medicoRepository = medicoRepository;
     }
 
-    @Override
-@PostMapping("/crear")
-public ResponseEntity<?> crearCita(@RequestBody Cita cita) {
+    @PostMapping("/crear")
+    public ResponseEntity<?> crearCita(@RequestBody CitaRq citaRq) {
 
-    if (cita.getId() != null && citaService.obtenerPorId(cita.getId()) != null) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                             .body("La cita con ese ID ya existe");
+        // Validar paciente y médico
+        if (!pacienteRepository.existsById(citaRq.getPacienteId())) {
+            return ResponseEntity.badRequest().body("El paciente no existe");
+        }
+
+        if (!medicoRepository.existsById(citaRq.getMedicoId())) {
+            return ResponseEntity.badRequest().body("El médico no existe");
+        }
+
+        try {
+            // Convertir DTO -> Entidad
+            Cita cita = new Cita();
+            cita.setPacienteId(citaRq.getPacienteId());
+            cita.setMedicoId(citaRq.getMedicoId());
+            cita.setFechaHora(LocalDateTime.parse(citaRq.getFechaHora()));
+            cita.setEstado(citaRq.getEstado());
+            cita.setMotivo(citaRq.getMotivo());
+
+            Cita nuevaCita = citaService.guardarCita(cita);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCita);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error al guardar la cita: " + e.getMessage());
+        }
     }
 
-    if (!pacienteRepository.existsById(cita.getPacienteId())) {
-        return ResponseEntity.badRequest().body("El paciente no existe");
-    }
-
-    if (!medicoRepository.existsById(cita.getMedicoId())) {
-        return ResponseEntity.badRequest().body("El médico no existe");
-    }
-
-    try {
-        Cita nuevaCita = citaService.guardarCita(cita);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCita);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                             .body("Error al guardar la cita: " + e.getMessage());
-    }
-}
-
-
-    @Override
     @GetMapping("/listar")
     public List<Cita> listarCitas() {
         return citaService.obtenerTodas();
     }
 
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<Cita> obtenerCitaPorId(@PathVariable Long id) {
         try {
@@ -73,7 +76,6 @@ public ResponseEntity<?> crearCita(@RequestBody Cita cita) {
         }
     }
 
-    @Override
     @GetMapping("/listar-desc")
     public ResponseEntity<List<Cita>> listarCitasPorFechaHoraDesc() {
         try {

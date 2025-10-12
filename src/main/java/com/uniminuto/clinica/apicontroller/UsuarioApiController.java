@@ -3,6 +3,8 @@ package com.uniminuto.clinica.apicontroller;
 import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.service.UsuarioService;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.model.UsuarioRq;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,17 @@ public class UsuarioApiController implements UsuarioApi {
             throws BadRequestException {
         return ResponseEntity.ok(this
                 .usuarioService.buscarPorEstado(activo));
+    }
+    
+    @Override
+    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuario)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuario));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarUsuario(UsuarioRq usuario) throws BadRequestException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

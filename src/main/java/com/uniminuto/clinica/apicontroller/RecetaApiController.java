@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
-@RequestMapping("/api/receta")
+@RequestMapping("/receta")
 public class RecetaApiController implements RecetaApi {
 
     private final RecetaService recetaService;

@@ -3,6 +3,8 @@ package com.uniminuto.clinica.service.impl;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.ClinicaService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 /**
  *

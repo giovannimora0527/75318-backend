@@ -1,7 +1,6 @@
 package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.Cita;
-import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.service.CitaService;
 import org.springframework.stereotype.Service;
