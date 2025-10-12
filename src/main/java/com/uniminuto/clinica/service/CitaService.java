@@ -22,4 +22,7 @@ public interface CitaService {
      * @throws BadRequestException excepcion.
      */
     RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException;
+
+    //Acutalizar cita
+    RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException;
 }

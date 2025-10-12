@@ -40,4 +40,20 @@ public interface CitaApi {
     ResponseEntity<RespuestaRs> guardarCita(
             @RequestBody @Valid CitaRq citaRq
             ) throws BadRequestException;
+
+    /**
+     * Api para actualizar una cita existente.
+     * @param citaRq cita con datos actualizados.
+     * @return Respuesta del servicio.
+     * @throws BadRequestException excepcion.
+     */
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarCita(@RequestBody @Valid CitaRq citaRq)
+            throws BadRequestException;
+
 }
+
+

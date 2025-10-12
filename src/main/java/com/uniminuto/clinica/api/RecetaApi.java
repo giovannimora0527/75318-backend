@@ -39,4 +39,6 @@ public interface RecetaApi {
     ResponseEntity<RespuestaRs> guardarReceta(
            @RequestBody @Valid RecetaRq recetaRq
     ) throws BadRequestException;
+
+    //TODO: actualizar receta
 }
