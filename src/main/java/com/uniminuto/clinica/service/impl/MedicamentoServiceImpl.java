@@ -29,70 +29,69 @@ public class MedicamentoServiceImpl implements MedicamentoService {
 
     @Override
     public RespuestaRs guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
-        // Paso 1. Validar el formulario
-        this.validarFormulario(medicamentoRq);
-        // Paso 2. Consultar si el medicamento ya existe por nombre
-        Optional<Medicamento> optMedicamento = medicamentoRepository
-                .findByNombre(medicamentoRq.getNombre());
+        validarFormulario(medicamentoRq);
 
-        // Paso 3. Si existe lanzo error
+        Optional<Medicamento> optMedicamento = medicamentoRepository.findByNombre(medicamentoRq.getNombre());
         if (optMedicamento.isPresent()) {
             throw new BadRequestException("El medicamento ya existe");
         }
-        // Paso 4. Si no existe, creo el medicamento y lo guardo
-        Medicamento nuevo = this.mapearAMedicamento(medicamentoRq);
+
+        Medicamento nuevo = mapearAMedicamento(medicamentoRq);
         medicamentoRepository.save(nuevo);
 
-        // Paso 5. Retorno la respuesta
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Medicamento creado exitosamente");
         rta.setStatus(200);
-
         return rta;
     }
 
     @Override
-    public RespuestaRs actualizarMedicamento(MedicamentoRq medicamentoRq)
-            throws BadRequestException {
-        // Paso 1. Consultar si el campo id existe y viene en el request
+    public RespuestaRs actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
         if (medicamentoRq.getId() == null) {
             throw new BadRequestException("El id del medicamento es obligatorio");
         }
-        // Paso 2. Consultar si el medicamento existe por id
-        Optional<Medicamento> optMedicamento = medicamentoRepository
-                .findById(medicamentoRq.getId());
-        // Paso 3. Si no existe lanzo error
+
+        Optional<Medicamento> optMedicamento = medicamentoRepository.findById(medicamentoRq.getId());
         if (!optMedicamento.isPresent()) {
             throw new BadRequestException("El medicamento no existe y no se puede actualizar");
         }
-        // Paso 4. Si existe voy y valido que el atributo nombre cambie y si cambia lo consulto por nombre
+
         Medicamento medicamentoActual = optMedicamento.get();
-        if (!medicamentoActual.getNombre()
-                .toLowerCase().equals(medicamentoRq.getNombre().toLowerCase())) {
-            Optional<Medicamento> optMedicamentoPorNombre = medicamentoRepository
-                    .findByNombre(medicamentoRq.getNombre());
-            // Paso 5. Si existe por nombre lanzo error
+        if (!medicamentoActual.getNombre().equalsIgnoreCase(medicamentoRq.getNombre())) {
+            Optional<Medicamento> optMedicamentoPorNombre = medicamentoRepository.findByNombre(medicamentoRq.getNombre());
             if (optMedicamentoPorNombre.isPresent()) {
                 throw new BadRequestException("El nombre del medicamento ya existe");
             }
         }
 
-        // Paso 6. Si no existe por nombre, actualizo los datos del medicamento
-        medicamentoActual.setNombre(medicamentoRq.getNombre() == null ? medicamentoActual.getNombre() : medicamentoRq.getNombre());
-        medicamentoActual.setDescripcion(medicamentoRq.getDescripcion() == null ? medicamentoActual.getDescripcion() : medicamentoRq.getDescripcion());
-        medicamentoActual.setPresentacion(medicamentoRq.getPresentacion() == null ? medicamentoActual.getPresentacion() : medicamentoRq.getPresentacion());
-        medicamentoActual.setFechaCompra(medicamentoRq.getFechaCompra() == null ? medicamentoActual.getFechaCompra() : medicamentoRq.getFechaCompra());
-        medicamentoActual.setFechaVence(medicamentoRq.getFechaVence() == null ? medicamentoActual.getFechaVence() : medicamentoRq.getFechaVence());
+        medicamentoActual.setNombre(medicamentoRq.getNombre());
+        medicamentoActual.setDescripcion(medicamentoRq.getDescripcion());
+        medicamentoActual.setPresentacion(medicamentoRq.getPresentacion());
+        medicamentoActual.setFechaCompra(medicamentoRq.getFechaCompra());
+        medicamentoActual.setFechaVence(medicamentoRq.getFechaVence());
         medicamentoActual.setFechaModificacionRegistro(LocalDateTime.now());
-        this.medicamentoRepository.save(medicamentoActual);
-        // Paso 7. Retorno la respuesta
+        medicamentoRepository.save(medicamentoActual);
+
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Medicamento actualizado exitosamente");
         rta.setStatus(200);
-
         return rta;
     }
 
+    @Override
+    public RespuestaRs eliminarMedicamento(Long id) throws BadRequestException {
+        Optional<Medicamento> optMedicamento = medicamentoRepository.findById(id);
+        if (!optMedicamento.isPresent()) {
+            throw new BadRequestException("El medicamento no existe y no se puede eliminar");
+        }
+
+        medicamentoRepository.deleteById(id);
+
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Medicamento eliminado exitosamente");
+        rta.setStatus(200);
+        return rta;
+    }
 
     private Medicamento mapearAMedicamento(MedicamentoRq medicamentoRq) {
         Medicamento nuevo = new Medicamento();
@@ -122,6 +121,4 @@ public class MedicamentoServiceImpl implements MedicamentoService {
             throw new BadRequestException("El campo fecha de vencimiento es obligatorio");
         }
     }
-
-
 }

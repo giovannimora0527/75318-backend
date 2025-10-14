@@ -1,7 +1,9 @@
 package com.uniminuto.clinica.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,7 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "medicamento")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Medicamento implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,9 +43,8 @@ public class Medicamento implements Serializable {
 
     @Column(name = "fecha_modificacion_registro")
     private LocalDateTime fechaModificacionRegistro;
-    
-   
+
     @OneToMany(mappedBy = "medicamento", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("medicamento") 
+    @JsonIgnore // Ignora las recetas en la respuesta JSON
     private List<Receta> recetas;
 }
