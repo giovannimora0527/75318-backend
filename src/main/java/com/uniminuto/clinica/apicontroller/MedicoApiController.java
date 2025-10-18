@@ -2,6 +2,8 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.MedicoApi;
 import com.uniminuto.clinica.entity.Medico;
+import com.uniminuto.clinica.model.MedicoRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.MedicoService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -30,6 +32,11 @@ public class MedicoApiController implements MedicoApi {
             throws BadRequestException {
         return ResponseEntity.ok(this.medicoService
                 .buscarPorEspecialidad(codigo));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarMedico(MedicoRq medicoRq) throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
     }
 
 }
