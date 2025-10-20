@@ -5,8 +5,11 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.PacienteApi;
-import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.PacienteRs;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.PacienteService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- *
+ * 
  * @author Usuario
  */
 
@@ -25,12 +28,23 @@ public class PacienteApiController implements PacienteApi {
     private PacienteService pacienteService;
 
     @Override
-    public ResponseEntity<List<Paciente>> obtenerPacientes() {
-        return ResponseEntity.ok(pacienteService.listarPacientes());
+    public List<PacienteRs> listarPacientes() {
+        return pacienteService.listarPacientes();
     }
 
     @Override
-    public ResponseEntity<List<Paciente>> obtenerPacientesOrdenados() {
-        return ResponseEntity.ok(pacienteService.listarPacientesPorFechaNacimiento());
+    public List<PacienteRs> listarPacientesRecientes() {
+        return pacienteService.listarPacientesRecientes();
     }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarPaciente(PacienteRq pacienteRq) throws BadRequestException {
+        RespuestaRs respuesta = pacienteService.guardarPaciente(pacienteRq);
+        return ResponseEntity.ok(respuesta);
+    }
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarPaciente(PacienteRq pacienteRq) throws BadRequestException {
+        RespuestaRs respuesta = pacienteService.guardarPaciente(pacienteRq);
+        return ResponseEntity.ok(respuesta);
+}
 }

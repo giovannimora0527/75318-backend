@@ -5,7 +5,11 @@
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.PacienteRs;
+import com.uniminuto.clinica.model.RespuestaRs;
 import java.util.List;
+import org.apache.coyote.BadRequestException;
 
 /**
  * @author Usuario
@@ -15,7 +19,11 @@ public interface PacienteService {
     /**
      * Obtiene todos los pacientes ordenados por fecha de nacimiento 
      */
-    List<Paciente> listarPacientesPorFechaNacimiento();
+    List<PacienteRs> listarPacientesPorFechaNacimiento();
     
-     List<Paciente> listarPacientes();
+    List<PacienteRs> listarPacientes();
+     
+    List<PacienteRs> listarPacientesRecientes();
+     
+    RespuestaRs guardarPaciente(PacienteRq pacienteRq) throws BadRequestException;
 }
