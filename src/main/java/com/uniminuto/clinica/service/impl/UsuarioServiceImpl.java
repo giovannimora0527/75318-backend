@@ -45,19 +45,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return optUser.get();
     }
-        //Encontrar por ID usuario
-
-    @Override
-    public Usuario encontrarPorId(Long id)
-            throws BadRequestException {
-        Optional<Usuario> optUser = this.usuarioRepository
-                .findById(id);
-        if (!optUser.isPresent()) {
-            throw new BadRequestException("No existe el usuario");
-        }
-
-        return optUser.get();
-    }
 
     @Override
     public List<Usuario> buscarPorEstado(Integer estado) {

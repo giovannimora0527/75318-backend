@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.PacienteApi;
@@ -13,34 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author crash
- */
+
 @RestController
 public class PacienteApiController implements PacienteApi {
-    
+
     @Autowired
     private PacienteService pacienteService;
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesDes() {
-        return ResponseEntity.ok(this.pacienteService.listarPacientesDes());
-    }
-
-    @Override
     public ResponseEntity<List<Paciente>> listarPacientes() {
-        return ResponseEntity.ok(this.pacienteService.listarTodo());
-    }
-    //Funcion buscar por documento identidad
-    @Override
-    public ResponseEntity<Paciente> encontrarPorDocumentoIdentidad(String numeroDocumento)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.pacienteService.encontrarPorDocumentoIdentidad(numeroDocumento));
+        return ResponseEntity.ok(pacienteService.encontrarTodosLosPacientes());
     }
 
     @Override
-    public ResponseEntity<Paciente> buscarPacienteId(Long id) throws BadRequestException {
-        return ResponseEntity.ok(this.pacienteService.buscarPacienteId(id));
+    public ResponseEntity<Paciente> buscarPacienteXIdentificacion(String numeroDocumento)
+            throws BadRequestException {
+        return ResponseEntity.ok(pacienteService.buscarPacientePorDocumento(numeroDocumento));
+    }
+
+    @Override
+    public ResponseEntity<List<Paciente>> listarPacientesXOrden(String orden) {
+        return ResponseEntity.ok(pacienteService.listarOrdenadoPorFechaNacimiento(orden.equals("asc")));
+    }
+
+    @Override
+    public ResponseEntity<Paciente> guardarOActualizarPaciente(Paciente paciente) throws BadRequestException {
+        return ResponseEntity.ok(pacienteService.guardarOActualizarPaciente(paciente));
     }
 }

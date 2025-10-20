@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
-
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Medico;
@@ -11,15 +6,11 @@ import org.apache.coyote.BadRequestException;
 
 /**
  *
- * @author crash
+ * @author lmora
  */
 public interface MedicoService {
-    List<Medico> listarMedicos();
-
-    Medico buscarMedicoId(Long id)
-        throws BadRequestException;
-
-    List<Medico> buscarPorEspecialidad(String codigo)
-            throws BadRequestException;
-
+   List<Medico> listarMedicos(); 
+   
+   List<Medico> buscarPorEspecialidad(String codigo) 
+           throws BadRequestException;
 }

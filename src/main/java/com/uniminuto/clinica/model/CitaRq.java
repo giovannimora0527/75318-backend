@@ -1,30 +1,41 @@
 package com.uniminuto.clinica.model;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
-
-/**
- * Modelo de datos de transferencia (DTO) que encapsula la información
- * necesaria para crear una nueva cita médica en el sistema.
- *
- * Este modelo se utiliza en las operaciones de API REST para recibir
- * datos del cliente y validarlos antes de la persistencia.
- *
- * @author crash
- * @version 1.0
- * @since 2025-09-20
- /* @see Cita
- /* @see CitaService#guardarCita(CitaRq)
- */
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class CitaRq {
+    /**
+     * Identificador del paciente asociado a la cita.
+     */
+    @NotNull(message = "El identificador del paciente es obligatorio.")
+    private Integer pacienteId;
 
-    private Long idPaciente; //idPaciente Long clave foránea hacia la entidad Paciente
-    private Long idMedico; //idMedico Long clave foránea hacia la entidad Medico
-    private LocalDateTime fechaHora; // fechaHora LocalDateTime fecha y hora de la cita
-    private String estado;// estado String estado de la cita (programada, cancelada, completada)
-    private String motivo; // motivo String motivo de la cita
+    /**
+     * Identificador del médico que atenderá la cita.
+     */
+    @NotNull(message = "El identificador del médico es obligatorio.")
+    private Integer medicoId;
 
+    /**
+     * Fecha y hora programada para la cita (formato ISO 8601)
+     * yyyy-MM-dd HH:mm:ss.
+     */
+    @NotBlank(message = "La fecha y hora de la cita es obligatoria.")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", message = "La fecha y hora debe tener el formato yyyy-MM-dd HH:mm:ss.")
+    private String fechaHora;
+
+    /**
+     * Estado actual de la cita (por ejemplo: programada, cancelada, completada).
+     */
+    @NotBlank(message = "El estado de la cita es obligatorio.")
+    private String estado;
+
+    /**
+     * Motivo o razón de la cita.
+     */
+    @NotBlank(message = "El motivo de la cita es obligatorio.")
+    private String motivo;
 }

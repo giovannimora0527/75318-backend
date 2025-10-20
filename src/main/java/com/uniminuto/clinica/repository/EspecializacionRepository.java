@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
-
 package com.uniminuto.clinica.repository;
 
 import com.uniminuto.clinica.entity.Especializacion;
@@ -12,11 +7,11 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author crash
+ * @author lmora
  */
 @Repository
 public interface EspecializacionRepository 
-    extends JpaRepository<Especializacion, Long>{
+        extends JpaRepository<Especializacion, Long> {
     
     Optional<Especializacion> findByCodigoEspecializacion(String codigo);
     

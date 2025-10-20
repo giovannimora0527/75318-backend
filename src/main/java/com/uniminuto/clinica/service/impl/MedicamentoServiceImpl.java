@@ -94,6 +94,11 @@ public class MedicamentoServiceImpl implements MedicamentoService {
     }
 
 
+    /**
+     * Mapea el request a la entidad Medicamento
+     * @param medicamentoRq dato de entrada.
+     * @return objeto mapeado medicamento.
+     */
     private Medicamento mapearAMedicamento(MedicamentoRq medicamentoRq) {
         Medicamento nuevo = new Medicamento();
         nuevo.setNombre(medicamentoRq.getNombre());

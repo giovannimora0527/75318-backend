@@ -8,44 +8,28 @@ import com.uniminuto.clinica.service.RecetaService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-public class RecetaApiController implements RecetaApi{
+public class RecetaApiController implements RecetaApi {
+
+    /**
+     * Servicio de recetas médicas.
+     */
     @Autowired
     private RecetaService recetaService;
 
     @Override
-    public ResponseEntity<List<Receta>> listarTodasRecetas() {
-        return ResponseEntity.ok(recetaService.listarTodasRecetas());
+    public ResponseEntity<List<Receta>> listarRecetas() {
+        return ResponseEntity.ok(this.recetaService.listarRecetas());
     }
 
     @Override
-    public ResponseEntity<List<Receta>> listarRecetasDesc() {
-        return ResponseEntity.ok(recetaService.listarRecetasDesc());
-    }
-
-    @Override
-    public ResponseEntity<List<Receta>> listarRecetasPorCita(Long citaId)
-            throws BadRequestException {
-        return ResponseEntity.ok(recetaService.buscarPorCita(citaId));
-    }
-
-    @Override
-    public ResponseEntity<List<Receta>> listarRecetasPorMedicamento(Integer medicamentoId) {
-        return ResponseEntity.ok(recetaService.buscarPorMedicamento(medicamentoId));
-    }
-
-    @Override
-    public ResponseEntity<Receta> buscarRecetaPorId(Long id) throws BadRequestException {
-        return ResponseEntity.ok(recetaService.buscarRecetaPorId(id));
-    }
-
-    @Override
-    public ResponseEntity<RespuestaRs> guardarReceta(RecetaRq recetaRq)
-            throws BadRequestException {
-        return ResponseEntity.ok(recetaService.guardarReceta(recetaRq));
+    public ResponseEntity<RespuestaRs> guardarReceta(@RequestBody @Valid RecetaRq recetaRq) throws BadRequestException {
+        return ResponseEntity.ok(this.recetaService.guardarReceta(recetaRq));
     }
 }
