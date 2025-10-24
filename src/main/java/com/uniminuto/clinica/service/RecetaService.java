@@ -9,8 +9,10 @@ import java.util.List;
 @Service
 public interface RecetaService {
     Receta guardarReceta(RecetaRq recetaRq);
+    Receta actualizarReceta(Long id, RecetaRq recetaRq);
+    void eliminarReceta(Long id);
+    Receta buscarPorId(Long id);
     List<Receta> listarPorCita(Long citaId);
-
     List<Receta> listaRecetas();
 
 }

@@ -48,6 +48,59 @@ public class RecetaServiceImpl implements RecetaService {
     }
 
     @Override
+    public Receta actualizarReceta(Long id, RecetaRq recetaRq) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID de la receta es obligatorio.");
+        }
+
+        if (recetaRq.getCitaId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo citaId es obligatorio.");
+        }
+
+        // Verificar que la receta existe
+        Receta recetaExistente = recetaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "La receta con ID " + id + " no existe"));
+
+        // Verificar que la cita existe
+        Cita cita = citaRepository.findById(recetaRq.getCitaId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "La cita con ID " + recetaRq.getCitaId() + " no existe"));
+
+        // Actualizar los campos
+        recetaExistente.setCita(cita);
+        recetaExistente.setMedicamentoId(recetaRq.getMedicamentoId());
+        recetaExistente.setDosis(recetaRq.getDosis());
+        recetaExistente.setIndicaciones(recetaRq.getIndicaciones());
+
+        return recetaRepository.save(recetaExistente);
+    }
+
+    @Override
+    public void eliminarReceta(Long id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID de la receta es obligatorio.");
+        }
+
+        Receta receta = recetaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "La receta con ID " + id + " no existe"));
+
+        recetaRepository.delete(receta);
+    }
+
+    @Override
+    public Receta buscarPorId(Long id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID de la receta es obligatorio.");
+        }
+
+        return recetaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "La receta con ID " + id + " no existe"));
+    }
+
+    @Override
     public List<Receta> listarPorCita(Long citaId) {
         return recetaRepository.findByCitaId(citaId);
     }

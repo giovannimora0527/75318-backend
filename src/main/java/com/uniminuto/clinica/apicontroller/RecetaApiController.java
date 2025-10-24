@@ -31,4 +31,22 @@ public class RecetaApiController implements RecetaApi {
     public ResponseEntity<List<Receta>> listaRecetas() {
         return ResponseEntity.ok(recetaService.listaRecetas());
     }
+
+    @Override
+    public ResponseEntity<Receta> actualizarReceta(Long id, RecetaRq recetaRq) {
+        Receta recetaActualizada = recetaService.actualizarReceta(id, recetaRq);
+        return ResponseEntity.ok(recetaActualizada);
+    }
+
+    @Override
+    public ResponseEntity<Void> eliminarReceta(Long id) {
+        recetaService.eliminarReceta(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Receta> buscarPorId(Long id) {
+        Receta receta = recetaService.buscarPorId(id);
+        return ResponseEntity.ok(receta);
+    }
 }

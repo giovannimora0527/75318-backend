@@ -33,4 +33,24 @@ public interface RecetaApi {
     )
     ResponseEntity<List<Receta>> listaRecetas();
 
+    @PutMapping(
+            value = "/actualizar-receta/{id}",
+            produces = "application/json",
+            consumes = "application/json"
+    )
+    ResponseEntity<Receta> actualizarReceta(@PathVariable Long id, @RequestBody RecetaRq recetaRq);
+
+    @DeleteMapping(
+            value = "/eliminar-receta/{id}",
+            produces = "application/json"
+    )
+    ResponseEntity<Void> eliminarReceta(@PathVariable Long id);
+
+    @RequestMapping(
+            value = "/receta/{id}",
+            method = RequestMethod.GET,
+            produces = {"application/json"}
+    )
+    ResponseEntity<Receta> buscarPorId(@PathVariable Long id);
+
 }
