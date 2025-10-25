@@ -10,7 +10,7 @@ import java.util.List;
 public interface MedicamentoService {
     List<Medicamento> listarMedicamentos();
 
-    RespuestaRs guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;
+    RespuestaRs crearMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;
 
-    RespuestaRs actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;
+    RespuestaRs actualizarMedicamento(Long id, MedicamentoRq medicamentoRq) throws BadRequestException;
 }
