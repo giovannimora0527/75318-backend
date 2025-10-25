@@ -4,44 +4,45 @@ import com.uniminuto.clinica.api.PacienteApi;
 import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.model.PacienteRs;
 import com.uniminuto.clinica.service.PacienteService;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
-import org.apache.coyote.BadRequestException; 
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PacienteApiController implements PacienteApi {
 
-    private final PacienteService pacienteService;
-
-    // Inyección de dependencias a través del constructor (buena práctica)
-    public PacienteApiController(PacienteService pacienteService) {
-        this.pacienteService = pacienteService;
-    }
+    @Autowired
+    private PacienteService servicio;
 
     @Override
     public List<PacienteRs> obtenerTodos() {
-        return pacienteService.obtenerTodos();
+        return this.servicio.obtenerTodos();
     }
 
     @Override
     public Optional<PacienteRs> buscarPorDocumento(String documento) {
-        return pacienteService.buscarPorDocumento(documento);
+        return this.servicio.buscarPorDocumento(documento);
     }
 
-   @Override
-    public PacienteRs guardar(@RequestBody PacienteRq pacienteRq) throws BadRequestException {
-    return pacienteService.guardar(pacienteRq);
+    @Override
+    public PacienteRs guardar(PacienteRq paciente) throws BadRequestException {
+        return this.servicio.guardar(paciente);
     }
-    
+
+    @Override
+    public PacienteRs actualizar(Long id, PacienteRq paciente) throws BadRequestException {
+        return this.servicio.actualizar(id, paciente);
+    }
+
     @Override
     public void eliminar(Long id) {
-        pacienteService.eliminar(id);
+        this.servicio.eliminar(id);
     }
 
     @Override
     public List<PacienteRs> obtenerPacientesOrdenadosPorFechaNacimiento() {
-        return pacienteService.obtenerPacientesOrdenadosPorFechaNacimiento();
+        return this.servicio.obtenerPacientesOrdenadosPorFechaNacimiento();
     }
 }

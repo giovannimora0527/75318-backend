@@ -19,7 +19,9 @@ public interface PacienteService {
     PacienteRs guardar(PacienteRq paciente) throws BadRequestException;
     
     void eliminar(Long id);
-    
 
+    PacienteRs actualizar(Long id, PacienteRq paciente) throws BadRequestException;
     List<PacienteRs> obtenerPacientesOrdenadosPorFechaNacimiento();
+
+
 }
