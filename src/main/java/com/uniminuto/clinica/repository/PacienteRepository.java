@@ -10,9 +10,14 @@ import java.util.Optional;
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
 
-    Optional<Paciente> findByNumeroDocumento(String documento);
+    Optional<Paciente> findBynombres(String nombresPaciente);
+
+    List<Paciente> findByNombres(String nombresPaciente);
+
 
     List<Paciente> findAllByOrderByFechaNacimientoAsc();
+
+
 
     List<Paciente> findAllByOrderByFechaNacimientoDesc();
 }

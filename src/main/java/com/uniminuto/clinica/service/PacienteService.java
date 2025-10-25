@@ -2,6 +2,10 @@ package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
+
+import com.uniminuto.clinica.model.MedicoRq;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
 
 /**
@@ -13,7 +17,9 @@ public interface PacienteService {
      * Lista todos los pacientes de la bd.
      * @return Lista de pacientes.
      */
-    List<Paciente> encontrarTodosLosPacientes();
+    List<Paciente> encomntrarPorNombre(String nombresPaciente) throws BadRequestException;
+
+    List<Paciente> listaTodosLosPacientes();
 
     /**
      * Busca un paciente dado un documento de identidad.
@@ -25,4 +31,9 @@ public interface PacienteService {
 
 
     List<Paciente> listarOrdenadoPorFechaNacimiento(boolean ascendente);
+
+    RespuestaRs guardarPaciente(PacienteRq pacienteNuevo) throws BadRequestException;
+
+
+    RespuestaRs actualizarPaciente(PacienteRq pacienteNuevo) throws BadRequestException;
 }

@@ -53,4 +53,8 @@ public class Paciente implements Serializable {
 
     @Column(name = "direccion")
     private String direccion;
+
+
+
+
 }

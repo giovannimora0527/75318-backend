@@ -4,10 +4,12 @@ import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.model.MedicamentoRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public interface MedicamentoService {
+
+public interface    MedicamentoService {
     List<Medicamento> listarMedicamentos();
 
     RespuestaRs guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;

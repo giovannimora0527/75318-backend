@@ -30,4 +30,5 @@ public class MedicoRq {
 
     @NotBlank(message = "El registro profesional es obligatorio")
     private String registroProfesional;
+
 }

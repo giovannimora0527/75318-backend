@@ -74,6 +74,11 @@ public class MedicoServiceImpl implements MedicoService {
         return rta;
     }
 
+    @Override
+    public RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException {
+        return null;
+    }
+
     private Medico convertToRqToEntidad(MedicoRq medicoRq, Especializacion especialidad) {
         Medico medico = new Medico();
         medico.setNombres(medicoRq.getNombres());
@@ -86,9 +91,6 @@ public class MedicoServiceImpl implements MedicoService {
         return medico;
     }
 
-    @Override
-    public RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException {
-        return null;
-    }
+
 
 }
