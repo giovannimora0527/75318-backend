@@ -30,5 +30,19 @@ public class EspecializacionApiController implements EspecializacionApi {
         return ResponseEntity.ok(this.servicio
                 .buscarEspecializacionPorCod(codigo));
     }
+
+    @Override
+    public ResponseEntity<Especializacion> crearEspecializacion(Especializacion especializacion)
+            throws BadRequestException {
+        Especializacion nuevaEspecializacion = this.servicio.crearEspecializacion(especializacion);
+        return ResponseEntity.ok(nuevaEspecializacion);
+    }
+
+    @Override
+    public ResponseEntity<Especializacion> actualizarEspecializacion(Long id, Especializacion especializacion)
+            throws BadRequestException {
+        Especializacion especializacionActualizada = this.servicio.actualizarEspecializacion(id, especializacion);
+        return ResponseEntity.ok(especializacionActualizada);
+    }
     
 }

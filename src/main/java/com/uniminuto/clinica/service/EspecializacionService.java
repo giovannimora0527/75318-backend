@@ -13,4 +13,10 @@ public interface EspecializacionService {
     
     Especializacion buscarEspecializacionPorCod(String codigo) 
             throws BadRequestException;
+
+    Especializacion crearEspecializacion(Especializacion especializacion)
+            throws BadRequestException;
+
+    Especializacion actualizarEspecializacion(Long id, Especializacion especializacion)
+            throws BadRequestException;
 }
