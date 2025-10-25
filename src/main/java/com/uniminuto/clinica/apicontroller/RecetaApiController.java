@@ -2,6 +2,7 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.RecetaApi;
 import com.uniminuto.clinica.entity.Receta;
+import com.uniminuto.clinica.model.CitaRq;
 import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.RecetaService;
@@ -31,5 +32,12 @@ public class RecetaApiController implements RecetaApi {
     @Override
     public ResponseEntity<RespuestaRs> guardarReceta(@RequestBody @Valid RecetaRq recetaRq) throws BadRequestException {
         return ResponseEntity.ok(this.recetaService.guardarReceta(recetaRq));
+    }
+
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarReceta(@RequestBody @Valid RecetaRq recetaRq)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.recetaService.actualizarReceta(recetaRq));
     }
 }

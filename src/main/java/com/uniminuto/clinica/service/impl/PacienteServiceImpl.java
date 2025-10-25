@@ -63,12 +63,12 @@ public class PacienteServiceImpl implements PacienteService {
         nuevo.setUsuarioId(pacienteNuevo.getUsuarioId());
         nuevo.setTipoDocumento(pacienteNuevo.getTipoDocumento().toUpperCase());
         nuevo.setNumeroDocumento(pacienteNuevo.getNumeroDocumento());
-        nuevo.setNombres(pacienteNuevo.getNombres().toUpperCase());
-        nuevo.setApellidos(pacienteNuevo.getApellidos().toUpperCase());
-        nuevo.setFechaNacimiento(pacienteNuevo.getFechaNacimiento().toLowerCase());
+        nuevo.setNombres(pacienteNuevo.getNombres());
+        nuevo.setApellidos(pacienteNuevo.getApellidos());
+        nuevo.setFechaNacimiento(pacienteNuevo.getFechaNacimiento());
         nuevo.setGenero(pacienteNuevo.getGenero().toUpperCase());
         nuevo.setTelefono(pacienteNuevo.getTelefono());
-        nuevo.setDireccion(pacienteNuevo.getDireccion().toLowerCase());
+        nuevo.setDireccion(pacienteNuevo.getDireccion());
 
         this.pacienteRepository.save(nuevo);
 
@@ -104,12 +104,12 @@ public class PacienteServiceImpl implements PacienteService {
         pacienteActualizar.setUsuarioId(pacienteNuevo.getUsuarioId());
         pacienteActualizar.setTipoDocumento(pacienteNuevo.getTipoDocumento().toUpperCase());
         pacienteActualizar.setNumeroDocumento(pacienteNuevo.getNumeroDocumento());
-        pacienteActualizar.setNombres(pacienteNuevo.getNombres().toUpperCase());
-        pacienteActualizar.setApellidos(pacienteNuevo.getApellidos().toUpperCase());
-        pacienteActualizar.setFechaNacimiento(pacienteNuevo.getFechaNacimiento().toLowerCase());
+        pacienteActualizar.setNombres(pacienteNuevo.getNombres());
+        pacienteActualizar.setApellidos(pacienteNuevo.getApellidos());
+        pacienteActualizar.setFechaNacimiento(pacienteNuevo.getFechaNacimiento());
         pacienteActualizar.setGenero(pacienteNuevo.getGenero().toUpperCase());
         pacienteActualizar.setTelefono(pacienteNuevo.getTelefono());
-        pacienteActualizar.setDireccion(pacienteNuevo.getDireccion().toLowerCase());
+        pacienteActualizar.setDireccion(pacienteNuevo.getDireccion());
 
         this.pacienteRepository.save(pacienteActualizar);
 
