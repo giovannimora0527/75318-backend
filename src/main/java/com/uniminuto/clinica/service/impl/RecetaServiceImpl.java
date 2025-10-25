@@ -1,9 +1,11 @@
 package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.Cita;
+import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
 import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.repository.CitaRepository;
+import com.uniminuto.clinica.repository.MedicamentoRepository;
 import com.uniminuto.clinica.repository.RecetaRepository;
 import com.uniminuto.clinica.service.RecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +29,28 @@ public class RecetaServiceImpl implements RecetaService {
     @Autowired
     private CitaRepository citaRepository;
 
+    @Autowired
+    private MedicamentoRepository medicamentoRepository;
+
     @Override
     public Receta guardarReceta(RecetaRq recetaRq) {
         if (recetaRq.getCitaId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo citaId es obligatorio.");
         }
 
+        if (recetaRq.getMedicamentoId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo medicamentoId es obligatorio.");
+        }
+
         Cita cita = citaRepository.findById(recetaRq.getCitaId())
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                 "La cita con ID " + recetaRq.getCitaId() + " no existe"));
+
+        Medicamento medicamento = medicamentoRepository.findById(recetaRq.getMedicamentoId())
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe"));
 
         Receta receta = new Receta();
         receta.setCita(cita);
@@ -57,6 +71,10 @@ public class RecetaServiceImpl implements RecetaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo citaId es obligatorio.");
         }
 
+        if (recetaRq.getMedicamentoId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo medicamentoId es obligatorio.");
+        }
+
         // Verificar que la receta existe
         Receta recetaExistente = recetaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -66,6 +84,11 @@ public class RecetaServiceImpl implements RecetaService {
         Cita cita = citaRepository.findById(recetaRq.getCitaId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "La cita con ID " + recetaRq.getCitaId() + " no existe"));
+
+        // Verificar que el medicamento existe
+        Medicamento medicamento = medicamentoRepository.findById(recetaRq.getMedicamentoId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe"));
 
         // Actualizar los campos
         recetaExistente.setCita(cita);
