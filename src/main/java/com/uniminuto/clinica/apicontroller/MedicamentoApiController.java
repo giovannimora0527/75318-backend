@@ -1,8 +1,8 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.MedicamentoApi;
-import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.model.MedicamentoRq;
+import com.uniminuto.clinica.model.MedicamentoRs;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.MedicamentoService;
 import org.apache.coyote.BadRequestException;
@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- *
- * @author Usuario
- */
-
 @RestController
 public class MedicamentoApiController implements MedicamentoApi {
 
@@ -24,17 +19,24 @@ public class MedicamentoApiController implements MedicamentoApi {
     private MedicamentoService medicamentoService;
 
     @Override
-    public ResponseEntity<List<Medicamento>> listarMedicamentos() {
-        return ResponseEntity.ok(this.medicamentoService.listarMedicamentos());
+    public List<MedicamentoRs> listarMedicamentos() {
+        return medicamentoService.listarMedicamentos();
+    }
+
+    @Override
+    public List<MedicamentoRs> listarMedicamentosRecientes() {
+        return medicamentoService.listarMedicamentosRecientes();
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
-        return ResponseEntity.ok(medicamentoService.guardarMedicamento(medicamentoRq));
+        RespuestaRs respuesta = medicamentoService.guardarMedicamento(medicamentoRq);
+        return ResponseEntity.ok(respuesta);
     }
-
+    
     @Override
     public ResponseEntity<RespuestaRs> actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
-        return ResponseEntity.ok(medicamentoService.actualizarMedicamento(medicamentoRq));
+        RespuestaRs respuesta = medicamentoService.guardarMedicamento(medicamentoRq);
+        return ResponseEntity.ok(respuesta);
     }
 }

@@ -4,15 +4,9 @@
  */
 package com.uniminuto.clinica.entity;
 
-import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.persistence.*;
 
 /**
  *
@@ -20,32 +14,32 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "receta")
-public class Receta {
+public class Receta implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cita_id", nullable = false)
     private Cita cita;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicamento_id", nullable = false)
     private Medicamento medicamento;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "dosis", nullable = false, columnDefinition = "TEXT")
     private String dosis;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "indicaciones", columnDefinition = "TEXT")
     private String indicaciones;
-    
-    @Column(name = "fecha")
-    private LocalDate fecha;
 
-    @Column(name = "fecha_creacion_registro", updatable = false, insertable = false)
-    private java.time.LocalDateTime fechaCreacionRegistro;
+    @Column(name = "fecha_creacion_registro")
+    private LocalDateTime fechaCreacionRegistro;
 
-
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -73,14 +67,6 @@ public class Receta {
     public String getDosis() {
         return dosis;
     }
-    
-    public LocalDate getFecha() {
-    return fecha;
-}
-
-    public void setFecha(LocalDate fecha) {
-    this.fecha = fecha;
-}
 
     public void setDosis(String dosis) {
         this.dosis = dosis;
@@ -102,4 +88,3 @@ public class Receta {
         this.fechaCreacionRegistro = fechaCreacionRegistro;
     }
 }
-

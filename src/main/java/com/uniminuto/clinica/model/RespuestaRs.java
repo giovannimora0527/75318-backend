@@ -2,13 +2,15 @@ package com.uniminuto.clinica.model;
 
 import lombok.Data;
 
-
-/**
- *
- * @author lmora
- */
 @Data
-public class RespuestaRs {    
-    private String mensaje;   
+public class RespuestaRs {
+    private String mensaje;
     private Integer status;
+
+    public RespuestaRs() {}
+
+    public RespuestaRs(Integer status, String mensaje) {
+        this.status = status;
+        this.mensaje = mensaje;
+    }
 }

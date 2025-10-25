@@ -1,16 +1,13 @@
 package com.uniminuto.clinica.service;
 
-import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.model.MedicamentoRq;
+import com.uniminuto.clinica.model.MedicamentoRs;
 import com.uniminuto.clinica.model.RespuestaRs;
+import java.util.List;
 import org.apache.coyote.BadRequestException;
 
-import java.util.List;
-
 public interface MedicamentoService {
-    List<Medicamento> listarMedicamentos();
-
+    List<MedicamentoRs> listarMedicamentos();
+    List<MedicamentoRs> listarMedicamentosRecientes();
     RespuestaRs guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;
-
-    RespuestaRs actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException;
 }

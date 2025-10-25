@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- *
+ * 
  * @author Usuario
  */
 
@@ -28,12 +28,34 @@ public class RecetaApiController implements RecetaApi {
     private RecetaService recetaService;
 
     @Override
-    public ResponseEntity<RespuestaRs> guardarReceta(RecetaRq recetaRq) throws BadRequestException {
-        return ResponseEntity.ok(recetaService.guardarReceta(recetaRq));
+    public List<RecetaRs> listarRecetas() {
+        return recetaService.listarRecetas();
     }
 
     @Override
-    public List<RecetaRs> listarRecetas() {
-        return recetaService.listarRecetas();
+    public List<RecetaRs> listarRecetasRecientes() {
+        return recetaService.listarRecetasRecientes();
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarReceta(RecetaRq recetaRq) throws BadRequestException {
+        RespuestaRs respuesta = recetaService.guardarReceta(recetaRq);
+        return ResponseEntity.ok(respuesta);
+    }
+    
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
+        RespuestaRs respuesta = recetaService.guardarReceta(recetaRq);
+        return ResponseEntity.ok(respuesta);
+    }
+    
+    @Override
+    public List<RecetaRs> listarRecetasPorCita(Long citaId) {
+        return recetaService.listarRecetasPorCita(citaId);
+    }
+    
+    @Override
+    public List<RecetaRs> listarRecetasPorMedicamento(Long medicamentoId) {
+        return recetaService.listarRecetasPorMedicamento(medicamentoId);
     }
 }

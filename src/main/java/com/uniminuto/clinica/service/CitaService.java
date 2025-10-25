@@ -4,41 +4,44 @@
  */
 package com.uniminuto.clinica.service;
 
-import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.CitaRq;
-import com.uniminuto.clinica.model.RespuestaRs;
-import org.apache.coyote.BadRequestException;
 import com.uniminuto.clinica.model.CitaRs;
+import com.uniminuto.clinica.model.RespuestaRs;
 import java.util.List;
+import org.apache.coyote.BadRequestException;
 
 /**
- *
  * @author Usuario
- */
-
-/**
- * Servicio para la gestión de citas.
  */
 public interface CitaService {
 
     /**
-     * Guarda una cita en la base de datos.
-     * @param citaRq datos de la cita
-     * @return respuesta con mensaje y status
-     * @throws BadRequestException si hay datos inválidos
-     */
-    RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException;
-
-    /**
-     * Lista todas las citas registradas.
-     * @return lista de citas
+     * Obtiene todas las citas
      */
     List<CitaRs> listarCitas();
-
+     
     /**
-     * Lista todas las citas ordenadas de la más reciente a la más antigua.
-     * @return lista de citas ordenadas
+     * Obtiene las citas más recientes
      */
     List<CitaRs> listarCitasRecientes();
+     
+    /**
+     * Guarda o actualiza una cita
+     */
+    RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException;
+    
+    /**
+     * Obtiene citas por paciente
+     */
+    List<CitaRs> listarCitasPorPaciente(Long pacienteId);
+    
+    /**
+     * Obtiene citas por médico
+     */
+    List<CitaRs> listarCitasPorMedico(Long medicoId);
+    
+    /**
+     * Obtiene citas por estado
+     */
+    List<CitaRs> listarCitasPorEstado(String estado);
 }
-

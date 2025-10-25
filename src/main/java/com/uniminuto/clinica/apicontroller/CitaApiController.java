@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Usuario
+ */
+
 @RestController
 public class CitaApiController implements CitaApi {
 
     @Autowired
     private CitaService citaService;
-
-    @Override
-    public ResponseEntity<RespuestaRs> guardarCita(CitaRq citaRq) throws BadRequestException {
-        return ResponseEntity.ok(citaService.guardarCita(citaRq));
-    }
 
     @Override
     public List<CitaRs> listarCitas() {
@@ -35,5 +35,32 @@ public class CitaApiController implements CitaApi {
     @Override
     public List<CitaRs> listarCitasRecientes() {
         return citaService.listarCitasRecientes();
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarCita(CitaRq citaRq) throws BadRequestException {
+        RespuestaRs respuesta = citaService.guardarCita(citaRq);
+        return ResponseEntity.ok(respuesta);
+    }
+    
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarCita(CitaRq citaRq) throws BadRequestException {
+        RespuestaRs respuesta = citaService.guardarCita(citaRq);
+        return ResponseEntity.ok(respuesta);
+    }
+    
+    @Override
+    public List<CitaRs> listarCitasPorPaciente(Long pacienteId) {
+        return citaService.listarCitasPorPaciente(pacienteId);
+    }
+    
+    @Override
+    public List<CitaRs> listarCitasPorMedico(Long medicoId) {
+        return citaService.listarCitasPorMedico(medicoId);
+    }
+    
+    @Override
+    public List<CitaRs> listarCitasPorEstado(String estado) {
+        return citaService.listarCitasPorEstado(estado);
     }
 }

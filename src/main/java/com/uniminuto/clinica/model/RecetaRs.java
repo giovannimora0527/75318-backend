@@ -4,24 +4,24 @@
  */
 package com.uniminuto.clinica.model;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Usuario
  */
 public class RecetaRs {
-    
     private Long id;
-    private String dosis;
-    private String indicaciones;
-    private String fecha;
-
-    private String nombreMedicamento;
+    private Long citaId;
     private String nombrePaciente;
     private String nombreMedico;
+    private Long medicamentoId;
+    private String nombreMedicamento;
+    private String dosis;
+    private String indicaciones;
+    private LocalDateTime fechaCreacionRegistro;
 
-    public RecetaRs() {
-    }
-
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -30,36 +30,12 @@ public class RecetaRs {
         this.id = id;
     }
 
-    public String getDosis() {
-        return dosis;
+    public Long getCitaId() {
+        return citaId;
     }
 
-    public void setDosis(String dosis) {
-        this.dosis = dosis;
-    }
-
-    public String getIndicaciones() {
-        return indicaciones;
-    }
-
-    public void setIndicaciones(String indicaciones) {
-        this.indicaciones = indicaciones;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getNombreMedicamento() {
-        return nombreMedicamento;
-    }
-
-    public void setNombreMedicamento(String nombreMedicamento) {
-        this.nombreMedicamento = nombreMedicamento;
+    public void setCitaId(Long citaId) {
+        this.citaId = citaId;
     }
 
     public String getNombrePaciente() {
@@ -78,4 +54,43 @@ public class RecetaRs {
         this.nombreMedico = nombreMedico;
     }
 
+    public Long getMedicamentoId() {
+        return medicamentoId;
+    }
+
+    public void setMedicamentoId(Long medicamentoId) {
+        this.medicamentoId = medicamentoId;
+    }
+
+    public String getNombreMedicamento() {
+        return nombreMedicamento;
+    }
+
+    public void setNombreMedicamento(String nombreMedicamento) {
+        this.nombreMedicamento = nombreMedicamento;
+    }
+
+    public String getDosis() {
+        return dosis;
+    }
+
+    public void setDosis(String dosis) {
+        this.dosis = dosis;
+    }
+
+    public String getIndicaciones() {
+        return indicaciones;
+    }
+
+    public void setIndicaciones(String indicaciones) {
+        this.indicaciones = indicaciones;
+    }
+
+    public LocalDateTime getFechaCreacionRegistro() {
+        return fechaCreacionRegistro;
+    }
+
+    public void setFechaCreacionRegistro(LocalDateTime fechaCreacionRegistro) {
+        this.fechaCreacionRegistro = fechaCreacionRegistro;
+    }
 }

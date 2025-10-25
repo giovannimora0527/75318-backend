@@ -4,6 +4,8 @@
  */
 package com.uniminuto.clinica.service.impl;
 
+import com.uniminuto.clinica.entity.Cita;
+import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
 import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.model.RecetaRs;
@@ -16,7 +18,9 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,53 +37,122 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Override
     public RespuestaRs guardarReceta(RecetaRq recetaRq) throws BadRequestException {
-        if (recetaRq == null) {
-            throw new BadRequestException("El cuerpo de la petición no puede ser vacío");
+        validarRecetaRq(recetaRq);
+
+        Optional<Cita> citaOpt = citaRepository.findById(recetaRq.getCitaId());
+        if (!citaOpt.isPresent()) {
+            throw new BadRequestException("Cita no encontrada con id: " + recetaRq.getCitaId());
         }
 
-        Receta receta = new Receta();
+        Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(recetaRq.getMedicamentoId());
+        if (!medicamentoOpt.isPresent()) {
+            throw new BadRequestException("Medicamento no encontrado con id: " + recetaRq.getMedicamentoId());
+        }
+
+        boolean esActualizacion = recetaRq.getId() != null;
+        Receta receta = esActualizacion 
+            ? recetaRepository.findById(recetaRq.getId()).orElse(new Receta())
+            : new Receta();
+
+        // Mapear campos desde el RQ a la entidad
+        receta.setCita(citaOpt.get());
+        receta.setMedicamento(medicamentoOpt.get());
         receta.setDosis(recetaRq.getDosis());
         receta.setIndicaciones(recetaRq.getIndicaciones());
-        // convertir fecha (si viene en String)
-        if (recetaRq.getFecha() != null) {
-            receta.setFecha(java.time.LocalDate.parse(recetaRq.getFecha()));
+        
+        if (!esActualizacion) {
+            receta.setFechaCreacionRegistro(LocalDateTime.now());
         }
-
-        // buscar cita
-        citaRepository.findById(recetaRq.getCitaId()).ifPresentOrElse(
-                receta::setCita,
-                () -> { throw new RuntimeException("Cita no encontrada con id: " + recetaRq.getCitaId()); }
-        );
-
-        // buscar medicamento
-        medicamentoRepository.findById(recetaRq.getMedicamentoId().intValue()).ifPresentOrElse(
-        receta::setMedicamento,
-        () -> { throw new RuntimeException("Medicamento no encontrado con id: " + recetaRq.getMedicamentoId()); }
-        );
 
         recetaRepository.save(receta);
 
-        RespuestaRs res = new RespuestaRs();
-        res.setMensaje("Receta guardada con éxito");
-        res.setStatus(200);
-        return res;
+        RespuestaRs respuesta = new RespuestaRs();
+        respuesta.setStatus(200);
+        respuesta.setMensaje(esActualizacion ? "Receta actualizada con éxito" : "Receta guardada con éxito");
+        return respuesta;
+    }
+
+    private void validarRecetaRq(RecetaRq recetaRq) throws BadRequestException {
+        if (recetaRq == null) {
+            throw new BadRequestException("El cuerpo de la petición no puede ser vacío");
+        }
+        if (recetaRq.getCitaId() == null) {
+            throw new BadRequestException("El campo citaId es obligatorio");
+        }
+        if (recetaRq.getMedicamentoId() == null) {
+            throw new BadRequestException("El campo medicamentoId es obligatorio");
+        }
+        if (recetaRq.getDosis() == null || recetaRq.getDosis().trim().isEmpty()) {
+            throw new BadRequestException("El campo dosis es obligatorio");
+        }
     }
 
     @Override
     public List<RecetaRs> listarRecetas() {
-        return recetaRepository.findAll().stream().map(r -> {
+        return recetaRepository.findAllByOrderByFechaCreacionRegistroDesc().stream().map(r -> {
             RecetaRs dto = new RecetaRs();
             dto.setId(r.getId());
+            dto.setCitaId(r.getCita().getId());
+            dto.setNombrePaciente(r.getCita().getPaciente().getNombres() + " " + r.getCita().getPaciente().getApellidos());
+            dto.setNombreMedico(r.getCita().getMedico().getNombres() + " " + r.getCita().getMedico().getApellidos());
+            dto.setMedicamentoId(r.getMedicamento().getId());
+            dto.setNombreMedicamento(r.getMedicamento().getNombre());
             dto.setDosis(r.getDosis());
             dto.setIndicaciones(r.getIndicaciones());
-            dto.setFecha(r.getFecha() != null ? r.getFecha().toString() : "SIN_FECHA");
-            dto.setNombreMedicamento(r.getMedicamento() != null ? r.getMedicamento().getNombre() : "SIN_MEDICAMENTO");
-            dto.setNombrePaciente(r.getCita() != null && r.getCita().getPaciente() != null
-                    ? r.getCita().getPaciente().getNombres() + " " + r.getCita().getPaciente().getApellidos()
-                    : "SIN_PACIENTE");
-            dto.setNombreMedico(r.getCita() != null && r.getCita().getMedico() != null
-                    ? r.getCita().getMedico().getNombres() + " " + r.getCita().getMedico().getApellidos()
-                    : "SIN_MEDICO");
+            dto.setFechaCreacionRegistro(r.getFechaCreacionRegistro());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecetaRs> listarRecetasRecientes() {
+        return recetaRepository.findAllByOrderByFechaCreacionRegistroDesc().stream()
+            .limit(10)
+            .map(r -> {
+                RecetaRs dto = new RecetaRs();
+                dto.setId(r.getId());
+                dto.setCitaId(r.getCita().getId());
+                dto.setNombrePaciente(r.getCita().getPaciente().getNombres() + " " + r.getCita().getPaciente().getApellidos());
+                dto.setNombreMedico(r.getCita().getMedico().getNombres() + " " + r.getCita().getMedico().getApellidos());
+                dto.setMedicamentoId(r.getMedicamento().getId());
+                dto.setNombreMedicamento(r.getMedicamento().getNombre());
+                dto.setDosis(r.getDosis());
+                dto.setIndicaciones(r.getIndicaciones());
+                dto.setFechaCreacionRegistro(r.getFechaCreacionRegistro());
+                return dto;
+            }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecetaRs> listarRecetasPorCita(Long citaId) {
+        return recetaRepository.findByCitaId(citaId).stream().map(r -> {
+            RecetaRs dto = new RecetaRs();
+            dto.setId(r.getId());
+            dto.setCitaId(r.getCita().getId());
+            dto.setNombrePaciente(r.getCita().getPaciente().getNombres() + " " + r.getCita().getPaciente().getApellidos());
+            dto.setNombreMedico(r.getCita().getMedico().getNombres() + " " + r.getCita().getMedico().getApellidos());
+            dto.setMedicamentoId(r.getMedicamento().getId());
+            dto.setNombreMedicamento(r.getMedicamento().getNombre());
+            dto.setDosis(r.getDosis());
+            dto.setIndicaciones(r.getIndicaciones());
+            dto.setFechaCreacionRegistro(r.getFechaCreacionRegistro());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecetaRs> listarRecetasPorMedicamento(Long medicamentoId) {
+        return recetaRepository.findByMedicamentoId(medicamentoId).stream().map(r -> {
+            RecetaRs dto = new RecetaRs();
+            dto.setId(r.getId());
+            dto.setCitaId(r.getCita().getId());
+            dto.setNombrePaciente(r.getCita().getPaciente().getNombres() + " " + r.getCita().getPaciente().getApellidos());
+            dto.setNombreMedico(r.getCita().getMedico().getNombres() + " " + r.getCita().getMedico().getApellidos());
+            dto.setMedicamentoId(r.getMedicamento().getId());
+            dto.setNombreMedicamento(r.getMedicamento().getNombre());
+            dto.setDosis(r.getDosis());
+            dto.setIndicaciones(r.getIndicaciones());
+            dto.setFechaCreacionRegistro(r.getFechaCreacionRegistro());
             return dto;
         }).collect(Collectors.toList());
     }

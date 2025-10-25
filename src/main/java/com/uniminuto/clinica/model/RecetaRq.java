@@ -4,33 +4,17 @@
  */
 package com.uniminuto.clinica.model;
 
+import lombok.Data;
+
 /**
  *
  * @author Usuario
  */
-
+@Data
 public class RecetaRq {
+    private Long id;
     private Long citaId;
     private Long medicamentoId;
     private String dosis;
     private String indicaciones;
-    private String fecha;
-
-    public Long getCitaId() { return citaId; }
-    public void setCitaId(Long citaId) { this.citaId = citaId; }
-
-    public Long getMedicamentoId() { return medicamentoId; }
-    public void setMedicamentoId(Long medicamentoId) { this.medicamentoId = medicamentoId; }
-
-    public String getDosis() { return dosis; }
-    public void setDosis(String dosis) { this.dosis = dosis; }
-
-    public String getIndicaciones() { return indicaciones; }
-    public void setIndicaciones(String indicaciones) { this.indicaciones = indicaciones; }
-    
-    public String getFecha() {
-    return fecha;}
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
 }

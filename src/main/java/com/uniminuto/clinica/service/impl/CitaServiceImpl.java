@@ -23,8 +23,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Implementación del servicio de citas.
+ * 
+ * @author Usuario
  */
+
 @Service
 public class CitaServiceImpl implements CitaService {
 
@@ -51,25 +53,30 @@ public class CitaServiceImpl implements CitaService {
             throw new BadRequestException("Médico no encontrado con id: " + citaRq.getMedicoId());
         }
 
-        Cita cita = new Cita();
+        boolean esActualizacion = citaRq.getId() != null;
+        Cita cita = esActualizacion
+            ? citaRepository.findById(citaRq.getId()).orElse(new Cita())
+            : new Cita();
+
+        // Mapear campos desde el RQ a la entidad
         cita.setPaciente(pacienteOpt.get());
         cita.setMedico(medicoOpt.get());
         cita.setFechaHora(citaRq.getFechaHora());
         cita.setEstado(citaRq.getEstado());
         cita.setMotivo(citaRq.getMotivo());
 
-        // 🚨 Validación: evitar guardar citas duplicadas
-        if (citaRepository.existsByMedicoAndPacienteAndFechaHora(
+        // Validar duplicados solo si es creación
+        if (!esActualizacion && citaRepository.existsByMedicoAndPacienteAndFechaHora(
                 cita.getMedico(), cita.getPaciente(), cita.getFechaHora())) {
             throw new BadRequestException("Ya existe una cita para ese médico, paciente y fecha/hora");
         }
 
         citaRepository.save(cita);
 
-        RespuestaRs res = new RespuestaRs();
-        res.setMensaje("Cita guardada con éxito");
-        res.setStatus(200);
-        return res;
+        RespuestaRs respuesta = new RespuestaRs();
+        respuesta.setStatus(200);
+        respuesta.setMensaje(esActualizacion ? "Cita actualizada con éxito" : "Cita guardada con éxito");
+        return respuesta;
     }
 
     private void validarCitaRq(CitaRq citaRq) throws BadRequestException {
@@ -85,24 +92,13 @@ public class CitaServiceImpl implements CitaService {
         if (citaRq.getFechaHora() == null) {
             throw new BadRequestException("El campo fechaHora es obligatorio");
         }
+        if (citaRq.getEstado() == null || citaRq.getEstado().trim().isEmpty()) {
+            throw new BadRequestException("El campo estado es obligatorio");
+        }
     }
 
     @Override
     public List<CitaRs> listarCitas() {
-        return citaRepository.findAll().stream().map(c -> {
-            CitaRs dto = new CitaRs();
-            dto.setId(c.getId());
-            dto.setFechaHora(c.getFechaHora().toString());
-            dto.setEstado(c.getEstado());
-            dto.setMotivo(c.getMotivo());
-            dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
-            dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
-            return dto;
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<CitaRs> listarCitasRecientes() {
         return citaRepository.findAllByOrderByFechaHoraDesc().stream().map(c -> {
             CitaRs dto = new CitaRs();
             dto.setId(c.getId());
@@ -111,6 +107,79 @@ public class CitaServiceImpl implements CitaService {
             dto.setMotivo(c.getMotivo());
             dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
             dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
+            dto.setPacienteId(c.getPaciente().getId());
+            dto.setMedicoId(c.getMedico().getId());
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CitaRs> listarCitasRecientes() {
+        return citaRepository.findAllByOrderByFechaHoraDesc().stream()
+            .limit(10)
+            .map(c -> {
+                CitaRs dto = new CitaRs();
+                dto.setId(c.getId());
+                dto.setFechaHora(c.getFechaHora().toString());
+                dto.setEstado(c.getEstado());
+                dto.setMotivo(c.getMotivo());
+                dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
+                dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
+                dto.setPacienteId(c.getPaciente().getId());
+                dto.setMedicoId(c.getMedico().getId());
+
+                return dto;
+            }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CitaRs> listarCitasPorPaciente(Long pacienteId) {
+        return citaRepository.findByPacienteId(pacienteId).stream().map(c -> {
+            CitaRs dto = new CitaRs();
+            dto.setId(c.getId());
+            dto.setFechaHora(c.getFechaHora().toString());
+            dto.setEstado(c.getEstado());
+            dto.setMotivo(c.getMotivo());
+            dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
+            dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
+            dto.setPacienteId(c.getPaciente().getId());
+            dto.setMedicoId(c.getMedico().getId());
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CitaRs> listarCitasPorMedico(Long medicoId) {
+        return citaRepository.findByMedicoId(medicoId).stream().map(c -> {
+            CitaRs dto = new CitaRs();
+            dto.setId(c.getId());
+            dto.setFechaHora(c.getFechaHora().toString());
+            dto.setEstado(c.getEstado());
+            dto.setMotivo(c.getMotivo());
+            dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
+            dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
+            dto.setPacienteId(c.getPaciente().getId());
+            dto.setMedicoId(c.getMedico().getId());
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CitaRs> listarCitasPorEstado(String estado) {
+        return citaRepository.findByEstado(estado).stream().map(c -> {
+            CitaRs dto = new CitaRs();
+            dto.setId(c.getId());
+            dto.setFechaHora(c.getFechaHora().toString());
+            dto.setEstado(c.getEstado());
+            dto.setMotivo(c.getMotivo());
+            dto.setNombrePaciente(c.getPaciente().getNombres() + " " + c.getPaciente().getApellidos());
+            dto.setNombreMedico(c.getMedico().getNombres() + " " + c.getMedico().getApellidos());
+            dto.setPacienteId(c.getPaciente().getId());
+            dto.setMedicoId(c.getMedico().getId());
+
             return dto;
         }).collect(Collectors.toList());
     }

@@ -1,34 +1,49 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.EspecializacionApi;
-import com.uniminuto.clinica.entity.Especializacion;
+import com.uniminuto.clinica.model.EspecializacionRq;
+import com.uniminuto.clinica.model.EspecializacionRs;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.EspecializacionService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
 
-/**
- *
- * @author lmora
- */
 @RestController
+@RequiredArgsConstructor
 public class EspecializacionApiController implements EspecializacionApi {
-    
-    @Autowired
-    private EspecializacionService servicio;
+
+    private final EspecializacionService service;
 
     @Override
-    public ResponseEntity<List<Especializacion>> listarEspecializaciones() {
-        return ResponseEntity.ok(this.servicio.listarTodo());
+    public List<EspecializacionRs> listarEspecializaciones() {
+        return service.listarEspecializaciones();
     }
 
     @Override
-    public ResponseEntity<Especializacion> buscarPorCodigo(String codigo) 
-            throws BadRequestException {
-        return ResponseEntity.ok(this.servicio
-                .buscarEspecializacionPorCod(codigo));
+    public EspecializacionRs buscarPorCodigo(String codigo) {
+        return service.buscarPorCodigo(codigo);
     }
-    
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarEspecializacion(EspecializacionRq request) {
+        try {
+            RespuestaRs r = service.guardarEspecializacion(request);
+            return ResponseEntity.ok(r);
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new RespuestaRs(400, e.getMessage()));
+        }
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarEspecializacion(EspecializacionRq request) {
+        try {
+            RespuestaRs r = service.actualizarEspecializacion(request);
+            return ResponseEntity.ok(r);
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new RespuestaRs(400, e.getMessage()));
+        }
+    }
 }

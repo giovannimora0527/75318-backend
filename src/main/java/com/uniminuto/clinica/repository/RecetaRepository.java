@@ -5,12 +5,17 @@
 package com.uniminuto.clinica.repository;
 
 import com.uniminuto.clinica.entity.Receta;
-import com.uniminuto.clinica.entity.Cita;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ *
+ * @author Usuario
+ */
 @Repository
 public interface RecetaRepository extends JpaRepository<Receta, Long> {
-
-    boolean existsByCita(Cita cita);
+    List<Receta> findAllByOrderByFechaCreacionRegistroDesc();
+    List<Receta> findByCitaId(Long citaId);
+    List<Receta> findByMedicamentoId(Long medicamentoId);
 }
