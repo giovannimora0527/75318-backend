@@ -23,7 +23,12 @@ public interface EspecializacionApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Especializacion>> listarEspecializaciones();
     
-    
+    /**
+     *
+     * @param codigo
+     * @return
+     * @throws BadRequestException
+     */
     @RequestMapping(value = "/buscar-por-codigo",
             produces = {"application/json"},
             consumes = {"application/json"},

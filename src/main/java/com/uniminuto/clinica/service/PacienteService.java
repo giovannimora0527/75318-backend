@@ -1,15 +1,26 @@
+<<<<<<< HEAD
+=======
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
+>>>>>>> origin/916724_BrayanEscorcha
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
+<<<<<<< HEAD
 
 import com.uniminuto.clinica.model.MedicoRq;
 import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.model.RespuestaRs;
+=======
+>>>>>>> origin/916724_BrayanEscorcha
 import org.apache.coyote.BadRequestException;
 
 /**
  *
+<<<<<<< HEAD
  * @author lmora
  */
 public interface PacienteService {
@@ -37,3 +48,14 @@ public interface PacienteService {
 
     RespuestaRs actualizarPaciente(PacienteRq pacienteNuevo) throws BadRequestException;
 }
+=======
+ * @author Brayan Escorcha
+ */
+public interface PacienteService {
+    
+    List<Paciente> ListarTodosLosPacientes();
+    
+    Paciente EncontrarPorNombre (String nombrePaciente) throws BadRequestException;
+    
+}
+>>>>>>> origin/916724_BrayanEscorcha
