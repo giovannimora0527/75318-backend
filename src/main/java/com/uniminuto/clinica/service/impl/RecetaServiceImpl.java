@@ -1,8 +1,10 @@
 package com.uniminuto.clinica.service.impl;
 
+import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
 import com.uniminuto.clinica.repository.RecetaRepository;
 import com.uniminuto.clinica.service.RecetaService;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -33,5 +35,17 @@ public class RecetaServiceImpl implements RecetaService {
     @Override
     public List<Receta> listarRecetaPorFechaCreacionDesc() {
         return recetaRepository.findAllByOrderByFechaCreacionDesc();
+    }
+    
+    @Override
+    public Receta actualizar(Long id, Receta receta) {
+        return recetaRepository.findById(id).map(existente -> {
+            existente.setCitaId(receta.getCitaId());
+            existente.setDosis(receta.getDosis());
+            existente.setIndicaciones(receta.getIndicaciones());
+            existente.setMedicamentoId(receta.getMedicamentoId());
+            existente.setFechaCreacion(LocalDateTime.now());
+            return recetaRepository.save(existente);
+        }).orElseThrow(() -> new RuntimeException("Fomrula no encontrada con id: " + id));
     }
 }

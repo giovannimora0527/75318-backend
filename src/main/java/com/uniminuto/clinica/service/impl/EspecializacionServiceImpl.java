@@ -9,10 +9,6 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author lmora
- */
 @Service
 public class EspecializacionServiceImpl implements EspecializacionService {
 
@@ -29,11 +25,26 @@ public class EspecializacionServiceImpl implements EspecializacionService {
             throws BadRequestException {
         Optional<Especializacion> optEspc = this.repo
                 .findByCodigoEspecializacion(codigo);
-        if (!optEspc.isPresent()) {         
-            throw new BadRequestException("No se encuentra la especializacion");
+        if (!optEspc.isPresent()) {
+            throw new BadRequestException("No se encuentra la especialización");
         }
-
         return optEspc.get();
     }
 
+    @Override
+    public Especializacion actualizar(Long id, Especializacion especializacion) {
+        return repo.findById(id)
+            .map(existente -> {
+                existente.setNombre(especializacion.getNombre());
+                existente.setDescripcion(especializacion.getDescripcion());
+                existente.setCodigoEspecializacion(especializacion.getCodigoEspecializacion());
+                return repo.save(existente);
+            })
+            .orElseThrow(() -> new RuntimeException("Especialización no encontrada con id: " + id));
+    }
+    
+    @Override
+    public Especializacion crear(Especializacion especializacion) {
+        return repo.save(especializacion);
+    }
 }

@@ -1,6 +1,7 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.RecetaApi;
+import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
 import com.uniminuto.clinica.service.RecetaService;
 import com.uniminuto.clinica.repository.MedicamentoRepository;
@@ -86,5 +87,12 @@ public class RecetaApiController implements RecetaApi {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+       }
+    
+    @Override
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<Receta> actualizar(Long id, Receta receta) {
+        Receta actualizado = recetaService.actualizar(id, receta);
+        return ResponseEntity.ok(actualizado);
     }
 }

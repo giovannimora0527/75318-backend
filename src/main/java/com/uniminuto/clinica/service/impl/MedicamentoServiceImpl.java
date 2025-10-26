@@ -47,7 +47,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
             existente.setDescripcion(medicamento.getDescripcion());
             existente.setFechaCompra(medicamento.getFechaCompra());
             existente.setFechaVence(medicamento.getFechaVence());
-            existente.setFechaModificacionRegistro(LocalDateTime.now());
             return medicamentoRepository.save(existente);
         }).orElseThrow(() -> new RuntimeException("Medicamento no encontrado con id: " + id));
     }

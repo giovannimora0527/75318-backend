@@ -9,8 +9,13 @@ import org.apache.coyote.BadRequestException;
  * @author lmora
  */
 public interface EspecializacionService {
+    
     List<Especializacion> listarTodo();
     
     Especializacion buscarEspecializacionPorCod(String codigo) 
             throws BadRequestException;
+    
+    Especializacion actualizar(Long id, Especializacion especializacion);
+    
+    Especializacion crear(Especializacion especializacion);
 }
