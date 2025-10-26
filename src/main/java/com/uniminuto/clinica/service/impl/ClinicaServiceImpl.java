@@ -14,8 +14,8 @@ public class ClinicaServiceImpl implements ClinicaService {
     @Override
     public RespuestaRs testearApp() {
         RespuestaRs rta = new RespuestaRs();
-        rta.setStatus(200);
-        rta.setMensaje("Hola Mundo");
+        rta.setStatus(200);  // Establecer el estado
+        rta.setMensaje("Hola Mundo");  // Establecer el mensaje
         return rta;
     }
     

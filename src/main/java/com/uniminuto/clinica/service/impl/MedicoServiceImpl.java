@@ -5,15 +5,13 @@ import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
-import java.util.List;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-/**
- *
- * @author lmora
- */
+import java.util.List;
+
 @Service
 public class MedicoServiceImpl implements MedicoService {
 
@@ -23,20 +21,23 @@ public class MedicoServiceImpl implements MedicoService {
     @Autowired
     private EspecializacionService especializacionService;
 
+    // Listar todos los médicos
     @Override
     public List<Medico> listarMedicos() {
         return this.medicoRepository.findAll();
     }
 
+    // Buscar médicos por especialidad usando el código
     @Override
-    public List<Medico> buscarPorEspecialidad(String codigo)
-            throws BadRequestException {
+    public List<Medico> buscarPorEspecialidad(String codigo) {
         try {
-            Especializacion e = this.especializacionService
-                    .buscarEspecializacionPorCod(codigo);
-            return this.medicoRepository.findByEspecializacion(e);
-        } catch (BadRequestException e) {
-            throw e;
+            // Obtener la especialización por su código
+            Especializacion especializacion = this.especializacionService.buscarEspecializacionPorCod(codigo);
+            // Buscar los médicos que corresponden a la especialización
+            return this.medicoRepository.findByEspecializacion(especializacion);
+        } catch (ResponseStatusException e) {
+            // En caso de que no se encuentre la especialización, lanzar un error con un código adecuado
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se encuentra la especialización con el código: " + codigo);
         }
     }
 

@@ -1,0 +1,149 @@
+Listado de rutas de carpetas para el volumen OS
+El número de serie del volumen es F282-2C24
+C:.
+¦   .gitattributes
+¦   .gitignore
+¦   estructura.txt
+¦   LICENSE
+¦   pom.xml
+¦   README.md
+¦   
++---src
+¦   +---main
+¦       +---java
+¦       ¦   +---com
+¦       ¦       +---uniminuto
+¦       ¦           +---clinica
+¦       ¦               ¦   ClinicaApplication.java
+¦       ¦               ¦   
+¦       ¦               +---api
+¦       ¦               ¦       ClinicaApi.java
+¦       ¦               ¦       EspecializacionApi.java
+¦       ¦               ¦       MedicoApi.java
+¦       ¦               ¦       PacienteApi.java
+¦       ¦               ¦       UsuarioApi.java
+¦       ¦               ¦       
+¦       ¦               +---apicontroller
+¦       ¦               ¦       ClinicaApiController.java
+¦       ¦               ¦       EspecializacionApiController.java
+¦       ¦               ¦       MedicoApiController.java
+¦       ¦               ¦       UsuarioApiController.java
+¦       ¦               ¦       
+¦       ¦               +---controller
+¦       ¦               ¦       PacienteApiController.java
+¦       ¦               ¦       
+¦       ¦               +---entity
+¦       ¦               ¦       Especializacion.java
+¦       ¦               ¦       Medico.java
+¦       ¦               ¦       Paciente.java
+¦       ¦               ¦       Usuario.java
+¦       ¦               ¦       
+¦       ¦               +---model
+¦       ¦               ¦       RespuestaRs.java
+¦       ¦               ¦       UsuarioRq.java
+¦       ¦               ¦       
+¦       ¦               +---repository
+¦       ¦               ¦       EspecializacionRepository.java
+¦       ¦               ¦       MedicoRepository.java
+¦       ¦               ¦       PacienteRepository.java
+¦       ¦               ¦       UsuarioRepository.java
+¦       ¦               ¦       
+¦       ¦               +---security
+¦       ¦               ¦       SecurityConfig.java
+¦       ¦               ¦       
+¦       ¦               +---service
+¦       ¦               ¦   ¦   ClinicaService.java
+¦       ¦               ¦   ¦   EspecializacionService.java
+¦       ¦               ¦   ¦   MedicoService.java
+¦       ¦               ¦   ¦   PacienteService.java
+¦       ¦               ¦   ¦   UsuarioService.java
+¦       ¦               ¦   ¦   
+¦       ¦               ¦   +---impl
+¦       ¦               ¦           ClinicaServiceImpl.java
+¦       ¦               ¦           EspecializacionServiceImpl.java
+¦       ¦               ¦           MedicoServiceImpl.java
+¦       ¦               ¦           PacienteServiceImpl.java
+¦       ¦               ¦           UsuarioServiceImpl.java
+¦       ¦               ¦           
+¦       ¦               +---utils
+¦       ¦                       DateFormatterService.java
+¦       ¦                       
+¦       +---resources
+¦               application.properties
+¦               
++---target
+    ¦   clinica-0.0.1-SNAPSHOT.jar
+    ¦   clinica-0.0.1-SNAPSHOT.jar.original
+    ¦   
+    +---classes
+    ¦   ¦   application.properties
+    ¦   ¦   
+    ¦   +---com
+    ¦       +---uniminuto
+    ¦           +---clinica
+    ¦               ¦   ClinicaApplication.class
+    ¦               ¦   
+    ¦               +---api
+    ¦               ¦       ClinicaApi.class
+    ¦               ¦       EspecializacionApi.class
+    ¦               ¦       MedicoApi.class
+    ¦               ¦       PacienteApi.class
+    ¦               ¦       UsuarioApi.class
+    ¦               ¦       
+    ¦               +---apicontroller
+    ¦               ¦       ClinicaApiController.class
+    ¦               ¦       EspecializacionApiController.class
+    ¦               ¦       MedicoApiController.class
+    ¦               ¦       UsuarioApiController.class
+    ¦               ¦       
+    ¦               +---controller
+    ¦               ¦       PacienteApiController.class
+    ¦               ¦       
+    ¦               +---entity
+    ¦               ¦       Especializacion.class
+    ¦               ¦       Medico.class
+    ¦               ¦       Paciente.class
+    ¦               ¦       Usuario.class
+    ¦               ¦       
+    ¦               +---model
+    ¦               ¦       RespuestaRs.class
+    ¦               ¦       UsuarioRq.class
+    ¦               ¦       
+    ¦               +---repository
+    ¦               ¦       EspecializacionRepository.class
+    ¦               ¦       MedicoRepository.class
+    ¦               ¦       PacienteRepository.class
+    ¦               ¦       UsuarioRepository.class
+    ¦               ¦       
+    ¦               +---security
+    ¦               ¦       SecurityConfig.class
+    ¦               ¦       
+    ¦               +---service
+    ¦               ¦   ¦   ClinicaService.class
+    ¦               ¦   ¦   EspecializacionService.class
+    ¦               ¦   ¦   MedicoService.class
+    ¦               ¦   ¦   PacienteService.class
+    ¦               ¦   ¦   UsuarioService.class
+    ¦               ¦   ¦   
+    ¦               ¦   +---impl
+    ¦               ¦           ClinicaServiceImpl.class
+    ¦               ¦           EspecializacionServiceImpl.class
+    ¦               ¦           MedicoServiceImpl.class
+    ¦               ¦           PacienteServiceImpl.class
+    ¦               ¦           UsuarioServiceImpl.class
+    ¦               ¦           
+    ¦               +---utils
+    ¦                       DateFormatterService.class
+    ¦                       
+    +---generated-sources
+    ¦   +---annotations
+    +---maven-archiver
+    ¦       pom.properties
+    ¦       
+    +---maven-status
+        +---maven-compiler-plugin
+            +---compile
+                +---default-compile
+                        createdFiles.lst
+                        inputFiles.lst
+                        

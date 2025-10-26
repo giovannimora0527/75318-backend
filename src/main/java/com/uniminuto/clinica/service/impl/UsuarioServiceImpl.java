@@ -55,7 +55,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo)
             throws BadRequestException {
-        // Paso 1. Validar que los campos llegue bien
+        // Paso 1. Validar que los campos lleguen bien
         this.validarCampos(usuarioNuevo);
         // Paso 2. Consulto si existe el usuario por username
         Optional<Usuario> optUser = this.usuarioRepository
@@ -117,5 +117,4 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new RuntimeException("Algoritmo no soportado: " + algoritmo, e);
         }
     }
-
 }

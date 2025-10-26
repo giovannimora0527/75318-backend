@@ -1,17 +1,11 @@
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.Data;
 
 /**
+ * Entidad que representa a un médico en el sistema.
  *
  * @author lmora
  */
@@ -20,36 +14,32 @@ import lombok.Data;
 @Table(name = "medico")
 public class Medico implements Serializable {
 
-    /**
-     * Id serializable.
-     */
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
-    
-    @Column(name = "tipo_documento")
-    private String tipoDocumento;
-    
-    @Column(name = "numero_documento")
-    private String documento;
-    
-    @Column(name = "nombres")
-    private String nombres;
-    
-    @Column(name = "apellidos")
-    private String apellidos;
-    
-    @Column(name = "telefono")
-    private String telefono;
-    
-    @Column(name = "registro_profesional")
-    private String registroProfesional;
-    
-    @ManyToOne
-    @JoinColumn(name = "especializacion_id")
-    private Especializacion especializacion;
 
+    @Column(name = "tipo_documento", nullable = false, length = 10)
+    private String tipoDocumento;
+
+    @Column(name = "numero_documento", nullable = false, unique = true, length = 20)
+    private String numeroDocumento;
+
+    @Column(name = "nombres", nullable = false, length = 100)
+    private String nombres;
+
+    @Column(name = "apellidos", nullable = false, length = 100)
+    private String apellidos;
+
+    @Column(name = "telefono", length = 20)
+    private String telefono;
+
+    @Column(name = "registro_profesional", nullable = false, unique = true, length = 50)
+    private String registroProfesional;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "especializacion_id", nullable = false)
+    private Especializacion especializacion;
 }
