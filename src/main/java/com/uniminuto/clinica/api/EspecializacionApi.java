@@ -1,16 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.uniminuto.clinica.api;
+
 import com.uniminuto.clinica.entity.Especializacion;
 import java.util.List;
+
+import com.uniminuto.clinica.model.EspecializacionRq;
+import com.uniminuto.clinica.model.MedicoRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 /**
  *
  * @author lmora
@@ -33,4 +32,37 @@ public interface EspecializacionApi {
     ResponseEntity<Especializacion> buscarPorCodigo(
       @RequestParam String codigo
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/buscar-por-id/{id}",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Especializacion> buscarPorId(@PathVariable Long id)
+            throws BadRequestException;
+
+
+
+    // TODO Agregar medodo para guardar especializacion.
+    @RequestMapping(value = "/guardar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> guardarEspecializacion(
+            @RequestBody EspecializacionRq especializacionNuevo
+    ) throws BadRequestException;
+
+
+
+
+
+    // TODO agregar metodo para actualizar especializacion.
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarEspecializacion(
+            @RequestBody EspecializacionRq especializacion
+    ) throws BadRequestException;
+
+
 }
