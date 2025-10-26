@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
@@ -16,12 +11,15 @@ import lombok.Data;
 
 /**
  *
- * @author crash
+ * @author lmora
  */
 @Data
 @Entity
 @Table(name = "especializacion")
-public class Especializacion implements Serializable{
+public class Especializacion implements Serializable {
+    /**
+     * Id de la entidad.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
