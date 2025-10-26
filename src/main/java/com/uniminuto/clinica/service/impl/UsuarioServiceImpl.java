@@ -45,19 +45,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return optUser.get();
     }
-        //Encontrar por ID usuario
-
-    @Override
-    public Usuario encontrarPorId(Long id)
-            throws BadRequestException {
-        Optional<Usuario> optUser = this.usuarioRepository
-                .findById(id);
-        if (!optUser.isPresent()) {
-            throw new BadRequestException("No existe el usuario");
-        }
-
-        return optUser.get();
-    }
 
     @Override
     public List<Usuario> buscarPorEstado(Integer estado) {
@@ -81,7 +68,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario nuevo = new Usuario();
         nuevo.setActivo(true);
         nuevo.setFechaCreacion(LocalDateTime.now());
-        nuevo.setPassword(this.encriptarPassword(usuarioNuevo.getPass()));
+        nuevo.setPassword(this.encriptarPassword(usuarioNuevo.getPassword()));
         nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
         nuevo.setUsername(usuarioNuevo.getUsername().toLowerCase());
 
@@ -94,6 +81,39 @@ public class UsuarioServiceImpl implements UsuarioService {
         return rta;
     }
 
+    @Override
+    public RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException {
+        // Paso 1. Verificar que el ID del usuario venga y pertenezca a un usuario
+        Optional<Usuario> optUser = this.usuarioRepository.findById(usuarioNuevo.getId());
+        if (optUser.isEmpty()) {
+            throw new BadRequestException("El ID del usuario no existe.");
+        }
+
+        Usuario userActualizar = optUser.get();
+        if (!userActualizar.getUsername().toLowerCase()
+                .equals(usuarioNuevo.getUsername().toLowerCase())) {
+            // Cambio el nombre de usuario
+            Optional<Usuario> optUserName = this.usuarioRepository
+                    .findByUsername(usuarioNuevo.getUsername().toLowerCase());
+            if (optUserName.isPresent()) {
+                throw new BadRequestException("El nombre de usuario ya existe.");
+            }
+        }
+
+        this.validarCampos(usuarioNuevo);
+
+        userActualizar.setUsername(usuarioNuevo.getUsername().toLowerCase());
+        userActualizar.setPassword(this.encriptarPassword(usuarioNuevo.getPassword()));
+        userActualizar.setActivo(usuarioNuevo.isActivo());
+        userActualizar.setRol(usuarioNuevo.getRol());
+        this.usuarioRepository.save(userActualizar);
+
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("El usuario se ha actualizado correctamente.");
+        rta.setStatus(200);
+        return rta;
+    }
+
     private void validarCampos(UsuarioRq usuarioNuevo)
             throws BadRequestException {
         if (usuarioNuevo.getUsername() == null
@@ -101,9 +121,9 @@ public class UsuarioServiceImpl implements UsuarioService {
                 || usuarioNuevo.getUsername().isEmpty()) {
             throw new BadRequestException("El campo username es obligatorio.");
         }
-        if (usuarioNuevo.getPass() == null
-                || usuarioNuevo.getPass().isBlank()
-                || usuarioNuevo.getPass().isEmpty()) {
+        if (usuarioNuevo.getPassword() == null
+                || usuarioNuevo.getPassword().isBlank()
+                || usuarioNuevo.getPassword().isEmpty()) {
             throw new BadRequestException("El campo pass es obligatorio.");
         }
         if (usuarioNuevo.getRol() == null
