@@ -1,15 +1,10 @@
-<<<<<<< HEAD
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-=======
->>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.EspecializacionApi;
 import com.uniminuto.clinica.entity.Especializacion;
+import com.uniminuto.clinica.model.EspecializacionRq;
+import com.uniminuto.clinica.model.MedicoRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.EspecializacionService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -38,5 +33,22 @@ public class EspecializacionApiController implements EspecializacionApi {
         return ResponseEntity.ok(this.servicio
                 .buscarEspecializacionPorCod(codigo));
     }
-    
+
+    @Override
+    public ResponseEntity<Especializacion> buscarPorId(Long id)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.servicio.buscarEspecializacionPorId(id));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarEspecializacion(EspecializacionRq especializacionNuevo)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.servicio.guardarEspecializacion(especializacionNuevo));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarEspecializacion(EspecializacionRq especializacion)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.servicio.actualizarEspecializacion(especializacion));
+    }
 }
