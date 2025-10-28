@@ -1,72 +1,73 @@
-<<<<<<< HEAD
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.uniminuto.clinica.api;
 
-
-=======
-package com.uniminuto.clinica.api;
-
->>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
 import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
+
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.model.UsuarioRq;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-/**
- *
-<<<<<<< HEAD
- * @author crash
-=======
- * @author Darleys
->>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
- */
 @CrossOrigin(origins = "*")
 @RequestMapping("/paciente")
 public interface PacienteApi {
-    
+
+    /**
+     * Lista los usuarios de la bd.
+     *
+     * @return
+     */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPacientes();
-<<<<<<< HEAD
-    //Funcion buscar por documento identidad
-    @RequestMapping(value = "/buscar-NumDoc",
+
+
+    @RequestMapping(value = "/buscar-paciente-documento",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<Paciente> encontrarPorDocumentoIdentidad(
-       @RequestParam String numeroDocumento
+    ResponseEntity<Paciente> buscarPacienteXIdentificacion(
+            @RequestParam String numeroDocumento)
+            throws BadRequestException;
+
+
+    /**
+     * Lista los usuarios de la bd.
+     *
+     * @return
+     */
+    @RequestMapping(value = "/listar-orden-fecha-nacimiento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacientesXOrden(
+            @RequestParam String orden
+    );
+
+    @RequestMapping(value = "/guardar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> guardarPaciente(
+            @RequestBody PacienteRq pacienteNuevo
     ) throws BadRequestException;
 
-    @RequestMapping(value = "/listarEdadDes",
+    /**
+     * Actualizar usuario.
+     * @param //PacienteRq paciente de entrada.
+     * @return respuesta del servicio.
+     * @throws BadRequestException excepcion.
+     */
+    @RequestMapping(value = "/actualizar",
             produces = {"application/json"},
             consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<List<Paciente>> listarPacientesDes();
-
-    @RequestMapping(value = "buscar-por-id",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<Paciente> buscarPacienteId(
-       @RequestParam Long id
-=======
-    
-    
-    @RequestMapping(value = "/buscar-x-documento",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<Paciente> buscarPorDocumento(
-      @RequestParam String documento
->>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarPaciente(
+            @RequestBody PacienteRq paciente
     ) throws BadRequestException;
+
 }
