@@ -45,18 +45,6 @@ public interface UsuarioApi {
        @RequestParam String nombre
     ) throws BadRequestException;
     
-<<<<<<< HEAD
-        //Encontrar por ID usuario
-
-    @RequestMapping(value = "/buscar-id",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<Usuario> encontrarPorId(
-       @RequestParam Long id
-    ) throws BadRequestException;
-=======
->>>>>>> 602c738be275f7f1826ccf9ef7bcb734aeea96d1
     
     
     @RequestMapping(value = "/buscar-estado",
@@ -74,5 +62,19 @@ public interface UsuarioApi {
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuario(
        @RequestBody UsuarioRq usuarioNuevo
+    ) throws BadRequestException;
+
+    /**
+     * Actualizar usuario.
+     * @param usuario UsuarioRq de entrada.
+     * @return respuesta del servicio.
+     * @throws BadRequestException excepcion.
+     */
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarUsuario(
+            @RequestBody UsuarioRq usuario
     ) throws BadRequestException;
 }
