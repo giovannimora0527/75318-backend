@@ -1,247 +1,179 @@
 package com.uniminuto.clinica.service.impl;
 
+import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.entity.Paciente;
-import com.uniminuto.clinica.entity.Cita;
+import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.service.CitaService;
-import com.uniminuto.clinica.service.MedicoService;
-import com.uniminuto.clinica.service.PacienteService;
-import com.uniminuto.clinica.model.RespuestaRs;
-import com.uniminuto.clinica.model.CitaRq;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-/**
- * Implementación del servicio de citas que contiene la lógica de negocio
- * para la gestión de citas médicas en el sistema clínico.
- *
- * @author crash
- * @version 1.0
- * @since 2025-09-20
- */
+import java.util.Optional;
 
 @Service
 public class CitaServiceImpl implements CitaService {
 
     /**
-     * Repositorio JPA para operaciones CRUD sobre la entidad Cita.
-     * Maneja la persistencia y consultas a la base de datos.
+     * Repositorio de datos para citas.
      */
     @Autowired
     private CitaRepository citaRepository;
 
     /**
-     * Servicio de médicos utilizado para validar la existencia de médicos
-     * antes de crear una cita.
+     * Repositorio de datos para pacientes.
      */
     @Autowired
-    private MedicoService medicoService;
+    private PacienteRepository pacienteRepository;
 
     /**
-     * Servicio de pacientes utilizado para validar la existencia de pacientes
-     * antes de crear una cita.
+     * Repositorio de datos para médicos.
      */
     @Autowired
-    private PacienteService pacienteService;
-
-    /**
-     * {@inheritDoc}
-     *
-     * Valida la existencia del paciente antes de buscar sus citas para
-     * proporcionar un mensaje de error más claro en caso de ID inválido.
-     *
-     * @param id Long identificador que debe existir en la tabla paciente
-     * @return List<Cita> citas asociadas al paciente, puede ser lista vacía
-     * @throws BadRequestException si el paciente no existe
-     */
+    private MedicoRepository medicoRepository;
 
     @Override
-    public List<Cita> buscarPorPaciente(Long id) throws BadRequestException {
-        // ✅ CORREGIDO: Validar que el paciente existe y luego buscar por ID
-        pacienteService.buscarPacienteId(id); // Lanza excepción si no existe
-        return citaRepository.findByPacienteId(id); // ✅ Ahora pasa el ID directamente
-    }
-    /**
-     * {@inheritDoc}
-     *
-     * Implementación similar a buscarPorPaciente pero para médicos.
-     * Garantiza que solo se busquen citas de médicos existentes.
-     */
-    @Override
-    public List<Cita> buscarPorMedico(Long id) throws BadRequestException {
-        // ✅ CORREGIDO: Validar que el médico existe y luego buscar por ID
-        medicoService.buscarMedicoId(id); // Lanza excepción si no existe
-        return citaRepository.findByMedicoId(id); // ✅ Ahora pasa el ID directamente
+    public List<Cita> listarCitas() {
+        return citaRepository.findAllByOrderByFechaHoraDesc();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Valida los campos del request, verifica la existencia
-     * de paciente y médico, crea y guarda la nueva cita.
-     *
-     * @param citaRq CitaRq objeto que contiene los datos de la nueva cita
-     * @return RespuestaRs mensaje de éxito o error
-     * @throws BadRequestException si faltan campos o no existen paciente/médico
-     */
     @Override
-    public RespuestaRs guardarCita(CitaRq citaRq)
-            throws BadRequestException {
-        // Paso 1. Validar que los campos llegue bien
-        this.validarCampos(citaRq);
-        // 2. Buscar al Paciente por ID
-        Paciente paciente = pacienteService.buscarPacienteId(citaRq.getIdPaciente()); // Lanza error si no existe
-        Medico medico = medicoService.buscarMedicoId(citaRq.getIdMedico()); // ...
-    // Paso 4. Creo la cita y seteo los campos que lleguen del post
-        validarCitaDuplicada(citaRq);
-
-
-        Cita nuevo = new Cita();
-
-        nuevo.setPaciente(paciente);  // ✅ Asignar objeto Paciente
-        nuevo.setMedico(medico);    // ✅ Asignar objeto Medico
-        nuevo.setFechaHora(citaRq.getFechaHora());
-        /**
-         * Normalización del motivo a minúsculas para consistencia
-         */
-        nuevo.setEstado(citaRq.getEstado().toLowerCase());
-        nuevo.setMotivo(citaRq.getMotivo().toLowerCase());
-
-//El método save() de JPA maneja la inserción y generación de ID automático
-        this.citaRepository.save(nuevo);
-
-    // Paso 5. Devuelve respuesta ok
-    RespuestaRs rta = new RespuestaRs();
-        rta.setMensaje("La cita se ha guardado correctamente.");
-        rta.setStatus(200);
-        return rta;
-}
-
-    /**
-     * Valida que no exista una cita similar (mismo paciente + médico + motivo)
-     * en una ventana de tiempo de 20 minutos hacia atrás desde ahora.
-     *
-     /* @param citaRq CitaRq datos de la nueva cita a validar
-     /* @throws BadRequestException si existe una cita similar reciente
-     */
-    private void validarCitaDuplicada(CitaRq citaRq) throws BadRequestException {
-        // Buscar citas idénticas (mismo paciente, médico, motivo y fecha/hora)
-        List<Cita> citasIdenticas = citaRepository.findCitasIdenticas(
-                citaRq.getIdPaciente(),
-                citaRq.getIdMedico(),
-                citaRq.getMotivo(),
-                citaRq.getFechaHora()
-        );
-
-        if (!citasIdenticas.isEmpty()) {
-            throw new BadRequestException(
-                    "Ya existe una cita idéntica (mismo paciente, médico, motivo y fecha/hora). " +
-                            "No se permite duplicar citas exactas."
-            );
+    public RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException {
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId());
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() + " no existe.");
         }
+
+        Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId());
+        if (optMedico.isEmpty()) {
+           throw new BadRequestException("El médico con ID " + citaRq.getMedicoId() + " no existe.");
+        }
+
+        LocalDateTime fechaInicio = LocalDateTime.parse(citaRq.getFechaHora(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime fechaFin = fechaInicio.plusMinutes(20);
+
+        List<Cita> citasDelMedico = this.citaRepository
+                .findByMedicoAndFechaHoraBetween(optMedico.get(), fechaInicio, fechaFin);
+
+        if (!citasDelMedico.isEmpty()) {
+            throw new BadRequestException("El médico ya tiene una cita programada en ese horario.");
+        }
+
+        List<Cita> citasDelPaciente = this.citaRepository
+                .findByPacienteAndFechaHoraBetween(optPaciente.get(), fechaInicio, fechaFin);
+
+        if (!citasDelPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente ya tiene una cita programada en ese horario.");
+        }
+
+        Cita citaNueva = this.converterToCita(citaRq, optPaciente.get(), optMedico.get());
+        this.citaRepository.save(citaNueva);
+        RespuestaRs rta = new RespuestaRs();
+        rta.setStatus(200);
+        rta.setMensaje("Cita creada exitosamente.");
+        return rta;
     }
 
     /**
-     * Método privado que valida que todos los campos obligatorios del request
-     * estén presentes y contengan valores válidos.
-     *
-     /* @param citaRq CitaRq objeto a validar
-     /* @throws BadRequestException si algún campo obligatorio es nulo, vacío o inválido
+     * Convierte un objeto CitaRq a una entidad Cita.
+     * @param citaRq objeto de entrada.
+     * @param paciente paciente de la cita.
+     * @param medico medico de la cita.
+     * @return entidad Cita.
      */
+    private Cita converterToCita(CitaRq citaRq, Paciente paciente, Medico medico) {
+        Cita cita = new Cita();
+        cita.setEstado(citaRq.getEstado());
+        cita.setMotivo(citaRq.getMotivo());
+        cita.setFechaHora(LocalDateTime.parse(citaRq.getFechaHora(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        cita.setPaciente(paciente);
+        cita.setMedico(medico);
+        return cita;
+    }
 
-private void validarCampos(CitaRq citaRq)
-        throws BadRequestException {
-    /*
-     * Validación de ID de paciente
-     * Debe ser un Long no nulo
-     */
-    if (citaRq.getIdPaciente() == null) {
-        throw new BadRequestException("El campo IdPaciente es obligatorio.");
-    }
-    /**
-     * Validación de ID de médico
-     * Debe ser un Long no nulo
-     */
-    if (citaRq.getIdMedico() == null) {
-        throw new BadRequestException("El campo IdMedico es obligatorio.");
-    }
-    /**
-     * Validación de fecha y hora de la cita
-     * Debe ser un LocalDateTime no nulo
-     */
-    if (citaRq.getFechaHora() == null) {
-        throw new BadRequestException("El campo FechaHora es obligatorio.");
-    }
-    /**
-     * Validación de estado de la cita
-     * No debe ser nulo ni contener solo espacios en blanco
-     */
-    if (citaRq.getEstado() == null
-            || citaRq.getEstado().isBlank()
-            || citaRq.getEstado().isEmpty()) {
-        throw new BadRequestException("El campo Estado es obligatorio.");
-    }
-    /**
-     * Validación de motivo de la cita
-     * No debe ser nulo ni contener solo espacios en blanco
-     */
-    if (citaRq.getMotivo() == null
-            || citaRq.getMotivo().isBlank()
-            || citaRq.getMotivo().isEmpty()) {
-        throw new BadRequestException("El campo Motivo es obligatorio.");
-    }
-}
-
-    /**
-     * {@inheritDoc}
-     *
-     * Lista todas las citas ordenadas por fecha y hora en orden descendente.
-     * Utiliza Java 8 Streams para el procesamiento y ordenamiento de datos.
-     *
-     * @return List<Cita> lista ordenada donde las citas más recientes aparecen primero
-     */
     @Override
-    public List<Cita> listarCitasDesc() {
-        return citaRepository.findAll()
-                /**
-                 * Conversión a Stream para operaciones funcionales
-                 */
-                .stream()
-                /**
-                 * Ordenamiento descendente por fecha y hora de la cita.
-                 * c2.compareTo(c1) invierte el orden natural para obtener orden descendente:
-                 * - c1: primera cita en la comparación
-                 * - c2: segunda cita en la comparación
-                 * - getFechaHora(): obtiene LocalDateTime de la cita
-                 * - compareTo(): compara fechas/horas cronológicamente
-                 */
-                .sorted((c1, c2) -> c2.getFechaHora().compareTo(c1.getFechaHora())) // ✅ Orden descendente (más recientes primero)
-                /**
-                 * Materialización del Stream en una List inmutable
-                 */
-                .toList();
+    public RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException {
+        // Paso 1. Validar que el ID de la cita venga en el request
+        if (citaRq.getId() == null) {
+            throw new BadRequestException("El ID de la cita es obligatorio para actualizar.");
+        }
+
+        // Paso 2. Verificar que la cita existe
+        Optional<Cita> optCita = this.citaRepository.findById(citaRq.getId());
+        if (optCita.isEmpty()) {
+            throw new BadRequestException("La cita con ID " + citaRq.getId() + " no existe.");
+        }
+
+        // Paso 3. Validar que el paciente existe
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId());
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() + " no existe.");
+        }
+
+        // Paso 4. Validar que el médico existe
+        Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId());
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("El médico con ID " + citaRq.getMedicoId() + " no existe.");
+        }
+
+        // Paso 5. Parsear la fecha
+        LocalDateTime fechaInicio = LocalDateTime.parse(citaRq.getFechaHora(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime fechaFin = fechaInicio.plusMinutes(20);
+
+        // Paso 6. Validar que el médico no tenga otra cita en ese horario
+        // (EXCLUYENDO la cita actual que estamos actualizando)
+        List<Cita> citasDelMedico = this.citaRepository
+                .findByMedicoAndFechaHoraBetween(optMedico.get(), fechaInicio, fechaFin);
+
+        // Filtrar para excluir la cita actual
+        citasDelMedico = citasDelMedico.stream()
+                .filter(c -> !c.getId().equals(citaRq.getId()))
+                .collect(java.util.stream.Collectors.toList());
+
+        if (!citasDelMedico.isEmpty()) {
+            throw new BadRequestException("El médico ya tiene otra cita programada en ese horario.");
+        }
+
+        // Paso 7. Validar que el paciente no tenga otra cita en ese horario
+        // (EXCLUYENDO la cita actual)
+        List<Cita> citasDelPaciente = this.citaRepository
+                .findByPacienteAndFechaHoraBetween(optPaciente.get(), fechaInicio, fechaFin);
+
+        citasDelPaciente = citasDelPaciente.stream()
+                .filter(c -> !c.getId().equals(citaRq.getId()))
+                .collect(java.util.stream.Collectors.toList());
+
+        if (!citasDelPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente ya tiene otra cita programada en ese horario.");
+        }
+
+        // Paso 8. Obtener la cita existente y actualizarla
+        Cita citaActual = optCita.get();
+
+        // Actualizar campos usando el converter (reutilizamos el método)
+        Cita citaActualizada = this.converterToCita(citaRq, optPaciente.get(), optMedico.get());
+
+        // Mantener el ID original
+        citaActualizada.setId(citaActual.getId());
+
+        // Paso 9. Guardar la cita actualizada
+        this.citaRepository.save(citaActualizada);
+
+        // Paso 10. Devolver respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setStatus(200);
+        rta.setMensaje("Cita actualizada exitosamente.");
+        return rta;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Valida la existencia del paciente antes de buscar sus citas para
-     * proporcionar un mensaje de error más claro en caso de ID inválido.
-     *
-     * @param id Long identificador que debe existir en la tabla paciente
-     * @return List<Cita> citas asociadas al paciente, puede ser lista vacía
-     * @throws BadRequestException si el paciente no existe
-     */
-    @Override
-    public Cita buscarCitaPorId(Long id) throws BadRequestException {
-        return citaRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("No existe la cita con id: " + id));
-    }
 }
