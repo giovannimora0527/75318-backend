@@ -32,4 +32,9 @@ public class RecetaApiController implements RecetaApi {
     public ResponseEntity<RespuestaRs> guardarReceta(@RequestBody @Valid RecetaRq recetaRq) throws BadRequestException {
         return ResponseEntity.ok(this.recetaService.guardarReceta(recetaRq));
     }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
+        return ResponseEntity.ok(this.recetaService.actualizarReceta(recetaRq));
+    }
 }

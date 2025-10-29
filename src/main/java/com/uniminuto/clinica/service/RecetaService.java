@@ -21,4 +21,12 @@ public interface RecetaService {
      * @throws BadRequestException excepcion del sistema.
      */
     RespuestaRs guardarReceta(RecetaRq recetaRq) throws BadRequestException;
+
+    /**
+     * Actualiza una receta médica existente en el sistema.
+     * @param recetaRq receta a actualizar.
+     * @return Respuesta del proceso.
+     * @throws BadRequestException excepcion del sistema.
+     */
+    RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException;
 }
