@@ -82,6 +82,15 @@ public class CitaServiceImpl implements CitaService {
         return rta;
     }
 
+    @Override
+    public List<Cita> listarCitasporPaciente(Integer pacienteId) throws BadRequestException {
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(pacienteId);
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + pacienteId + " no existe.");
+        }
+        return this.citaRepository.findByPacienteOrderByFechaHoraDesc(optPaciente.get());
+    }
+
     /**
      * Convierte un objeto CitaRq a una entidad Cita.
      * @param citaRq objeto de entrada.
