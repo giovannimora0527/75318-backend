@@ -126,14 +126,14 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public RespuestaRs testEmail() throws BadRequestException, MessagingException {
-        this.sendHtmlEmail("giovannimora0527@gmail.com", "Prueba de correo",
+    public RespuestaRs testEmail(String correoDestinatario) throws BadRequestException, MessagingException {
+        this.sendHtmlEmail(correoDestinatario, "Prueba de correo",
                 "<h1>Este es un correo de prueba</h1>"
                 + "<p>Enviado desde el servicio de email.</p>",
                 this.getTo());
         RespuestaRs rta = new RespuestaRs();
         rta.setStatus(200);
-        rta.setMensaje("Correo enviado exitosamente a " );
+        rta.setMensaje("Correo enviado exitosamente a " + correoDestinatario);
         return rta;
     }
 }

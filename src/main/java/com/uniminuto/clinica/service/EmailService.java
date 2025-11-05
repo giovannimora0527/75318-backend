@@ -50,5 +50,5 @@ public interface EmailService {
             throws BadRequestException, MessagingException;
 
 
-    RespuestaRs testEmail() throws BadRequestException, MessagingException;
+    RespuestaRs testEmail(String correoDestinatario) throws BadRequestException, MessagingException;
 }

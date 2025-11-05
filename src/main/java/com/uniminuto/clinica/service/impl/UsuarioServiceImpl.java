@@ -169,6 +169,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         userActualizar.setPassword(this.cifrarService.encriptarPassword(usuarioNuevo.getPassword()));
         userActualizar.setActivo(usuarioNuevo.isActivo());
         userActualizar.setRol(usuarioNuevo.getRol());
+        userActualizar.setEmail(usuarioNuevo.getEmail());
         this.usuarioRepository.save(userActualizar);
 
         RespuestaRs rta = new RespuestaRs();
