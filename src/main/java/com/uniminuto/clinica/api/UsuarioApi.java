@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
+
 /**
  *
  * @author lmora
@@ -62,5 +64,19 @@ public interface UsuarioApi {
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuario(
        @RequestBody UsuarioRq usuarioNuevo
+    ) throws BadRequestException, MessagingException;
+
+    /**
+     * Actualizar usuario.
+     * @param usuario UsuarioRq de entrada.
+     * @return respuesta del servicio.
+     * @throws BadRequestException excepcion.
+     */
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarrUsuario(
+            @RequestBody UsuarioRq usuario
     ) throws BadRequestException;
 }
