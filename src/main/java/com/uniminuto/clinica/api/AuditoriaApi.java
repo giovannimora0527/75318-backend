@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  * API para consultar registros de auditoría.
@@ -16,11 +17,11 @@ import java.util.List;
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/auditoria")
+@SecurityRequirement(name = "bearer-jwt")
 public interface AuditoriaApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Auditoria>> listarAuditorias(
             @RequestParam(required = false) String tipoEvento

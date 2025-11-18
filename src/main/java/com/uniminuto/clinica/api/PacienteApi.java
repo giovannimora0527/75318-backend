@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  *
@@ -14,18 +15,16 @@ import java.util.List;
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/paciente")
-
+@SecurityRequirement(name = "bearer-jwt")
 public interface PacienteApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPaciente();
 
     @RequestMapping(value = "/por_documento",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Paciente> encontrarPorDocumento(
             @RequestParam String numeroDocumento

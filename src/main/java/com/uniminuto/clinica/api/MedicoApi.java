@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  *
@@ -23,18 +24,17 @@ import javax.validation.Valid;
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/medico")
+@SecurityRequirement(name = "bearer-jwt")
 public interface MedicoApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Medico>> listarMedicos();
 
 
     @RequestMapping(value = "/listar-x-cod-esp",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
             @RequestParam String codigo

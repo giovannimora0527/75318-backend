@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.mail.MessagingException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  *
@@ -20,11 +21,11 @@ import javax.mail.MessagingException;
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/usuario")
+@SecurityRequirement(name = "bearer-jwt")
 public interface UsuarioApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuarios();
     
@@ -32,7 +33,6 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/listar-rol",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuariosPorRol(
        @RequestParam String rol
@@ -41,7 +41,6 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/buscar-nombre",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Usuario> buscarUsuarioPorNombre(
        @RequestParam String nombre
@@ -51,7 +50,6 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/buscar-estado",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(
        @RequestParam Integer activo

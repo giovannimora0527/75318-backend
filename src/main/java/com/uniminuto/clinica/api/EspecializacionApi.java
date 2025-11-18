@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 /**
  *
@@ -12,18 +13,17 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/especializacion")
+@SecurityRequirement(name = "bearer-jwt")
 public interface EspecializacionApi {
     
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Especializacion>> listarEspecializaciones();
     
     
     @RequestMapping(value = "/buscar-por-codigo",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Especializacion> buscarPorCodigo(
       @RequestParam String codigo
