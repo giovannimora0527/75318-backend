@@ -48,5 +48,12 @@ public class Usuario implements Serializable {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "intentos_fallidos")
+    private Integer intentosFallidos = 0;
+
+    @Column(name = "fecha_bloqueo")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime fechaBloqueo;
     
 }

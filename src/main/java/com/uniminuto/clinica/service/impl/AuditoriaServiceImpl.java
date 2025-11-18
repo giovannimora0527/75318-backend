@@ -44,6 +44,30 @@ public class AuditoriaServiceImpl implements AuditoriaService {
         auditoriaRepository.save(auditoria);
     }
     
+    @Override
+    public void registrarIntentoFallidoLogin(String username, String motivo, Integer intentosFallidos, HttpServletRequest request) {
+        Auditoria auditoria = new Auditoria();
+        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setNombreUsuario(username != null ? username : "DESCONOCIDO");
+        auditoria.setDescripcion(String.format("Intento fallido de inicio de sesión. Motivo: %s. Intentos fallidos consecutivos: %d", motivo, intentosFallidos));
+        auditoria.setTipoEvento("LOGIN_FALLIDO");
+        auditoria.setIpOrigen(obtenerIpOrigen(request));
+        
+        auditoriaRepository.save(auditoria);
+    }
+    
+    @Override
+    public void registrarBloqueoUsuario(String username, Integer tiempoBloqueoMinutos, HttpServletRequest request) {
+        Auditoria auditoria = new Auditoria();
+        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setNombreUsuario(username);
+        auditoria.setDescripcion(String.format("Usuario bloqueado automáticamente por %d intentos fallidos consecutivos. Bloqueo temporal de %d minutos.", 3, tiempoBloqueoMinutos));
+        auditoria.setTipoEvento("BLOQUEO_USUARIO");
+        auditoria.setIpOrigen(obtenerIpOrigen(request));
+        
+        auditoriaRepository.save(auditoria);
+    }
+    
     /**
      * Obtiene la IP de origen del request.
      * 

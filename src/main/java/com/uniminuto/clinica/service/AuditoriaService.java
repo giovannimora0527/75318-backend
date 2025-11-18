@@ -25,5 +25,24 @@ public interface AuditoriaService {
      * @param request Request HTTP para obtener la IP de origen
      */
     void registrarRecuperacionError(String username, String descripcion, HttpServletRequest request);
+    
+    /**
+     * Registra un intento fallido de inicio de sesión en la auditoría.
+     * 
+     * @param username Nombre de usuario que intentó iniciar sesión
+     * @param motivo Motivo del fallo (usuario no existe, contraseña incorrecta, usuario bloqueado, etc.)
+     * @param intentosFallidos Número de intentos fallidos consecutivos
+     * @param request Request HTTP para obtener la IP de origen
+     */
+    void registrarIntentoFallidoLogin(String username, String motivo, Integer intentosFallidos, HttpServletRequest request);
+    
+    /**
+     * Registra un bloqueo de usuario por intentos fallidos excesivos.
+     * 
+     * @param username Nombre de usuario bloqueado
+     * @param tiempoBloqueoMinutos Tiempo de bloqueo en minutos
+     * @param request Request HTTP para obtener la IP de origen
+     */
+    void registrarBloqueoUsuario(String username, Integer tiempoBloqueoMinutos, HttpServletRequest request);
 }
 

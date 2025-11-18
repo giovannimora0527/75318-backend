@@ -25,9 +25,14 @@ import com.uniminuto.clinica.service.AuditoriaService;
 import javax.transaction.Transactional;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AutenticarServiceImpl implements AutenticarService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AutenticarServiceImpl.class);
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -50,55 +55,208 @@ public class AutenticarServiceImpl implements AutenticarService {
     @Autowired
     private AuditoriaService auditoriaService;
 
+    @Value("${security.login.max-intentos-fallidos:3}")
+    private Integer maxIntentosFallidos;
+
+    @Value("${security.login.tiempo-bloqueo-minutos:5}")
+    private Integer tiempoBloqueoMinutos;
+
     @Override
     @Transactional
-    public AutenticatorRs autenticar(AuthenticatorRq request)
+    public AutenticatorRs autenticar(AuthenticatorRq request, HttpServletRequest httpRequest)
             throws BadRequestException {
 
-        // Usuario hardcodeado para desarrollo/testing
-        String hardcodedUsername = "admin";
-        String hardcodedPassword = "123456";
+        String username = request.getUsername();
         
-        Usuario usuario;
+        // Buscar usuario en la base de datos
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(username);
         
-        // Verificar si es el usuario hardcodeado
-        if (hardcodedUsername.equals(request.getUsername()) && 
-            hardcodedPassword.equals(request.getPassword())) {
-            // Crear usuario hardcodeado
-            usuario = new Usuario();
-            usuario.setId(999L); // ID ficticio
-            usuario.setUsername(hardcodedUsername);
-            usuario.setRol("ADMIN");
-            usuario.setActivo(true);
-            usuario.setEmail("admin@clinica.com");
-        } else {
-            // Buscar usuario en la base de datos
-            Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(request.getUsername());
-            if (usuarioOpt.isEmpty()) {
-                throw new BadRequestException("Usuario o contraseña incorrectos");
-            }
-            usuario = usuarioOpt.get();
-            boolean passwordOk;
-            if (passwordEncoder != null) {
-                passwordOk = passwordEncoder.matches(request.getPassword(), usuario.getPassword());
-            } else {
-                passwordOk = usuario.getPassword().equals(this.cifrarService.encriptarPassword(request.getPassword()));
-            }
-            if (!passwordOk) {
-                throw new BadRequestException("Usuario o contraseña incorrectos");
-            }
+        if (usuarioOpt.isEmpty()) {
+            // Usuario no existe - registrar intento fallido
+            logger.warn("Intento de login fallido: Usuario '{}' no existe. IP: {}", 
+                username, obtenerIpOrigen(httpRequest));
+            auditoriaService.registrarIntentoFallidoLogin(
+                username, 
+                "Usuario no existe", 
+                0, 
+                httpRequest
+            );
+            throw new BadRequestException("Usuario o contraseña incorrectos");
         }
+        
+        Usuario usuario = usuarioOpt.get();
+        
+        // Verificar si el usuario está bloqueado (ANTES de verificar contraseña)
+        if (estaUsuarioBloqueado(usuario)) {
+            long minutosRestantes = calcularMinutosRestantesBloqueo(usuario);
+            logger.warn("Intento de login bloqueado: Usuario '{}' está bloqueado. Minutos restantes: {}. IP: {}", 
+                username, minutosRestantes, obtenerIpOrigen(httpRequest));
+            auditoriaService.registrarIntentoFallidoLogin(
+                username, 
+                String.format("Usuario bloqueado. Minutos restantes: %d", minutosRestantes), 
+                usuario.getIntentosFallidos() != null ? usuario.getIntentosFallidos() : 0, 
+                httpRequest
+            );
+            throw new BadRequestException(String.format(
+                "Usuario bloqueado temporalmente. Intente nuevamente en %d minuto(s).", 
+                minutosRestantes
+            ));
+        }
+        
+        // Verificar contraseña
+        boolean passwordOk;
+        if (passwordEncoder != null) {
+            passwordOk = passwordEncoder.matches(request.getPassword(), usuario.getPassword());
+        } else {
+            passwordOk = usuario.getPassword().equals(this.cifrarService.encriptarPassword(request.getPassword()));
+        }
+        
+        if (!passwordOk) {
+            // Contraseña incorrecta - incrementar intentos fallidos
+            incrementarIntentosFallidos(usuario, httpRequest);
+            throw new BadRequestException("Usuario o contraseña incorrectos");
+        }
+        
+        // Login exitoso - resetear intentos fallidos
+        resetearIntentosFallidos(usuario);
+        logger.info("Login exitoso para usuario '{}'. IP: {}", username, obtenerIpOrigen(httpRequest));
         
         // Generar y devolver un JWT
         AutenticatorRs rta = new AutenticatorRs();
         String token = jwtUtil.generateToken(usuario);
         rta.setToken(token);
 
-        // Creamos la sesión del usuario autenticado (solo si existe en BD)
-        if (usuario.getId() != 999L) {
-            crearSesionUsuario(usuario, token);
-        }
+        // Crear la sesión del usuario autenticado
+        crearSesionUsuario(usuario, token);
         return rta;
+    }
+    
+    /**
+     * Verifica si un usuario está bloqueado temporalmente.
+     * 
+     * @param usuario Usuario a verificar
+     * @return true si el usuario está bloqueado, false en caso contrario
+     */
+    private boolean estaUsuarioBloqueado(Usuario usuario) {
+        if (usuario.getFechaBloqueo() == null) {
+            return false;
+        }
+        
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaDesbloqueo = usuario.getFechaBloqueo().plusMinutes(tiempoBloqueoMinutos);
+        
+        if (ahora.isBefore(fechaDesbloqueo)) {
+            return true;
+        } else {
+            // El bloqueo expiró - desbloquear automáticamente
+            usuario.setFechaBloqueo(null);
+            usuario.setIntentosFallidos(0);
+            usuarioRepository.save(usuario);
+            logger.info("Bloqueo automático expirado para usuario '{}'. Usuario desbloqueado.", usuario.getUsername());
+            return false;
+        }
+    }
+    
+    /**
+     * Calcula los minutos restantes de bloqueo para un usuario.
+     * 
+     * @param usuario Usuario bloqueado
+     * @return Minutos restantes de bloqueo
+     */
+    private long calcularMinutosRestantesBloqueo(Usuario usuario) {
+        if (usuario.getFechaBloqueo() == null) {
+            return 0;
+        }
+        
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaDesbloqueo = usuario.getFechaBloqueo().plusMinutes(tiempoBloqueoMinutos);
+        
+        if (ahora.isBefore(fechaDesbloqueo)) {
+            return java.time.Duration.between(ahora, fechaDesbloqueo).toMinutes() + 1;
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * Incrementa el contador de intentos fallidos y bloquea al usuario si excede el límite.
+     * 
+     * @param usuario Usuario que falló el login
+     * @param request Request HTTP para obtener la IP
+     */
+    private void incrementarIntentosFallidos(Usuario usuario, HttpServletRequest request) {
+        int intentosActuales = usuario.getIntentosFallidos() != null ? usuario.getIntentosFallidos() : 0;
+        intentosActuales++;
+        usuario.setIntentosFallidos(intentosActuales);
+        
+        logger.warn("Intento fallido de login para usuario '{}'. Intentos fallidos: {}/{}. IP: {}", 
+            usuario.getUsername(), intentosActuales, maxIntentosFallidos, obtenerIpOrigen(request));
+        
+        auditoriaService.registrarIntentoFallidoLogin(
+            usuario.getUsername(), 
+            "Contraseña incorrecta", 
+            intentosActuales, 
+            request
+        );
+        
+        // Si alcanza el máximo de intentos, bloquear usuario
+        if (intentosActuales >= maxIntentosFallidos) {
+            bloquearUsuario(usuario, request);
+        } else {
+            usuarioRepository.save(usuario);
+        }
+    }
+    
+    /**
+     * Bloquea temporalmente a un usuario por exceder el límite de intentos fallidos.
+     * 
+     * @param usuario Usuario a bloquear
+     * @param request Request HTTP para obtener la IP
+     */
+    private void bloquearUsuario(Usuario usuario, HttpServletRequest request) {
+        usuario.setFechaBloqueo(LocalDateTime.now());
+        usuarioRepository.save(usuario);
+        
+        logger.error("Usuario '{}' bloqueado automáticamente por {} intentos fallidos consecutivos. Bloqueo de {} minutos. IP: {}", 
+            usuario.getUsername(), maxIntentosFallidos, tiempoBloqueoMinutos, obtenerIpOrigen(request));
+        
+        auditoriaService.registrarBloqueoUsuario(usuario.getUsername(), tiempoBloqueoMinutos, request);
+    }
+    
+    /**
+     * Resetea el contador de intentos fallidos cuando el login es exitoso.
+     * 
+     * @param usuario Usuario que inició sesión exitosamente
+     */
+    private void resetearIntentosFallidos(Usuario usuario) {
+        if (usuario.getIntentosFallidos() != null && usuario.getIntentosFallidos() > 0) {
+            usuario.setIntentosFallidos(0);
+            usuario.setFechaBloqueo(null);
+            usuarioRepository.save(usuario);
+            logger.info("Intentos fallidos reseteados para usuario '{}' después de login exitoso.", usuario.getUsername());
+        }
+    }
+    
+    /**
+     * Obtiene la IP de origen del request.
+     * 
+     * @param request Request HTTP
+     * @return IP de origen
+     */
+    private String obtenerIpOrigen(HttpServletRequest request) {
+        if (request == null) {
+            return "DESCONOCIDA";
+        }
+        
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        
+        return ip != null ? ip : "DESCONOCIDA";
     }
 
     /**

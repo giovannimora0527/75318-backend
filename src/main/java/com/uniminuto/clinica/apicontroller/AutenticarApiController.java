@@ -21,7 +21,11 @@ public class AutenticarApiController implements AutenticarApi {
 
     @Override
     public ResponseEntity<AutenticatorRs> autenticar(AuthenticatorRq request) throws BadRequestException {
-        return ResponseEntity.ok(this.autenticarService.autenticar(request));
+        // Obtener HttpServletRequest del contexto de Spring
+        HttpServletRequest servletRequest = ((org.springframework.web.context.request.ServletRequestAttributes) 
+                org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        return ResponseEntity.ok(this.autenticarService.autenticar(request, servletRequest));
     }
 
     @Override
