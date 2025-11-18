@@ -39,4 +39,9 @@ public class MedicoApiController implements MedicoApi {
         return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
     }
 
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarMedico(MedicoRq medicoRq) throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.actualizarsMedico(medicoRq));
+    }
+
 }

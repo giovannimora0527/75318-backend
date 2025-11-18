@@ -3,6 +3,7 @@ package com.uniminuto.clinica.entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,8 +52,9 @@ public class Medico implements Serializable {
     @Column(name = "registro_profesional")
     private String registroProfesional;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "especializacion_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Especializacion especializacion;
 
 }

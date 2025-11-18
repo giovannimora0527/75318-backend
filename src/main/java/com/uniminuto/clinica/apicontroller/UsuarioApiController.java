@@ -25,7 +25,13 @@ public class UsuarioApiController implements UsuarioApi {
 
     @Override
     public ResponseEntity<List<Usuario>> listarUsuarios() {
-        return ResponseEntity.ok(this.usuarioService.listarTodosLosUsuarios());
+        try {
+            return ResponseEntity.ok(this.usuarioService.listarTodosLosUsuarios());
+        } catch (Exception e) {
+            System.err.println("Error al listar usuarios: " + e.getMessage());
+            e.printStackTrace();
+            throw e; // Re-lanzar para que Spring maneje el error
+        }
     }
 
     @Override

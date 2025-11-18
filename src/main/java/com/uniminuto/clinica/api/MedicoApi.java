@@ -48,6 +48,12 @@ public interface MedicoApi {
             @RequestBody @Valid MedicoRq medicoRq
     ) throws BadRequestException;
 
-
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarMedico(
+            @RequestBody @Valid MedicoRq medicoRq
+    ) throws BadRequestException;
 
 }

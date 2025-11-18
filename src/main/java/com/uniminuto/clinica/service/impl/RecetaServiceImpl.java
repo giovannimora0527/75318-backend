@@ -57,6 +57,7 @@ public class RecetaServiceImpl implements RecetaService {
         receta.setMedicamentoId(recetaRq.getMedicamentoId());
         receta.setDosis(recetaRq.getDosis());
         receta.setIndicaciones(recetaRq.getIndicaciones());
+        receta.setMedicamentoCargado(medicamento); // Cargar el medicamento para la respuesta
 
         return recetaRepository.save(receta);
     }
@@ -95,6 +96,7 @@ public class RecetaServiceImpl implements RecetaService {
         recetaExistente.setMedicamentoId(recetaRq.getMedicamentoId());
         recetaExistente.setDosis(recetaRq.getDosis());
         recetaExistente.setIndicaciones(recetaRq.getIndicaciones());
+        recetaExistente.setMedicamentoCargado(medicamento); // Cargar el medicamento para la respuesta
 
         return recetaRepository.save(recetaExistente);
     }
@@ -118,18 +120,42 @@ public class RecetaServiceImpl implements RecetaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID de la receta es obligatorio.");
         }
 
-        return recetaRepository.findById(id)
+        Receta receta = recetaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "La receta con ID " + id + " no existe"));
+        
+        // Cargar el medicamento
+        if (receta.getMedicamentoId() != null) {
+            Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(receta.getMedicamentoId());
+            medicamentoOpt.ifPresent(receta::setMedicamentoCargado);
+        }
+        
+        return receta;
     }
 
     @Override
     public List<Receta> listarPorCita(Long citaId) {
-        return recetaRepository.findByCitaId(citaId);
+        List<Receta> recetas = recetaRepository.findByCitaId(citaId);
+        // Cargar los medicamentos para cada receta
+        for (Receta receta : recetas) {
+            if (receta.getMedicamentoId() != null) {
+                Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(receta.getMedicamentoId());
+                medicamentoOpt.ifPresent(receta::setMedicamentoCargado);
+            }
+        }
+        return recetas;
     }
 
     @Override
     public List<Receta> listaRecetas() {
-        return recetaRepository.findAll(Sort.by(Sort.Direction.DESC, "fechaCreacionRegistro"));
+        List<Receta> recetas = recetaRepository.findAll(Sort.by(Sort.Direction.DESC, "fechaCreacionRegistro"));
+        // Cargar los medicamentos para cada receta
+        for (Receta receta : recetas) {
+            if (receta.getMedicamentoId() != null) {
+                Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(receta.getMedicamentoId());
+                medicamentoOpt.ifPresent(receta::setMedicamentoCargado);
+            }
+        }
+        return recetas;
     }
 }

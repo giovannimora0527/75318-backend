@@ -83,11 +83,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
         nuevo.setUsername(usuarioNuevo.getUsername().toLowerCase());
         nuevo.setEmail(usuarioNuevo.getEmail());
-
-        nuevo = this.usuarioRepository.save(nuevo);
+        
+        // Generar password antes de guardar (password_hash no puede ser null)
         String password = generarPass();
         nuevo.setPassword(this.cifrarService.encriptarPassword(password));
-        this.usuarioRepository.save(nuevo);
+        
+        nuevo = this.usuarioRepository.save(nuevo);
         String html = String.format("""
                         <html>
                         <body>
@@ -111,13 +112,19 @@ public class UsuarioServiceImpl implements UsuarioService {
                 password
         );
 
-        this.emailService.sendHtmlEmail(
-                nuevo.getEmail(),
-                "Envio de contraseña",
-                html,
-                emailService.getTo()
-        );
-
+        // Intentar enviar el correo, pero no fallar si hay un error
+        try {
+            this.emailService.sendHtmlEmail(
+                    nuevo.getEmail(),
+                    "Envio de contraseña",
+                    html,
+                    emailService.getTo()
+            );
+        } catch (MessagingException e) {
+            // Log del error pero no interrumpir la creación del usuario
+            System.err.println("Error al enviar correo de bienvenida: " + e.getMessage());
+            // El usuario se creó correctamente, solo falló el envío del email
+        }
 
         // Paso 5. Devuelve respuesta ok
         RespuestaRs rta = new RespuestaRs();
@@ -166,7 +173,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.validarCampos(usuarioNuevo);
 
         userActualizar.setUsername(usuarioNuevo.getUsername().toLowerCase());
-        userActualizar.setPassword(this.cifrarService.encriptarPassword(usuarioNuevo.getPassword()));
+        // Solo actualizar password si viene en el request
+        if (usuarioNuevo.getPassword() != null && !usuarioNuevo.getPassword().trim().isEmpty()) {
+            userActualizar.setPassword(this.cifrarService.encriptarPassword(usuarioNuevo.getPassword()));
+        }
         userActualizar.setActivo(usuarioNuevo.isActivo());
         userActualizar.setRol(usuarioNuevo.getRol());
         userActualizar.setEmail(usuarioNuevo.getEmail());

@@ -88,7 +88,50 @@ public class MedicoServiceImpl implements MedicoService {
 
     @Override
     public RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException {
-        return null;
+        if (medicoRq.getId() == null) {
+            throw new BadRequestException("El ID del médico es obligatorio para actualizar");
+        }
+
+        Optional<Medico> optMedico = this.medicoRepository.findById(medicoRq.getId().longValue());
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("El médico no existe");
+        }
+
+        Medico medicoActualizar = optMedico.get();
+
+        // Validar que el documento no esté duplicado (excepto para el mismo médico)
+        Optional<Medico> optMedicoDoc = this.medicoRepository.findByDocumento(medicoRq.getDocumento());
+        if (optMedicoDoc.isPresent() && !optMedicoDoc.get().getId().equals(medicoRq.getId().longValue())) {
+            throw new BadRequestException("El número de documento ya está registrado por otro médico");
+        }
+
+        // Validar que el registro profesional no esté duplicado (excepto para el mismo médico)
+        Optional<Medico> optMedicoReg = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
+        if (optMedicoReg.isPresent() && !optMedicoReg.get().getId().equals(medicoRq.getId().longValue())) {
+            throw new BadRequestException("Existe otro médico con el registro profesional ingresado");
+        }
+
+        // Validar especialización
+        Optional<Especializacion> optEsp = this.especializacionRepository.findById(medicoRq.getEspecializacion());
+        if (optEsp.isEmpty()) {
+            throw new BadRequestException("La especialización no existe");
+        }
+
+        // Actualizar los campos
+        medicoActualizar.setNombres(medicoRq.getNombres());
+        medicoActualizar.setApellidos(medicoRq.getApellidos());
+        medicoActualizar.setDocumento(medicoRq.getDocumento());
+        medicoActualizar.setTipoDocumento(medicoRq.getTipoDocumento());
+        medicoActualizar.setRegistroProfesional(medicoRq.getRegistroProfesional());
+        medicoActualizar.setEspecializacion(optEsp.get());
+        medicoActualizar.setTelefono(medicoRq.getTelefono());
+
+        this.medicoRepository.save(medicoActualizar);
+        
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Médico actualizado exitosamente");
+        rta.setStatus(200);
+        return rta;
     }
 
 }

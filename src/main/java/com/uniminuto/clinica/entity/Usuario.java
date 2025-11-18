@@ -1,5 +1,6 @@
 package com.uniminuto.clinica.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -39,6 +40,7 @@ public class Usuario implements Serializable {
     private String rol;
     
     @Column(name = "fecha_creacion")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaCreacion;
     
     @Column(name = "activo")

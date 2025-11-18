@@ -58,4 +58,13 @@ public class Paciente implements Serializable {
     @Column(name = "fecha_registro", columnDefinition = "DATETIME(6)")
     private LocalDateTime fechaRegistro;
 
+    /**
+     * Getter para compatibilidad con frontend (alias de numeroDocumento)
+     */
+    @com.fasterxml.jackson.annotation.JsonGetter("documento")
+    @javax.persistence.Transient
+    public String getDocumento() {
+        return numeroDocumento;
+    }
+
 }
