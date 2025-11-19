@@ -17,14 +17,41 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Obtener la ruta absoluta de la carpeta diagramas (relativa al directorio del proyecto)
+        // Obtener la ruta absoluta de la carpeta diagramas
+        // En desarrollo: relativa al directorio del proyecto
+        // En Docker: dentro de /app/diagramas
         String projectRoot = System.getProperty("user.dir");
-        String diagramasPath = projectRoot + File.separator + "diagramas" + File.separator;
+        String diagramasPath;
+        
+        // Verificar si estamos en Docker (el directorio de trabajo es /app)
+        if ("/app".equals(projectRoot) || projectRoot.endsWith("/app")) {
+            // En Docker, la carpeta diagramas está en /app/diagramas
+            diagramasPath = "/app/diagramas/";
+        } else {
+            // En desarrollo, buscar en el directorio del proyecto
+            diagramasPath = projectRoot + File.separator + "diagramas" + File.separator;
+        }
         
         // Normalizar la ruta para Windows/Linux
         diagramasPath = diagramasPath.replace("\\", "/");
         if (!diagramasPath.endsWith("/")) {
             diagramasPath += "/";
+        }
+        
+        // Verificar que el directorio existe
+        File diagramasDir = new File(diagramasPath);
+        if (!diagramasDir.exists()) {
+            System.err.println("ADVERTENCIA: El directorio de diagramas no existe: " + diagramasPath);
+        } else {
+            System.out.println("Directorio de diagramas encontrado: " + diagramasPath);
+            // Listar archivos para debugging
+            File[] files = diagramasDir.listFiles();
+            if (files != null) {
+                System.out.println("Archivos en el directorio:");
+                for (File file : files) {
+                    System.out.println("  - " + file.getName());
+                }
+            }
         }
         
         // Registrar el handler para servir las imágenes de diagramas

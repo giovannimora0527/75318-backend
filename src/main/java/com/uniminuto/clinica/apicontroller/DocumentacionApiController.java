@@ -5,6 +5,7 @@ import com.uniminuto.clinica.model.RespuestaRs;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 public class DocumentacionApiController implements DocumentacionApi {
 
     @Override
-    public ResponseEntity<RespuestaRs> obtenerDocumentacionSistema() {
+    public ResponseEntity<RespuestaRs> obtenerDocumentacionSistema(HttpServletRequest request) {
         Map<String, Object> documentacion = new HashMap<>();
         
         // Información general del sistema
@@ -105,8 +106,21 @@ public class DocumentacionApiController implements DocumentacionApi {
         // Diagramas UML (URLs de imágenes)
         Map<String, String> diagramas = new HashMap<>();
         
+        // Construir la URL base desde la petición HTTP (funciona en desarrollo y Docker)
+        String scheme = request.getScheme(); // http o https
+        String serverName = request.getServerName(); // localhost o dominio
+        int serverPort = request.getServerPort(); // 8000
+        String contextPath = request.getContextPath(); // /clinica/v1
+        
+        // Construir URL base
+        String baseUrl = scheme + "://" + serverName;
+        if ((scheme.equals("http") && serverPort != 80) || 
+            (scheme.equals("https") && serverPort != 443)) {
+            baseUrl += ":" + serverPort;
+        }
+        baseUrl += contextPath;
+        
         // URLs de las imágenes de diagramas
-        String baseUrl = "http://localhost:8000/clinica/v1";
         diagramas.put("diagramaClases", baseUrl + "/diagramas/DiagramaClase.png");
         diagramas.put("diagramaDespliegue", baseUrl + "/diagramas/DiagramaDespliegue.png");
         diagramas.put("diagramaArquitectura", baseUrl + "/diagramas/DiagramaArquitectura.png");

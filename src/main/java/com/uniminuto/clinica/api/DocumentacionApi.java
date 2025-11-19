@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * API para obtener documentación del sistema.
  * 
@@ -19,11 +21,12 @@ public interface DocumentacionApi {
     /**
      * Obtiene la documentación completa del sistema.
      * 
+     * @param request La petición HTTP actual para construir URLs dinámicas.
      * @return Documentación del sistema en formato JSON
      */
     @RequestMapping(value = "/sistema",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<RespuestaRs> obtenerDocumentacionSistema();
+    ResponseEntity<RespuestaRs> obtenerDocumentacionSistema(HttpServletRequest request);
 }
 

@@ -1,0 +1,26 @@
+# Archivos y directorios a ignorar en la construcción de Docker
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+node_modules/
+npm-debug.log
+yarn-error.log
+.git/
+.gitignore
+README.md
+LICENSE
+scripts/
+*.md
+
