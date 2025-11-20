@@ -17,7 +17,7 @@ public interface RecetaApi {
             produces = "application/json",
             consumes = "application/json"
     )
-    ResponseEntity<Receta> guardarReceta(@RequestBody RecetaRq recetaRq);
+    ResponseEntity<Receta> guardarReceta(@RequestBody RecetaRq recetaRq, javax.servlet.http.HttpServletRequest request);
 
     @RequestMapping(
             value = "/por-receta",
@@ -40,13 +40,13 @@ public interface RecetaApi {
             produces = "application/json",
             consumes = "application/json"
     )
-    ResponseEntity<Receta> actualizarReceta(@PathVariable Long id, @RequestBody RecetaRq recetaRq);
+    ResponseEntity<Receta> actualizarReceta(@PathVariable Long id, @RequestBody RecetaRq recetaRq, javax.servlet.http.HttpServletRequest request);
 
     @DeleteMapping(
             value = "/eliminar-receta/{id}",
             produces = "application/json"
     )
-    ResponseEntity<Void> eliminarReceta(@PathVariable Long id);
+    ResponseEntity<Void> eliminarReceta(@PathVariable Long id, javax.servlet.http.HttpServletRequest request);
 
     @RequestMapping(
             value = "/receta/{id}",

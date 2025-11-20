@@ -68,6 +68,42 @@ public class AuditoriaServiceImpl implements AuditoriaService {
         auditoriaRepository.save(auditoria);
     }
     
+    @Override
+    public void registrarCrear(String username, String tipoEntidad, String descripcion, HttpServletRequest request) {
+        Auditoria auditoria = new Auditoria();
+        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setNombreUsuario(username != null ? username : "SISTEMA");
+        auditoria.setDescripcion(descripcion);
+        auditoria.setTipoEvento("CREAR_" + tipoEntidad.toUpperCase());
+        auditoria.setIpOrigen(obtenerIpOrigen(request));
+        
+        auditoriaRepository.save(auditoria);
+    }
+    
+    @Override
+    public void registrarActualizar(String username, String tipoEntidad, String descripcion, HttpServletRequest request) {
+        Auditoria auditoria = new Auditoria();
+        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setNombreUsuario(username != null ? username : "SISTEMA");
+        auditoria.setDescripcion(descripcion);
+        auditoria.setTipoEvento("ACTUALIZAR_" + tipoEntidad.toUpperCase());
+        auditoria.setIpOrigen(obtenerIpOrigen(request));
+        
+        auditoriaRepository.save(auditoria);
+    }
+    
+    @Override
+    public void registrarEliminar(String username, String tipoEntidad, String descripcion, HttpServletRequest request) {
+        Auditoria auditoria = new Auditoria();
+        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setNombreUsuario(username != null ? username : "SISTEMA");
+        auditoria.setDescripcion(descripcion);
+        auditoria.setTipoEvento("ELIMINAR_" + tipoEntidad.toUpperCase());
+        auditoria.setIpOrigen(obtenerIpOrigen(request));
+        
+        auditoriaRepository.save(auditoria);
+    }
+    
     /**
      * Obtiene la IP de origen del request.
      * 

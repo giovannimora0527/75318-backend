@@ -14,8 +14,8 @@ import java.util.List;
 @Repository
 public interface AuditoriaRepository extends JpaRepository<Auditoria, Long> {
     
-    List<Auditoria> findAllByOrderByFechaHoraDesc();
+    List<Auditoria> findAllByOrderByFechaHoraAsc();
     
-    List<Auditoria> findByTipoEventoOrderByFechaHoraDesc(String tipoEvento);
+    List<Auditoria> findByTipoEventoOrderByFechaHoraAsc(String tipoEvento);
 }
 

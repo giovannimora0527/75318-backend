@@ -44,5 +44,35 @@ public interface AuditoriaService {
      * @param request Request HTTP para obtener la IP de origen
      */
     void registrarBloqueoUsuario(String username, Integer tiempoBloqueoMinutos, HttpServletRequest request);
+    
+    /**
+     * Registra la creación de una entidad en el sistema.
+     * 
+     * @param username Nombre de usuario que realizó la operación
+     * @param tipoEntidad Tipo de entidad (Usuario, Medico, Paciente, Cita, Receta, Medicamento, Especializacion)
+     * @param descripcion Descripción de la operación (ej: "Se creó el usuario admin2")
+     * @param request Request HTTP para obtener la IP de origen
+     */
+    void registrarCrear(String username, String tipoEntidad, String descripcion, HttpServletRequest request);
+    
+    /**
+     * Registra la actualización de una entidad en el sistema.
+     * 
+     * @param username Nombre de usuario que realizó la operación
+     * @param tipoEntidad Tipo de entidad (Usuario, Medico, Paciente, Cita, Receta, Medicamento, Especializacion)
+     * @param descripcion Descripción de la operación (ej: "Se actualizó el médico con ID 1")
+     * @param request Request HTTP para obtener la IP de origen
+     */
+    void registrarActualizar(String username, String tipoEntidad, String descripcion, HttpServletRequest request);
+    
+    /**
+     * Registra la eliminación de una entidad en el sistema.
+     * 
+     * @param username Nombre de usuario que realizó la operación
+     * @param tipoEntidad Tipo de entidad (Usuario, Medico, Paciente, Cita, Receta, Medicamento, Especializacion)
+     * @param descripcion Descripción de la operación (ej: "Se eliminó la receta con ID 5")
+     * @param request Request HTTP para obtener la IP de origen
+     */
+    void registrarEliminar(String username, String tipoEntidad, String descripcion, HttpServletRequest request);
 }
 

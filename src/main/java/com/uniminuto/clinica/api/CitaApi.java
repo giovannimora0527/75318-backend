@@ -22,7 +22,7 @@ public interface CitaApi {
             consumes = {"application/json"},
             method = RequestMethod.POST
     )
-    ResponseEntity<Cita> guardarCita(@RequestBody CitaRq citaRq);
+    ResponseEntity<Cita> guardarCita(@RequestBody CitaRq citaRq, javax.servlet.http.HttpServletRequest request);
 
     @RequestMapping(value = "/por-fecha",
             produces = {"application/json"},

@@ -40,7 +40,7 @@ public interface PacienteApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-    ResponseEntity<Paciente> guardarPaciente(@RequestBody PacienteRq pacienteRq) throws BadRequestException;
+    ResponseEntity<Paciente> guardarPaciente(@RequestBody PacienteRq pacienteRq, javax.servlet.http.HttpServletRequest request) throws BadRequestException;
 
     @RequestMapping(value = "/actualizar/{id}",
             produces = {"application/json"},
@@ -48,6 +48,7 @@ public interface PacienteApi {
             method = RequestMethod.PUT)
     ResponseEntity<Paciente> actualizarPaciente(
             @PathVariable Long id,
-            @RequestBody PacienteRq pacienteRq) throws BadRequestException;
+            @RequestBody PacienteRq pacienteRq,
+            javax.servlet.http.HttpServletRequest request) throws BadRequestException;
 
 }

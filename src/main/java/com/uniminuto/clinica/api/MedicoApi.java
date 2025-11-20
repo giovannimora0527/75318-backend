@@ -45,7 +45,8 @@ public interface MedicoApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarMedico(
-            @RequestBody @Valid MedicoRq medicoRq
+            @RequestBody @Valid MedicoRq medicoRq,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 
     @RequestMapping(value = "/actualizar",
@@ -53,7 +54,8 @@ public interface MedicoApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> actualizarMedico(
-            @RequestBody @Valid MedicoRq medicoRq
+            @RequestBody @Valid MedicoRq medicoRq,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 
 }

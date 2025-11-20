@@ -26,5 +26,10 @@ public interface AuditoriaApi {
     ResponseEntity<List<Auditoria>> listarAuditorias(
             @RequestParam(required = false) String tipoEvento
     );
+    
+    @RequestMapping(value = "/tipos-eventos",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<String>> listarTiposEventos();
 }
 

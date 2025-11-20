@@ -61,12 +61,14 @@ public interface UsuarioApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuario(
-       @RequestBody UsuarioRq usuarioNuevo
+       @RequestBody UsuarioRq usuarioNuevo,
+       javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException, MessagingException;
 
     /**
      * Actualizar usuario.
      * @param usuario UsuarioRq de entrada.
+     * @param request Request HTTP para auditoría.
      * @return respuesta del servicio.
      * @throws BadRequestException excepcion.
      */
@@ -75,6 +77,7 @@ public interface UsuarioApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> actualizarrUsuario(
-            @RequestBody UsuarioRq usuario
+            @RequestBody UsuarioRq usuario,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 }

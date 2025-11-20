@@ -25,7 +25,8 @@ public interface MedicamentoApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> crearMedicamento(
-            @RequestBody MedicamentoRq medicamentoRq
+            @RequestBody MedicamentoRq medicamentoRq,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 
     @RequestMapping(value = "/actualizar/{id}",
@@ -34,6 +35,7 @@ public interface MedicamentoApi {
             method = RequestMethod.PUT)
     ResponseEntity<RespuestaRs> actualizarMedicamento(
             @PathVariable Long id,
-            @RequestBody MedicamentoRq medicamentoRq
+            @RequestBody MedicamentoRq medicamentoRq,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 }

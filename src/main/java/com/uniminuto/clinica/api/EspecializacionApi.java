@@ -34,7 +34,8 @@ public interface EspecializacionApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<Especializacion> crearEspecializacion(
-            @RequestBody Especializacion especializacion
+            @RequestBody Especializacion especializacion,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 
     @RequestMapping(value = "/actualizar/{id}",
@@ -43,6 +44,7 @@ public interface EspecializacionApi {
             method = RequestMethod.PUT)
     ResponseEntity<Especializacion> actualizarEspecializacion(
             @PathVariable Long id,
-            @RequestBody Especializacion especializacion
+            @RequestBody Especializacion especializacion,
+            javax.servlet.http.HttpServletRequest request
     ) throws BadRequestException;
 }

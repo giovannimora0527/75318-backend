@@ -4,14 +4,19 @@ import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
+import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.UsuarioService;
+import com.uniminuto.clinica.utils.SecurityUtils;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -22,6 +27,9 @@ public class UsuarioApiController implements UsuarioApi {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @Override
     public ResponseEntity<List<Usuario>> listarUsuarios() {
@@ -52,15 +60,53 @@ public class UsuarioApiController implements UsuarioApi {
     }
 
     @Override
-    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo)
+    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo, HttpServletRequest request)
             throws BadRequestException, MessagingException {
-        return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuarioNuevo));
+        RespuestaRs respuesta = this.usuarioService.guardarUsuario(usuarioNuevo);
+        
+        // Registrar auditoría solo si la operación fue exitosa
+        try {
+            if (respuesta != null && respuesta.getStatus() == 200) {
+                String username = SecurityUtils.getCurrentUsername();
+                HttpServletRequest httpRequest = request;
+                if (httpRequest == null) {
+                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+                    httpRequest = attributes.getRequest();
+                }
+                String descripcion = String.format("Se creó el usuario: %s", usuarioNuevo.getUsername());
+                auditoriaService.registrarCrear(username != null ? username : "SISTEMA", "USUARIO", descripcion, httpRequest);
+            }
+        } catch (Exception e) {
+            System.err.println("ERROR al registrar auditoría de creación de usuario: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return ResponseEntity.ok(respuesta);
     }
 
     @Override
-    public ResponseEntity<RespuestaRs> actualizarrUsuario(UsuarioRq usuario)
+    public ResponseEntity<RespuestaRs> actualizarrUsuario(UsuarioRq usuario, HttpServletRequest request)
             throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
+        RespuestaRs respuesta = this.usuarioService.actualizarUsuario(usuario);
+        
+        // Registrar auditoría solo si la operación fue exitosa
+        try {
+            if (respuesta != null && respuesta.getStatus() == 200) {
+                String username = SecurityUtils.getCurrentUsername();
+                HttpServletRequest httpRequest = request;
+                if (httpRequest == null) {
+                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+                    httpRequest = attributes.getRequest();
+                }
+                String descripcion = String.format("Se actualizó el usuario: %s (ID: %s)", usuario.getUsername(), usuario.getId() != null ? usuario.getId() : "N/A");
+                auditoriaService.registrarActualizar(username != null ? username : "SISTEMA", "USUARIO", descripcion, httpRequest);
+            }
+        } catch (Exception e) {
+            System.err.println("ERROR al registrar auditoría de actualización de usuario: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return ResponseEntity.ok(respuesta);
     }
 
 }

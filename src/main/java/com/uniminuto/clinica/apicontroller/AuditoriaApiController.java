@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controlador para la API de auditoría.
@@ -23,12 +24,23 @@ public class AuditoriaApiController implements AuditoriaApi {
     @Override
     public ResponseEntity<List<Auditoria>> listarAuditorias(String tipoEvento) {
         List<Auditoria> auditorias;
-        if (tipoEvento != null && !tipoEvento.isEmpty()) {
-            auditorias = auditoriaRepository.findByTipoEventoOrderByFechaHoraDesc(tipoEvento);
+        if (tipoEvento != null && !tipoEvento.isEmpty() && !tipoEvento.trim().isEmpty()) {
+            auditorias = auditoriaRepository.findByTipoEventoOrderByFechaHoraAsc(tipoEvento);
         } else {
-            auditorias = auditoriaRepository.findAllByOrderByFechaHoraDesc();
+            auditorias = auditoriaRepository.findAllByOrderByFechaHoraAsc();
         }
         return ResponseEntity.ok(auditorias);
+    }
+    
+    @Override
+    public ResponseEntity<List<String>> listarTiposEventos() {
+        List<String> tiposEventos = auditoriaRepository.findAll()
+                .stream()
+                .map(Auditoria::getTipoEvento)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(tiposEventos);
     }
 }
 
