@@ -15,9 +15,9 @@ import com.uniminuto.clinica.model.RecuperarPasswordRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.EmailService;
+import com.uniminuto.clinica.service.LoginAttemptService;
 import lombok.extern.slf4j.Slf4j;
 import javax.mail.MessagingException;
-
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -54,46 +54,83 @@ public class AutenticarServiceImpl implements AutenticarService {
     @Autowired
     private AuditoriaService auditoriaService;
 
+    // NUEVA DEPENDENCIA PARA CONTROL DE INTENTOS
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
     @Override
     @Transactional
     public AutenticatorRs autenticar(AuthenticatorRq request)
             throws BadRequestException {
 
+        // NUEVA VALIDACIÓN: Verificar si el usuario está bloqueado
+        if (loginAttemptService.estaBloqueado(request.getUsername())) {
+            String tiempoRestante = loginAttemptService.obtenerTiempoRestanteBloqueo(request.getUsername());
+            log.warn("🔒 Intento de login con usuario bloqueado: {}, Tiempo restante: {}", 
+                    request.getUsername(), tiempoRestante);
+            throw new BadRequestException("Cuenta temporalmente bloqueada. Intente nuevamente en " + tiempoRestante);
+        }
+
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(request.getUsername());
         if (usuarioOpt.isEmpty()) {
+            // REGISTRAR INTENTO FALLIDO (NUEVO)
+            loginAttemptService.registrarIntentoFallido(request.getUsername(), "N/A", "Sistema");
             throw new BadRequestException("Usuario o contraseña incorrectos");
         }
+        
         Usuario usuario = usuarioOpt.get();
-        //borrar a aqui
+
+        // Verificar si el usuario está activo
+        if (!usuario.isActivo()) {
+            log.warn("Intento de login con usuario inactivo: {}", request.getUsername());
+            throw new BadRequestException("Usuario inactivo");
+        }
+
+        // DEBUG: Mostrar información de depuración (opcional, puedes comentarlo después de pruebas)
         System.out.println("=== DEBUG AUTENTICACIÓN ===");
         System.out.println("Usuario recibido: [" + request.getUsername() + "]");
         System.out.println("Contraseña recibida: [" + request.getPassword() + "]");
         System.out.println("Longitud de la contraseña: " + (request.getPassword() != null ? request.getPassword().length() : "null"));
-        if (request.getPassword() != null) {
-            for (int i = 0; i < request.getPassword().length(); i++) {
-                System.out.println("  Carácter " + i + ": '" + request.getPassword().charAt(i) + "' (ASCII: " + (int)request.getPassword().charAt(i) + ")");
-            }
-        }
         System.out.println("Hash en BD: " + usuario.getPassword());
         System.out.println("Hash de la entrada: " + this.cifrarService.encriptarPassword(request.getPassword()));
         System.out.println("============================");
-        //Borrar todo antes de aqui
+
         boolean passwordOk;
         if (passwordEncoder != null) {
             passwordOk = passwordEncoder.matches(request.getPassword(), usuario.getPassword());
         } else {
             passwordOk = usuario.getPassword().equals(this.cifrarService.encriptarPassword(request.getPassword()));
         }
+        
         if (!passwordOk) {
+            // REGISTRAR INTENTO FALLIDO (NUEVO)
+            loginAttemptService.registrarIntentoFallido(request.getUsername(), "N/A", "Sistema");
             throw new BadRequestException("Usuario o contraseña incorrectos");
         }
+
+        // LOGIN EXITOSO - RESETEAR INTENTOS FALLIDOS (NUEVO)
+        loginAttemptService.resetearIntentosFallidos(request.getUsername());
+        
+        // Registrar auditoría de login exitoso
+        auditoriaService.registrarEvento(
+                request.getUsername(),
+                AuditoriaServiceImpl.MOTIVO_LOGIN_EXITOSO,
+                true,
+                null,
+                "N/A",
+                "Sistema"
+        );
+
         // Generar y devolver un JWT
         AutenticatorRs rta = new AutenticatorRs();
         String token = jwtUtil.generateToken(usuario);
         rta.setToken(token);
 
-        // Creamos la sesión del usuario autenticado
+        // Crear la sesión del usuario autenticado
         crearSesionUsuario(usuario, token);
+        
+        log.info("✅ Login exitoso - Usuario: {}", request.getUsername());
+        
         return rta;
     }
 
@@ -303,7 +340,6 @@ public class AutenticarServiceImpl implements AutenticarService {
         return respuesta;
     }
 
-
     /**
      * Crea y almacena la sesión del usuario autenticado.
      *
@@ -311,18 +347,26 @@ public class AutenticarServiceImpl implements AutenticarService {
      * @param token   Token JWT generado
      */
     private void crearSesionUsuario(Usuario usuario, String token) {
-        // Elimina cualquier sesión previa del usuario
-        sessionRepository.deleteByUserId(usuario.getId().intValue());
-        Session session = new Session();
-        session.setUserId(usuario.getId().intValue());
-        session.setToken(token);
-        session.setFechaIniSesion(LocalDateTime.now());
-        Date fechaExpiracion = jwtUtil.getExpirationDateFromToken(token);
-        session.setFechaExpiracion(fechaExpiracion.toInstant()
-                .atZone(java.time.ZoneId.systemDefault())
-                .toLocalDateTime());
-        sessionRepository.save(session);
+        try {
+            // Elimina cualquier sesión previa del usuario
+            sessionRepository.deleteByUserId(usuario.getId().intValue());
+            
+            Session session = new Session();
+            session.setUserId(usuario.getId().intValue());
+            session.setToken(token);
+            session.setFechaIniSesion(LocalDateTime.now());
+            
+            Date fechaExpiracion = jwtUtil.getExpirationDateFromToken(token);
+            session.setFechaExpiracion(fechaExpiracion.toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDateTime());
+            
+            sessionRepository.save(session);
+            
+            log.debug("Sesión creada para usuario: {}", usuario.getUsername());
+        } catch (Exception e) {
+            log.error("Error al crear sesión para usuario: {}", usuario.getUsername(), e);
+            // No lanzamos excepción para no afectar el login exitoso
+        }
     }
-
-
 }

@@ -70,11 +70,6 @@ public class MedicoServiceImpl implements MedicoService {
         return medico;
     }
 
-    @Override
-    public RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException {
-        return null;
-    }
-
 
     @Override
     public RespuestaRs guardarMedico(MedicoRq medicoNuevo)
