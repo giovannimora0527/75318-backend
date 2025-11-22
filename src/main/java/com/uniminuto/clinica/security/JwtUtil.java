@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -28,16 +30,26 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    // Generar un token
-    public String generateToken(Usuario usuario) {
+    /**
+     * 🔥 Versión extendida: permite agregar claims adicionales
+     */
+    public String generateToken(Usuario usuario, boolean requirePasswordChange) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
+
         return JWT.create()
                 .withSubject(usuario.getUsername())
                 .withClaim("fecha_inicio_sesion", new Date())
                 .withClaim("fecha_fin_sesion", new Date(System.currentTimeMillis() + jwtExpiration))
                 .withClaim("correo", usuario.getEmail())
-                //.withClaim("perfil_id", usuario.getEmail())
+                .withClaim("requirePasswordChange", requirePasswordChange)
                 .sign(algorithm);
+    }
+
+    /**
+     * ⚠️ Versión original preservada para compatibilidad
+     */
+    public String generateToken(Usuario usuario) {
+        return generateToken(usuario, false);
     }
 
     // Obtener el username del token
@@ -50,14 +62,19 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // Obtener la fecha de expiración del token (usando el claim personalizado fecha_fin_sesion)
+    // Obtener la fecha de expiración del token
     public Date getExpirationDateFromToken(String token) {
         DecodedJWT jwt = JWT.decode(token);
-        // El claim fecha_fin_sesion se almacena como Date
         return jwt.getClaim("fecha_fin_sesion").asDate();
     }
 
-    // Validar si el token es correcto
+    // Obtener claim personalizado
+    public Boolean extractRequirePasswordChange(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getClaim("requirePasswordChange").asBoolean();
+    }
+
+    // Validar token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -69,4 +86,22 @@ public class JwtUtil {
             return false;
         }
     }
+
+    /**
+     * Extraer username directamente desde el request HTTP
+     */
+    public String extractUsernameFromRequest(javax.servlet.http.HttpServletRequest request) {
+        final String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) return null;
+        return extractUsername(header.substring(7));
+    }
+
+    public String extractTokenFromRequest(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
+    }
+
 }

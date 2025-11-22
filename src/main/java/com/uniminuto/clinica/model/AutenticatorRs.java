@@ -5,4 +5,6 @@ import lombok.Data;
 @Data
 public class AutenticatorRs {
     private String token;
+    private boolean requiereCambioPassword;
 }
+

@@ -51,7 +51,7 @@ public class RecetaServiceImpl implements RecetaService {
         }
 
         Optional<Cita> optCita = this.citaRepository.findById(recetaRq.getCitaId());
-        if(optCita.isEmpty()) {
+        if (optCita.isEmpty()) {
             throw new BadRequestException("La cita con ID " + recetaRq.getCitaId() + " no existe.");
         }
 
@@ -73,32 +73,41 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Override
     public RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
-        Optional<Receta> optReceta = this.recetaRepository.findById(recetaRq.getId());
+
+        Optional<Receta> optReceta = recetaRepository.findById(recetaRq.getId());
+
         if (optReceta.isEmpty()) {
             throw new BadRequestException("La receta con ID " + recetaRq.getId() + " no existe.");
         }
 
         Receta recetaActual = optReceta.get();
+
+        // Validar medicamento si cambió
         if (!recetaActual.getMedicamento().getId().equals(recetaRq.getMedicamentoId())) {
-            Optional<Medicamento> optMedicamento = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
-            if (optMedicamento.isEmpty()) {
-                throw new BadRequestException("El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe.");
-            }
-            recetaActual.setMedicamento(optMedicamento.get());
+            Medicamento medicamento = medicamentoRepository.findById(recetaRq.getMedicamentoId())
+                    .orElseThrow(() -> new BadRequestException(
+                            "El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe."));
+            recetaActual.setMedicamento(medicamento);
         }
 
+        // Actualizar datos editables
         recetaActual.setDosis(recetaRq.getDosis());
         recetaActual.setIndicaciones(recetaRq.getIndicaciones());
+
+        // Actualizar fecha
         recetaActual.setFechaActualizacionRegistro(LocalDateTime.now());
-        this.recetaRepository.save(recetaActual);
+
+        recetaRepository.save(recetaActual);
+
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Receta actualizada exitosamente.");
         rta.setStatus(200);
+
         return rta;
     }
-
     /**
      * Convierte un objeto RecetaRq a una entidad Receta.
+     *
      * @param recetaRq receta de entrada.
      * @return entidad receta.
      */
@@ -109,6 +118,7 @@ public class RecetaServiceImpl implements RecetaService {
         receta.setDosis(recetaRq.getDosis());
         receta.setIndicaciones(recetaRq.getIndicaciones());
         receta.setFechaCreacionRegistro(LocalDateTime.now());
+        receta.setFechaActualizacionRegistro(LocalDateTime.now());
         return receta;
     }
 }

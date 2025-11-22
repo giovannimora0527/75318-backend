@@ -13,7 +13,7 @@ import java.util.List;
  * Interfaz que define las operaciones CRUD para la entidad Cita.
  */
 @Repository
-public interface CitaRepository extends JpaRepository<Cita, Integer> {
+public interface CitaRepository extends JpaRepository<Cita, Long> {
 
     /**
      * Query que obtiene las citas organizadas por fecha y hora.
