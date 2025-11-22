@@ -49,7 +49,7 @@ public interface EmailService {
                        String subject,
                        String htmlBody,
                        String from)
-            throws BadRequestException, MessagingException;
+            throws MessagingException;
 
 
     RespuestaRs testEmail(String correoDestinatario) throws BadRequestException, MessagingException;
