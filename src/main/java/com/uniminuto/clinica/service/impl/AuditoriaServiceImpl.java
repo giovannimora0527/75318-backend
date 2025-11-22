@@ -100,4 +100,15 @@ public class AuditoriaServiceImpl implements AuditoriaService {
                 fechaLimite
         );
     }
+
+    @Override
+    public List<AuditoriaSeguridad> obtenerLogs(
+            String username,
+            String motivo,
+            LocalDateTime fechaDesde,
+            LocalDateTime fechaHasta) {
+
+        // Construir la consulta con los filtros
+        return auditoriaRepository.findByFilters(username, motivo, fechaDesde, fechaHasta);
+    }
 }

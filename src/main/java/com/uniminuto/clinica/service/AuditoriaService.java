@@ -53,4 +53,12 @@ public interface AuditoriaService {
      * @return Cantidad de intentos fallidos
      */
     Long contarIntentosFallidosRecientes(String username, int horas);
+
+    // src/main/java/com/uniminuto/clinica/service/AuditoriaService.java
+    List<AuditoriaSeguridad> obtenerLogs(
+            String username,
+            String motivo,
+            LocalDateTime fechaDesde,
+            LocalDateTime fechaHasta
+    );
 }

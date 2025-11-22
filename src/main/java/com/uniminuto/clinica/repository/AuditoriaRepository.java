@@ -59,4 +59,16 @@ public interface AuditoriaRepository extends JpaRepository<AuditoriaSeguridad, L
             @Param("username") String username,
             @Param("fechaDesde") LocalDateTime fechaDesde
     );
+
+    @Query("SELECT a FROM AuditoriaSeguridad a WHERE " +
+            "(:username IS NULL OR a.usernameIngresado LIKE %:username%) AND " +
+            "(:motivo IS NULL OR a.motivo = :motivo) AND " +
+            "(:fechaDesde IS NULL OR a.fechaHora >= :fechaDesde) AND " +
+            "(:fechaHasta IS NULL OR a.fechaHora <= :fechaHasta) " +
+            "ORDER BY a.fechaHora DESC")
+    List<AuditoriaSeguridad> findByFilters(
+            @Param("username") String username,
+            @Param("motivo") String motivo,
+            @Param("fechaDesde") LocalDateTime fechaDesde,
+            @Param("fechaHasta") LocalDateTime fechaHasta);
 }
