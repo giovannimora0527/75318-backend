@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -48,6 +51,23 @@ public interface MedicoApi {
             @RequestBody @Valid MedicoRq medicoRq
     ) throws BadRequestException;
 
+    @RequestMapping(value = "/buscar-medico-documento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Medico> buscarMedicoPorDocumento(
+            @RequestParam String documento)
+            throws BadRequestException;
 
 
+
+    /*
+     * TODO agregar metodo para actualizar medico.*/
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarMedico(
+            @RequestBody MedicoRq medico
+    ) throws BadRequestException;
 }

@@ -8,6 +8,10 @@ import javax.validation.constraints.Pattern;
 @Data
 public class CitaRq {
     /**
+     * ID de la cita (solo para actualizar).
+     */
+    private Integer id;
+    /**
      * Identificador del paciente asociado a la cita.
      */
     @NotNull(message = "El identificador del paciente es obligatorio.")

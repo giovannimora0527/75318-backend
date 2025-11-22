@@ -30,4 +30,6 @@ public interface CitaService {
      * @throws BadRequestException excepcion.
      */
     List<Cita> listarCitasporPaciente(Integer pacienteId) throws BadRequestException;
+    //Acutalizar cita
+    RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException;
 }

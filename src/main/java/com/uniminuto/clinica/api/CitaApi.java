@@ -43,6 +43,7 @@ public interface CitaApi {
             ) throws BadRequestException;
 
     /**
+<<<<<<< HEAD
      * Api para listar todas las citas del sistema.
      * @return listado de citas.
      */
@@ -53,4 +54,14 @@ public interface CitaApi {
     ResponseEntity<List<Cita>> listarCitasPorPaciente(
             @RequestParam Integer pacienteIds
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarCita(@RequestBody @Valid CitaRq citaRq)
+            throws BadRequestException;
+
 }
+
+

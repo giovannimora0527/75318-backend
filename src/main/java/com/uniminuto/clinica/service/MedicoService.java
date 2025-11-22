@@ -13,13 +13,15 @@ import org.apache.coyote.BadRequestException;
  * @author lmora
  */
 public interface MedicoService {
-    List<Medico> listarMedicos();
+   List<Medico> listarMedicos();
+   
+   List<Medico> buscarPorEspecialidad(String codigo) 
+           throws BadRequestException;
 
-    List<Medico> buscarPorEspecialidad(String codigo)
-            throws BadRequestException;
+   Medico buscarMedicoPorDocumento(String documento) throws BadRequestException;
 
-    RespuestaRs guardarMedico(MedicoRq medicoRq) throws BadRequestException;
+   RespuestaRs guardarMedico(MedicoRq medicoNuevo) throws BadRequestException;
 
+   RespuestaRs actualizarMedico(MedicoRq medicoNuevo) throws BadRequestException;
 
-    RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException;
 }

@@ -44,6 +44,7 @@ public interface RecetaApi {
      * Api para acualizar una receta en el sistema.
      * @return respuesta del servicio.
      */
+    //TODO: actualizar receta
     @RequestMapping(value = "/actualizar",
             produces = {"application/json"},
             consumes = {"application/json"},

@@ -34,9 +34,22 @@ public class MedicoApiController implements MedicoApi {
                 .buscarPorEspecialidad(codigo));
     }
 
-    @Override
-    public ResponseEntity<RespuestaRs> guardarMedico(MedicoRq medicoRq) throws BadRequestException {
-        return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
+
+    public ResponseEntity<Medico> buscarMedicoPorDocumento(String documento)
+            throws BadRequestException {
+        return ResponseEntity.ok(medicoService.buscarMedicoPorDocumento(documento));
     }
 
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarMedico(MedicoRq medicoNuevo)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.guardarMedico(medicoNuevo));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarMedico(MedicoRq medico)
+            throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.actualizarMedico(medico));
+    }
 }

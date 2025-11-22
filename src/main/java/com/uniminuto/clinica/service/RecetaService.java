@@ -29,4 +29,5 @@ public interface RecetaService {
      * @throws BadRequestException excepcion del sistema.
      */
     RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException;
+
 }
