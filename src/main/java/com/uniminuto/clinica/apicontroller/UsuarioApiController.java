@@ -1,58 +1,99 @@
-package com.uniminuto.clinica.apicontroller;
+package com.uniminuto.clinica.controller;
 
-import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
-import com.uniminuto.clinica.service.UsuarioService;
-import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.service.UsuarioService;
+import com.uniminuto.clinica.model.LoginRq;
+
+
 import java.util.List;
-import org.apache.coyote.BadRequestException;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-/**
- *
- * @author lmora
- */
 @RestController
-public class UsuarioApiController implements UsuarioApi {
+@RequestMapping("/api/usuarios")
+@CrossOrigin("*")
+public class UsuarioApiController {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @Override
+    // ================================
+    // LISTAR TODOS
+    // ================================
+    @GetMapping
     public ResponseEntity<List<Usuario>> listarUsuarios() {
-        return ResponseEntity.ok(this.usuarioService.listarTodosLosUsuarios());
+        return ResponseEntity.ok(usuarioService.listarTodosLosUsuarios());
     }
 
-    @Override
-    public ResponseEntity<List<Usuario>> listarUsuariosPorRol(String rol) {
-        return ResponseEntity.ok(this.usuarioService.encontrarPorRol(rol));
+    // ================================
+    // BUSCAR POR USERNAME
+    // ================================
+    @GetMapping("/username/{username}")
+    public ResponseEntity<Usuario> buscarPorNombre(@PathVariable String username) {
+        return ResponseEntity.ok(usuarioService.encontrarPorNombre(username));
     }
 
-    @Override
-    public ResponseEntity<Usuario> buscarUsuarioPorNombre(String nombre) 
-            throws BadRequestException{
-        return ResponseEntity.ok(this.usuarioService.encontrarPorNombre(nombre));
+    // ================================
+    // BUSCAR POR ROL
+    // ================================
+    @GetMapping("/rol/{rol}")
+    public ResponseEntity<List<Usuario>> buscarPorRol(@PathVariable String rol) {
+        return ResponseEntity.ok(usuarioService.encontrarPorRol(rol));
     }
 
-    @Override
-    public ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(Integer activo) 
-            throws BadRequestException {
-        return ResponseEntity.ok(this
-                .usuarioService.buscarPorEstado(activo));
+    // ================================
+    // BUSCAR POR ESTADO
+    // ================================
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<List<Usuario>> buscarPorEstado(@PathVariable Integer estado) {
+        return ResponseEntity.ok(usuarioService.buscarPorEstado(estado));
+    }
+
+    // ================================
+    // CREAR USUARIO
+    // ================================
+    @PostMapping
+    public ResponseEntity<RespuestaRs> crearUsuario(@RequestBody UsuarioRq usuarioRq) {
+        return ResponseEntity.ok(usuarioService.guardarUsuario(usuarioRq));
+    }
+
+    // ================================
+    // ACTUALIZAR USUARIO
+    // ================================
+    @PutMapping("/{id}")
+    public ResponseEntity<RespuestaRs> actualizar(
+            @PathVariable Long id,
+            @RequestBody UsuarioRq usuarioRq
+    ) {
+        usuarioRq.setId(id);
+        return ResponseEntity.ok(usuarioService.actualizarUsuario(usuarioRq));
+    }
+
+    // ================================
+    // RECUPERACIÓN DE CONTRASEÑA
+    // ================================
+    @PostMapping("/recuperar-password")
+    public ResponseEntity<RespuestaRs> recuperarPassword(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        return ResponseEntity.ok(usuarioService.recuperarPassword(username));
     }
     
-    @Override
-    public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuario)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuario));
+    // ================================
+// LOGIN CON CONTROL DE INTENTOS
+// ================================
+@PostMapping("/login")
+public ResponseEntity<RespuestaRs> login(@RequestBody LoginRq request) {
+    try {
+        usuarioService.login(request.getUsername(), request.getPassword(), request.getIp());
+        return ResponseEntity.ok(new RespuestaRs(200, "Login exitoso"));
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(401).body(new RespuestaRs(401, e.getMessage()));
     }
-
-    @Override
-    public ResponseEntity<RespuestaRs> actualizarUsuario(UsuarioRq usuario) throws BadRequestException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+}
 
 }

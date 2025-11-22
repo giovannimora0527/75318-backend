@@ -10,18 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
-/**
- *
- * @author lmora
- */
 @Data
 @Entity
 @Table(name="usuario")
 public class Usuario implements Serializable {
     
-    /**
-     * Id serializable.
-     */
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -35,6 +28,15 @@ public class Usuario implements Serializable {
     @Column(name = "password_hash")
     private String password;
     
+    @Column(name = "email")
+    private String email;
+    
+    @Column(name = "temp_password_hash")
+    private String tempPasswordHash;  // NUEVO
+    
+    @Column(name = "temp_password_expira")
+    private LocalDateTime tempPasswordExpira; // NUEVO
+    
     @Column(name = "rol")
     private String rol;
     
@@ -44,4 +46,10 @@ public class Usuario implements Serializable {
     @Column(name = "activo")
     private boolean activo;
     
+    @Column(name = "intentos_fallidos")
+    private int intentosFallidos;
+
+    @Column(name = "bloqueado_hasta")
+    private LocalDateTime bloqueadoHasta;
+
 }

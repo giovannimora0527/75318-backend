@@ -1,27 +1,27 @@
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Usuario;
-import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
+import com.uniminuto.clinica.model.RespuestaRs;
+
 import java.util.List;
-import org.apache.coyote.BadRequestException;
 
-/**
- *
- * @author lmora
- */
 public interface UsuarioService {
-  List<Usuario> listarTodosLosUsuarios();
-  
-  List<Usuario> encontrarPorRol(String rol);
-  
-  Usuario encontrarPorNombre(String nombreUsuario) throws BadRequestException;
-  
-  List<Usuario> buscarPorEstado(Integer estado);
-  
-  RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) 
-            throws BadRequestException;
 
-  RespuestaRs actualizarUsuario(UsuarioRq usuario)
-            throws BadRequestException;
+    List<Usuario> listarTodosLosUsuarios();
+
+    List<Usuario> encontrarPorRol(String rol);
+
+    Usuario encontrarPorNombre(String nombreUsuario);
+
+    List<Usuario> buscarPorEstado(Integer estado);
+
+    RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo);
+
+    RespuestaRs actualizarUsuario(UsuarioRq usuarioRq);
+    
+    RespuestaRs recuperarPassword(String username);
+    
+    void login(String email, String password, String ip);
+
 }

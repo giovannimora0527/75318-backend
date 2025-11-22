@@ -1,14 +1,13 @@
 package com.uniminuto.clinica.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
-/**
- *
- * @author lmora
- */
 @Data
-public class RespuestaRs {    
-    private String mensaje;   
+@AllArgsConstructor
+@NoArgsConstructor
+public class RespuestaRs {
     private Integer status;
+    private String mensaje;
 }
