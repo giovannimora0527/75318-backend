@@ -93,18 +93,23 @@ public class UsuarioServiceImpl implements UsuarioService {
         return new RespuestaRs(200, "Usuario actualizado con éxito");
     }
 
-    @Override
-    public RespuestaRs recuperarPassword(String username) {
-        Usuario usuario = usuarioRepository.findByUsername(username.toLowerCase())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+@Override
+public RespuestaRs recuperarPassword(String username) {
+    if (username == null || username.trim().isEmpty()) {
+        throw new IllegalArgumentException("El username no puede estar vacío");
+    }
 
-        // Aquí podrías generar un password temporal
-        usuario.setTempPasswordHash(passwordEncoder.encode("temporal123")); // ✅ temporal seguro
+    // Solo dentro del ifPresent se declara 'usuario'
+    usuarioRepository.findByUsername(username.toLowerCase()).ifPresent(usuario -> {
+        usuario.setTempPasswordHash(passwordEncoder.encode("temporal123"));
         usuario.setTempPasswordExpira(LocalDateTime.now().plusHours(1));
         usuarioRepository.save(usuario);
+    });
 
-        return new RespuestaRs(200, "Se ha enviado un correo para restablecer la contraseña");
-    }
+    // Siempre devuelve el mismo mensaje
+    return new RespuestaRs(200, "Se ha enviado un correo para restablecer la contraseña");
+}
+
 
     @Override
 public void login(String username, String password, String ip) {
@@ -139,4 +144,3 @@ public void login(String username, String password, String ip) {
     log.info("Usuario {} ha iniciado sesión correctamente desde IP {}", username, ip);
 }
 }
-
