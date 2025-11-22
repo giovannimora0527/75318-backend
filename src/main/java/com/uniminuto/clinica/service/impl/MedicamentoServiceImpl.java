@@ -1,5 +1,6 @@
 package com.uniminuto.clinica.service.impl;
 
+import com.uniminuto.clinica.entity.Historia;
 import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.model.MedicamentoRq;
 import com.uniminuto.clinica.model.RespuestaRs;
@@ -87,6 +88,28 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         // Paso 7. Retorno la respuesta
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Medicamento actualizado exitosamente");
+        rta.setStatus(200);
+
+        return rta;
+    }
+
+    @Override
+    public RespuestaRs eliminarMedicamento(Integer idMedicamento) throws BadRequestException {
+
+        Optional<Medicamento> optMedicamento = medicamentoRepository.findById(idMedicamento);
+
+        if (optMedicamento.isEmpty()) {
+            throw new BadRequestException("El medicamento no existe, no se puede eliminar");
+        }
+
+        Medicamento medicamento = optMedicamento.get();
+
+        // Eliminamos el paciente
+        medicamentoRepository.delete(medicamento);
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Medicamento eliminado correctamente");
         rta.setStatus(200);
 
         return rta;

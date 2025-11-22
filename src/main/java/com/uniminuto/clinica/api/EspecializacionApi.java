@@ -2,12 +2,15 @@ package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Especializacion;
 import java.util.List;
+
+import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.EspecializacionRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  *
@@ -31,4 +34,24 @@ public interface EspecializacionApi {
     ResponseEntity<Especializacion> buscarPorCodigo(
       @RequestParam String codigo
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/guardar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> guardarEspecializacion(
+            @RequestBody @Valid EspecializacionRq especializacionRq
+    ) throws BadRequestException;
+
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarEspecializacion(
+            @RequestBody EspecializacionRq especializacionRq
+    ) throws BadRequestException;
+
+    @DeleteMapping("/eliminar/{id}")
+    ResponseEntity<RespuestaRs> eliminarEspecializacion(@PathVariable Integer idEspecializacion)
+            throws BadRequestException;;
 }

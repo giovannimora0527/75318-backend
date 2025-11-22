@@ -24,4 +24,7 @@ public interface RecetaService {
 
     RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException;
 
+    RespuestaRs eliminarReceta(Integer idReceta) throws BadRequestException;
+
+
 }

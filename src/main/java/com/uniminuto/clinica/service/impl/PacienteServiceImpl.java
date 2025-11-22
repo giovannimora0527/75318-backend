@@ -5,6 +5,7 @@ import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.repository.UsuarioRepository;
+import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.PacienteService;
 
 import java.util.List;
@@ -31,6 +32,9 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @Override
     public List<Paciente> encontrarTodosLosPacientes() {
@@ -71,7 +75,16 @@ public class PacienteServiceImpl implements PacienteService {
         }
 
         Paciente pacienteGuardar = this.convertToRqToEntidad(pacienteRq, optEsp.get());
-        this.pacienteRepository.save(pacienteGuardar);
+        pacienteGuardar = this.pacienteRepository.save(pacienteGuardar);
+        // Registrar auditoria
+        auditoriaService.registrarAuditoria(
+                "paciente",
+                pacienteGuardar.getId(),
+                "INSERT",
+                null,
+                pacienteGuardar,
+                "Registro de paciente creado"
+        );
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Paciente guardado exitosamente");
         rta.setStatus(200);
@@ -95,43 +108,94 @@ public class PacienteServiceImpl implements PacienteService {
     @Override
     public RespuestaRs actualizarPaciente(PacienteRq pacienteRq)
             throws BadRequestException {
-        // Paso 1. Consultar si el campo id existe y viene en el request
+
         if (pacienteRq.getId() == null) {
             throw new BadRequestException("El id del paciente es obligatorio");
         }
-        // Paso 2. Consultar si el medicamento existe por id
-        Optional<Paciente> optPaciente = pacienteRepository
-                .findById(pacienteRq.getId());
-        // Paso 3. Si no existe lanzo error
-        if (!optPaciente.isPresent()) {
-            throw new BadRequestException("El paciente no existe y no se puede actualizar");
+
+        // 1. Buscar el paciente actual
+        Optional<Paciente> optPaciente = pacienteRepository.findById(pacienteRq.getId());
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente no existe para actualizar");
         }
-        // Paso 4. Si existe voy y valido que el atributo nombre cambie y si cambia lo consulto por nombre
+
         Paciente pacienteActual = optPaciente.get();
-        if (!pacienteActual.getNombres()
-                .toLowerCase().equals(pacienteRq.getNombres().toLowerCase())) {
-            Optional<Paciente> optPacientePorNombre = pacienteRepository
-                    .findByNombres(pacienteRq.getNombres());
-            // Paso 5. Si existe por nombre lanzo error
-            if (optPacientePorNombre.isPresent()) {
-                throw new BadRequestException("El nombre del paciente ya existe");
-            }
+
+        // Guardamos valores ANTES para auditoría
+        String valoresAntes = pacienteActual.toString();
+
+        // 3. Obtener usuario (por el ID que viene en el DTO)
+        Optional<Usuario> optEsp = usuarioRepository.findById(pacienteRq.getUsuario());
+        if (optEsp.isEmpty()) {
+            throw new BadRequestException("El usuario no existe");
         }
+        Usuario usuario = optEsp.get();
 
-        // Paso 6. Si no existe por nombre, actualizo los datos del medicamento
-        pacienteActual.setTipoDocumento(pacienteRq.getTipoDocumento() == null ? pacienteActual.getTipoDocumento() : pacienteRq.getTipoDocumento());
-        pacienteActual.setNumeroDocumento(pacienteRq.getNumeroDocumento() == null ? pacienteActual.getNumeroDocumento() : pacienteRq.getNumeroDocumento());
-        pacienteActual.setNombres(pacienteRq.getNombres() == null ? pacienteActual.getNombres() : pacienteRq.getNombres());
-        pacienteActual.setApellidos(pacienteRq.getApellidos() == null ? pacienteActual.getApellidos() : pacienteRq.getApellidos());
-        pacienteActual.setTelefono(pacienteRq.getTelefono() == null ? pacienteActual.getTelefono() : pacienteRq.getTelefono());
-        pacienteActual.setGenero(pacienteRq.getGenero() == null ? pacienteActual.getGenero() : pacienteRq.getGenero());
-        pacienteActual.setFechaNacimiento(pacienteRq.getFechaNacimiento() == null ? pacienteActual.getFechaNacimiento() : pacienteRq.getFechaNacimiento());
-        pacienteActual.setDireccion(pacienteRq.getDireccion() == null ? pacienteActual.getDireccion() : pacienteRq.getDireccion());
+        // 4. Actualizar datos
+        pacienteActual.setTipoDocumento(pacienteRq.getTipoDocumento());
+        pacienteActual.setNumeroDocumento(pacienteRq.getNumeroDocumento());
+        pacienteActual.setNombres(pacienteRq.getNombres());
+        pacienteActual.setApellidos(pacienteRq.getApellidos());
+        pacienteActual.setTelefono(pacienteRq.getTelefono());
+        pacienteActual.setGenero(pacienteRq.getGenero());
+        pacienteActual.setFechaNacimiento(pacienteRq.getFechaNacimiento());
+        pacienteActual.setDireccion(pacienteRq.getDireccion());
+        pacienteActual.setUsuario(usuario);
 
-        this.pacienteRepository.save(pacienteActual);
-        // Paso 7. Retorno la respuesta
+        // 5. Guardar
+        Paciente actualizado = pacienteRepository.save(pacienteActual);
+
+        // Valores después de actualización
+        String valoresDespues = actualizado.toString();
+
+        // 6. Registrar Auditoría
+        auditoriaService.registrarAuditoria(
+                "paciente",
+                actualizado.getId(),
+                "UPDATE",
+                valoresAntes,
+                valoresDespues,
+                "Paciente actualizado"
+        );
+
+        // Respuesta
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Paciente actualizado exitosamente");
+        rta.setStatus(200);
+
+        return rta;
+    }
+
+    @Override
+    public RespuestaRs eliminarPaciente(Integer idPaciente) throws BadRequestException {
+
+        Optional<Paciente> optPaciente = pacienteRepository.findById(idPaciente);
+
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente no existe, no se puede eliminar");
+        }
+
+        Paciente paciente = optPaciente.get();
+
+        // Guardamos valores ANTES para auditoría
+        String valoresAntes = paciente.toString();
+
+        // Eliminamos el paciente
+        pacienteRepository.delete(paciente);
+
+        // Auditoría
+        auditoriaService.registrarAuditoria(
+                "paciente",
+                paciente.getId(),
+                "DELETE",
+                valoresAntes,
+                null,
+                "Paciente eliminado"
+        );
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Paciente eliminado correctamente");
         rta.setStatus(200);
 
         return rta;

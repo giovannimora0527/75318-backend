@@ -27,7 +27,7 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
     
     @Column(name = "username")
     private String username;
@@ -43,5 +43,12 @@ public class Usuario implements Serializable {
     
     @Column(name = "activo")
     private boolean activo;
-    
+
+    @Column(name = "email")
+    private String email;
+
+    private Integer intentosFallidos = 0;
+
+    private LocalDateTime bloqueadoHasta;
+
 }

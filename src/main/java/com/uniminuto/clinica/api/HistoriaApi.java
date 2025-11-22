@@ -35,4 +35,8 @@ public interface HistoriaApi {
     ResponseEntity<RespuestaRs> actualizarHistoria(
             @RequestBody HistoriaRq historia
     ) throws BadRequestException;
+
+    @DeleteMapping("/eliminar/{id}")
+    ResponseEntity<RespuestaRs> eliminarHistoria(@PathVariable Integer idHistoria)
+            throws BadRequestException;;
 }

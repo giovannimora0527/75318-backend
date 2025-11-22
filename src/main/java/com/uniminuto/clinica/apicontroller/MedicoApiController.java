@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.uniminuto.clinica.security.RoleChecker.checkRole;
+
 /**
  *
  * @author lmora
@@ -23,26 +25,34 @@ public class MedicoApiController implements MedicoApi {
 
     @Override
     public ResponseEntity<List<Medico>> listarMedicos() {
+        checkRole();
         return ResponseEntity.ok(this.medicoService.listarMedicos());
     }
 
     @Override
     public ResponseEntity<List<Medico>>
-            listarMedicosporEspecialidad(String codigo)
+    listarMedicosporEspecialidad(String codigo)
             throws BadRequestException {
+        checkRole();
         return ResponseEntity.ok(this.medicoService
                 .buscarPorEspecialidad(codigo));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarMedico(MedicoRq medicoRq) throws BadRequestException {
+        checkRole("ADMINISTRADOR");
         return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarMedico(MedicoRq medicoRq) throws BadRequestException {
+        checkRole("ADMINISTRADOR");
         return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
     }
 
-
+    @Override
+    public ResponseEntity<RespuestaRs> eliminarMedico(Integer idMedico) throws BadRequestException {
+        checkRole("ADMINISTRADOR");
+        return ResponseEntity.ok(this.medicoService.eliminarMedico(idMedico));
+    }
 }

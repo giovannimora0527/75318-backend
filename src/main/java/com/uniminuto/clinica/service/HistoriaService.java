@@ -17,4 +17,7 @@ public interface HistoriaService {
     RespuestaRs guardarHistoria(HistoriaRq historiaRq) throws BadRequestException;
 
     RespuestaRs actualizarHistoria(HistoriaRq historiaRq) throws BadRequestException;
+
+    RespuestaRs eliminarHistoria(Integer idHistoria) throws BadRequestException;
+
 }

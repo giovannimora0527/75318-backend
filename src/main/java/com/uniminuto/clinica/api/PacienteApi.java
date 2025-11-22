@@ -66,4 +66,8 @@ public interface PacienteApi {
     ResponseEntity<RespuestaRs> actualizarPaciente(
             @RequestBody PacienteRq pacienteRq
     ) throws BadRequestException;
+
+    @DeleteMapping("/eliminar/{id}")
+    ResponseEntity<RespuestaRs> eliminarPaciente(@PathVariable Integer idPaciente)
+    throws BadRequestException;;
 }

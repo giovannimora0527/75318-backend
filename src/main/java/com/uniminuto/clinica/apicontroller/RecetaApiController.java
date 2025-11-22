@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.uniminuto.clinica.security.RoleChecker.checkRole;
+
 @RestController
 public class RecetaApiController implements RecetaApi {
 
@@ -26,16 +28,25 @@ public class RecetaApiController implements RecetaApi {
 
     @Override
     public ResponseEntity<List<Receta>> listarRecetas() {
+        checkRole();
         return ResponseEntity.ok(this.recetaService.listarTodasLasRecetas());
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarReceta(@RequestBody @Valid RecetaRq recetaRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(this.recetaService.guardarReceta(recetaRq));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(recetaService.actualizarReceta(recetaRq));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> eliminarReceta(Integer idReceta) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
+        return ResponseEntity.ok(this.recetaService.eliminarReceta(idReceta));
     }
 }

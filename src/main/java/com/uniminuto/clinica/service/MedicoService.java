@@ -22,4 +22,6 @@ public interface MedicoService {
 
 
     RespuestaRs actualizarMedico(MedicoRq medicoRq) throws BadRequestException;
+
+    RespuestaRs eliminarMedico(Integer idMedico) throws BadRequestException;
 }

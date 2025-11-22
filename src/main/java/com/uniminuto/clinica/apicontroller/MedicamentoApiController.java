@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.uniminuto.clinica.security.RoleChecker.checkRole;
+
 @RestController
 public class MedicamentoApiController implements MedicamentoApi {
 
@@ -20,16 +22,25 @@ public class MedicamentoApiController implements MedicamentoApi {
 
     @Override
     public ResponseEntity<List<Medicamento>> listarMedicamentos() {
+        checkRole();
         return ResponseEntity.ok(this.medicamentoService.listarMedicamentos());
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(medicamentoService.guardarMedicamento(medicamentoRq));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(medicamentoService.actualizarMedicamento(medicamentoRq));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> eliminarMedicamento(Integer idMedicamento) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
+        return ResponseEntity.ok(this.medicamentoService.eliminarMedicamento(idMedicamento));
     }
 }

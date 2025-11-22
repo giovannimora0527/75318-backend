@@ -2,14 +2,10 @@ package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.CitaRq;
-import com.uniminuto.clinica.model.MedicamentoRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,4 +45,8 @@ public interface CitaApi {
     ResponseEntity<RespuestaRs> actualizarCita(
             @RequestBody CitaRq citaRq
     ) throws BadRequestException;
+
+    @DeleteMapping("/eliminar/{id}")
+    ResponseEntity<RespuestaRs> eliminarCita(@PathVariable Integer idCita)
+            throws BadRequestException;;
 }

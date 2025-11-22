@@ -113,4 +113,27 @@ public class RecetaServiceImpl implements RecetaService {
 
         return rta;
     }
+
+    @Override
+    public RespuestaRs eliminarReceta(Integer idReceta) throws BadRequestException {
+
+        Optional<Receta> optReceta = recetaRepository.findById(idReceta);
+
+        if (optReceta.isEmpty()) {
+            throw new BadRequestException("El receta no existe, no se puede eliminar");
+        }
+
+        Receta receta = optReceta.get();
+
+        // Eliminamos el paciente
+        recetaRepository.delete(receta);
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Receta eliminado correctamente");
+        rta.setStatus(200);
+
+        return rta;
+    }
+
 }

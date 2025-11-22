@@ -22,4 +22,11 @@ public interface UsuarioService {
   RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
 
   RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
+
+    RespuestaRs eliminarUsuario(Long idUsuario) throws BadRequestException;
+
+    Usuario getUsuarioLogeado();
+
+    Usuario login(String nombreUsuario, String password);
+
 }

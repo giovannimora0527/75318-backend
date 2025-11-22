@@ -118,5 +118,27 @@ public class CitaServiceImpl implements CitaService {
         return rta;
     }
 
+    @Override
+    public RespuestaRs eliminarCita(Integer idCita) throws BadRequestException {
+
+        Optional<Cita> optCita = citaRepository.findById(idCita);
+
+        if (optCita.isEmpty()) {
+            throw new BadRequestException("La cita no existe, no se puede eliminar");
+        }
+
+        Cita cita = optCita.get();
+
+        // Eliminamos el paciente
+        citaRepository.delete(cita);
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Cita eliminado correctamente");
+        rta.setStatus(200);
+
+        return rta;
     }
+
+}
 

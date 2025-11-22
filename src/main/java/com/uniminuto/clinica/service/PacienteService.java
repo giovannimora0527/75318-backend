@@ -25,4 +25,6 @@ public interface PacienteService {
     RespuestaRs guardarPaciente(PacienteRq pacienteRq) throws BadRequestException;
 
     RespuestaRs actualizarPaciente(PacienteRq pacienteRq) throws BadRequestException;
+
+    RespuestaRs eliminarPaciente(Integer idPaciente) throws BadRequestException;
 }

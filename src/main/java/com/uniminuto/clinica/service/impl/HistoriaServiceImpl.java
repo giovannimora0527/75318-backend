@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HistoriaServiceImpl implements HistoriaService {
@@ -83,6 +84,28 @@ public class HistoriaServiceImpl implements HistoriaService {
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("La historia se ha actualizado correctamente.");
         rta.setStatus(200);
+        return rta;
+    }
+
+    @Override
+    public RespuestaRs eliminarHistoria(Integer idHistoria) throws BadRequestException {
+
+        Optional<Historia> optHistoria = historiaRepository.findById(idHistoria);
+
+        if (optHistoria.isEmpty()) {
+            throw new BadRequestException("La historia medica no existe, no se puede eliminar");
+        }
+
+        Historia historia = optHistoria.get();
+
+        // Eliminamos el paciente
+        historiaRepository.delete(historia);
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Historia clinica eliminado correctamente");
+        rta.setStatus(200);
+
         return rta;
     }
 }

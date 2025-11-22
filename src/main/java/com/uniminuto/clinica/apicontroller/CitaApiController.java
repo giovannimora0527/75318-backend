@@ -3,7 +3,6 @@ package com.uniminuto.clinica.apicontroller;
 import com.uniminuto.clinica.api.CitaApi;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.CitaRq;
-import com.uniminuto.clinica.model.MedicamentoRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.CitaService;
 import org.apache.coyote.BadRequestException;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.uniminuto.clinica.security.RoleChecker.checkRole;
+
 @RestController
 public class CitaApiController implements CitaApi {
 
@@ -25,17 +26,26 @@ public class CitaApiController implements CitaApi {
     private CitaService citaService;
 
     @Override
-    public ResponseEntity<List<Cita>> listarCitas() {
+    public ResponseEntity<List<Cita>> listarCitas()
+    {        checkRole();
         return ResponseEntity.ok(this.citaService.listarCitas());
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarCita(@RequestBody @Valid CitaRq citaRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(this.citaService.guardarCita(citaRq));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarCita(CitaRq citaRq) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(citaService.actualizarCita(citaRq));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> eliminarCita(Integer idCita) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
+        return ResponseEntity.ok(this.citaService.eliminarCita(idCita));
     }
 }

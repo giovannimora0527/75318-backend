@@ -1,19 +1,13 @@
 package com.uniminuto.clinica.service.impl;
 
-import com.uniminuto.clinica.entity.Especializacion;
-import com.uniminuto.clinica.entity.Medicamento;
-import com.uniminuto.clinica.entity.Medico;
-import com.uniminuto.clinica.entity.Usuario;
-import com.uniminuto.clinica.model.MedicamentoRq;
-import com.uniminuto.clinica.model.MedicoRq;
-import com.uniminuto.clinica.model.RespuestaRs;
-import com.uniminuto.clinica.model.UsuarioRq;
+import com.uniminuto.clinica.entity.*;
+import com.uniminuto.clinica.model.*;
 import com.uniminuto.clinica.repository.EspecializacionRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
+import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +31,9 @@ public class MedicoServiceImpl implements MedicoService {
 
     @Autowired
     private EspecializacionRepository especializacionRepository;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @Override
     public List<Medico> listarMedicos() {
@@ -72,8 +69,16 @@ public class MedicoServiceImpl implements MedicoService {
         }
 
         Medico medicoGuardar = this.convertToRqToEntidad(medicoRq, optEsp.get());
-        this.medicoRepository.save(medicoGuardar);
-        RespuestaRs rta = new RespuestaRs();
+        medicoGuardar = this.medicoRepository.save(medicoGuardar);
+        // Registrar auditoria
+        auditoriaService.registrarAuditoria(
+                "medico",
+                medicoGuardar.getId(),
+                "INSERT",
+                null,
+                medicoGuardar,
+                "Registro de medico creado"
+        );        RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Médico guardado exitosamente");
         rta.setStatus(200);
         return rta;
@@ -91,43 +96,100 @@ public class MedicoServiceImpl implements MedicoService {
         return medico;
     }
 
+
+    @Override
     public RespuestaRs actualizarMedico(MedicoRq medicoRq)
             throws BadRequestException {
-        // Paso 1. Consultar si el campo id existe y viene en el request
+
         if (medicoRq.getId() == null) {
             throw new BadRequestException("El id del medico es obligatorio");
         }
-        // Paso 2. Consultar si el medicamento existe por id
-        Optional<Medico> optMedico = medicoRepository
-                .findById(medicoRq.getId());
-        // Paso 3. Si no existe lanzo error
-        if (!optMedico.isPresent()) {
-            throw new BadRequestException("El medico no existe y no se puede actualizar");
-        }
-        // Paso 4. Si existe voy y valido que el atributo nombre cambie y si cambia lo consulto por nombre
-        Medico medicoActual = optMedico.get();
-        if (!medicoActual.getNombres()
-                .toLowerCase().equals(medicoRq.getNombres().toLowerCase())) {
-            Optional<Medico> optMedicoPorNombre = medicoRepository
-                    .findByNombres(medicoRq.getNombres());
-            // Paso 5. Si existe por nombre lanzo error
-            if (optMedicoPorNombre.isPresent()) {
-                throw new BadRequestException("El nombre del medico ya existe");
-            }
+
+        // 1. Buscar el paciente actual
+        Optional<Medico> optMedico = medicoRepository.findById(medicoRq.getId());
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("El medico no existe para actualizar");
         }
 
-        // Paso 6. Si no existe por nombre, actualizo los datos del medicamento
-        medicoActual.setNombres(medicoRq.getNombres() == null ? medicoActual.getNombres() : medicoRq.getNombres());
-        medicoActual.setApellidos(medicoRq.getApellidos() == null ? medicoRq.getApellidos() : medicoRq.getApellidos());
-        medicoActual.setTipoDocumento(medicoRq.getTipoDocumento() == null ? medicoRq.getTipoDocumento() : medicoRq.getTipoDocumento());
-        medicoActual.setTelefono(medicoRq.getTelefono() == null ? medicoRq.getTelefono() : medicoRq.getTelefono());
-        medicoActual.setRegistroProfesional(medicoRq.getRegistroProfesional() == null ? medicoRq.getRegistroProfesional() : medicoRq.getTipoDocumento());
-        this.medicoRepository.save(medicoActual);
-        // Paso 7. Retorno la respuesta
+        Medico medicoActual = optMedico.get();
+
+        // Guardamos valores ANTES para auditoría
+        String valoresAntes = medicoActual.toString();
+
+        Optional<Especializacion> optEsp = especializacionRepository.findById(medicoRq.getEspecializacion());
+        if (optEsp.isEmpty()) {
+            throw new BadRequestException("La especializacion no existe");
+        }
+        Especializacion especializacion = optEsp.get();
+
+        // 4. Actualizar datos
+        medicoActual.setNombres(medicoRq.getNombres());
+        medicoActual.setApellidos(medicoRq.getApellidos());
+        medicoActual.setTipoDocumento(medicoRq.getTipoDocumento());
+        medicoActual.setTipoDocumento(medicoRq.getTipoDocumento());
+        medicoActual.setDocumento(medicoRq.getDocumento());
+        medicoActual.setEspecializacion(especializacion);
+        medicoActual.setTelefono(medicoRq.getTelefono());
+        medicoActual.setRegistroProfesional(medicoRq.getRegistroProfesional());
+
+
+        // 5. Guardar
+        Medico actualizado = medicoRepository.save(medicoActual);
+
+        // Valores después de actualización
+        String valoresDespues = actualizado.toString();
+
+        // 6. Registrar Auditoría
+        auditoriaService.registrarAuditoria(
+                "medico",
+                actualizado.getId(),
+                "UPDATE",
+                valoresAntes,
+                valoresDespues,
+                "Medico actualizado"
+        );
+
+        // Respuesta
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Medico actualizado exitosamente");
         rta.setStatus(200);
 
         return rta;
     }
+
+    @Override
+    public RespuestaRs eliminarMedico(Integer idMedico) throws BadRequestException {
+
+        Optional<Medico> optMedico = medicoRepository.findById(idMedico);
+
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("El medico no existe, no se puede eliminar");
+        }
+
+        Medico medico = optMedico.get();
+
+        // Guardamos valores ANTES para auditoría
+        String valoresAntes = medico.toString();
+
+        // Eliminamos el paciente
+        medicoRepository.delete(medico);
+
+        // Auditoría
+        auditoriaService.registrarAuditoria(
+                "medico",
+                medico.getId(),
+                "DELETE",
+                valoresAntes,
+                null,
+                "Medico eliminado"
+        );
+
+        // Respuesta
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Medico eliminado correctamente");
+        rta.setStatus(200);
+
+        return rta;
+    }
+
 }

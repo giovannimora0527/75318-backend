@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.uniminuto.clinica.security.RoleChecker.checkRole;
+
 @RestController
 public class HistoriaApiController implements HistoriaApi {
 
@@ -21,18 +23,27 @@ public class HistoriaApiController implements HistoriaApi {
 
     @Override
     public ResponseEntity<List<Historia>> listarHistorias() {
+        checkRole();
         return ResponseEntity.ok(this.historiaService.listarTodasLasHistorias());
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarHistoria(HistoriaRq historiaNuevo)
             throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(this.historiaService.guardarHistoria(historiaNuevo));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarHistoria(HistoriaRq historia)
             throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
         return ResponseEntity.ok(this.historiaService.actualizarHistoria(historia));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> eliminarHistoria(Integer idHistoria) throws BadRequestException {
+        checkRole("MEDICO","ADMINISTRADOR");
+        return ResponseEntity.ok(this.historiaService.eliminarHistoria(idHistoria));
     }
 }

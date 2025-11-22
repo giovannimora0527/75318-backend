@@ -20,4 +20,6 @@ public interface CitaService {
 
     RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException;
 
+    RespuestaRs eliminarCita(Integer idCita) throws BadRequestException;
+
 }
