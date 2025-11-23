@@ -10,43 +10,31 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
-/**
- *
- * @author lmora
- */
 @Data
 @Entity
-@Table(name="usuario")
-public class Usuario implements Serializable {
-    
-    /**
-     * Id serializable.
-     */
-    private static final long serialVersionUID = 1L;
+@Table(name = "usuario")
+public class ActualizaciondeUsuario implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
     
-    @Column(name = "email")
+    @Column(name = "email", unique = true, length = 100)
     private String email;
     
-    @Column(name = "password_hash")
-    private String password;
+    @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")
+    private String passwordHash;
     
-    @Column(name = "rol")
+    @Column(name = "rol", nullable = false, length = 30)
     private String rol;
     
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
     
-    @Column(name = "activo")
-    private boolean activo;
-
-    
-    
+    @Column(name = "activo", nullable = false)
+    private Boolean activo;
 }

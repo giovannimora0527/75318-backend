@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EspecializacionApiController implements EspecializacionApi {
     
     @Autowired
-    private EspecializacionService servicio;
+    private EspecializacionService servicio; // Inyección de dependencia
 
     @Override
     public ResponseEntity<List<Especializacion>> listarEspecializaciones() {
@@ -31,4 +31,15 @@ public class EspecializacionApiController implements EspecializacionApi {
                 .buscarEspecializacionPorCod(codigo));
     }
     
+    @Override
+    public ResponseEntity<Especializacion> GuardarEspecializacion(Especializacion especializacion) throws BadRequestException {
+        return ResponseEntity.ok(this.servicio.GuardarEspecializacion(especializacion));
+    }
+
+    @Override
+    public ResponseEntity<Void> eliminarEspecializacion(Long id) throws BadRequestException {
+        this.servicio.eliminarEspecializacion(id); 
+        return ResponseEntity.noContent().build();
+    }
+
 }
