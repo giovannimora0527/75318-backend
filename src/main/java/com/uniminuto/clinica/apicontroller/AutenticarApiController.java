@@ -25,8 +25,18 @@ public class AutenticarApiController implements AutenticarApi {
 
 
     @Override
-    public ResponseEntity<AutenticatorRs> autenticar(AuthenticatorRq request) throws BadRequestException {
-        return ResponseEntity.ok(this.autenticarService.autenticar(request));
+    public ResponseEntity<AutenticatorRs> autenticar(AuthenticatorRq request, HttpServletRequest httpRequest) throws BadRequestException {
+        try {
+            String ipAddress = obtenerIpCliente(httpRequest); // ← IP normalizada
+            String userAgent = httpRequest.getHeader("User-Agent");
+
+            // Llamar al servicio con IP y User-Agent
+            AutenticatorRs response = autenticarService.autenticar(request, ipAddress, userAgent);
+            return ResponseEntity.ok(response);
+        } catch (BadRequestException e) {
+            log.error("Error en autenticación desde IP {}: {}", obtenerIpCliente(httpRequest), e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @Override
@@ -62,6 +72,31 @@ public class AutenticarApiController implements AutenticarApi {
     }
 
     /**
+     * Convierte IPs IPv6 de loopback a su equivalente IPv4.
+     *
+     * @param ip Dirección IP original
+     * @return IP normalizada (127.0.0.1 para localhost)
+     */
+    private String normalizarIp(String ip) {
+        if (ip == null || ip.isEmpty()) {
+            return "0.0.0.0";
+        }
+
+        // Caso IPv6 de loopback
+        if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
+            return "127.0.0.1";
+        }
+
+        // Caso IPv4 ya normal
+        if (ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
+            return ip;
+        }
+
+        // Para otros casos (IPv6 públicas, etc.), devolver tal cual
+        return ip;
+    }
+
+    /**
      * Obtiene la dirección IP real del cliente, considerando proxies y balanceadores.
      */
     private String obtenerIpCliente(HttpServletRequest request) {
@@ -85,11 +120,11 @@ public class AutenticarApiController implements AutenticarApi {
                 if (ipAddress.contains(",")) {
                     ipAddress = ipAddress.split(",")[0].trim();
                 }
-                return ipAddress;
+                return normalizarIp(ipAddress);
             }
         }
 
-        return request.getRemoteAddr();
+        return normalizarIp(request.getRemoteAddr());
     }
 }
 

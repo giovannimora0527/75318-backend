@@ -60,77 +60,87 @@ public class AutenticarServiceImpl implements AutenticarService {
 
     @Override
     @Transactional
-    public AutenticatorRs autenticar(AuthenticatorRq request)
+    public AutenticatorRs autenticar(AuthenticatorRq request, String ipAddress, String userAgent)
             throws BadRequestException {
+        // Validar parámetros
+        String username = request.getUsername() != null ? request.getUsername().trim() : "";
+        String password = request.getPassword() != null ? request.getPassword().trim() : "";
 
-        // NUEVA VALIDACIÓN: Verificar si el usuario está bloqueado
-        if (loginAttemptService.estaBloqueado(request.getUsername())) {
-            String tiempoRestante = loginAttemptService.obtenerTiempoRestanteBloqueo(request.getUsername());
-            log.warn("🔒 Intento de login con usuario bloqueado: {}, Tiempo restante: {}", 
-                    request.getUsername(), tiempoRestante);
+        if (username.isEmpty() || password.isEmpty()) {
+            log.warn("Intento de login con credenciales vacías desde IP: {}", ipAddress);
+            throw new BadRequestException("Usuario o contraseña incorrectos");
+        }
+
+        // Verificar si el usuario está bloqueado
+        if (loginAttemptService.estaBloqueado(username)) {
+            String tiempoRestante = loginAttemptService.obtenerTiempoRestanteBloqueo(username);
+            log.warn("🔒 Intento de login con usuario bloqueado: {}, IP: {}, Tiempo restante: {}",
+                    username, ipAddress, tiempoRestante);
+            auditoriaService.registrarEvento(
+                    username,
+                    "INTENTO_LOGIN_BLOQUEADO",
+                    false,
+                    "Usuario bloqueado: " + tiempoRestante,
+                    ipAddress,
+                    userAgent
+            );
             throw new BadRequestException("Cuenta temporalmente bloqueada. Intente nuevamente en " + tiempoRestante);
         }
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(request.getUsername());
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(username);
         if (usuarioOpt.isEmpty()) {
-            // REGISTRAR INTENTO FALLIDO (NUEVO)
-            loginAttemptService.registrarIntentoFallido(request.getUsername(), "N/A", "Sistema");
+            loginAttemptService.registrarIntentoFallido(username, ipAddress, userAgent);
+            auditoriaService.registrarEvento(
+                    username,
+                    AuditoriaServiceImpl.MOTIVO_LOGIN_FALLIDO,
+                    false,
+                    "Usuario no encontrado",
+                    ipAddress,
+                    userAgent
+            );
             throw new BadRequestException("Usuario o contraseña incorrectos");
         }
-        
-        Usuario usuario = usuarioOpt.get();
 
-        // Verificar si el usuario está activo
+        Usuario usuario = usuarioOpt.get();
         if (!usuario.isActivo()) {
-            log.warn("Intento de login con usuario inactivo: {}", request.getUsername());
+            log.warn("Intento de login con usuario inactivo: {}, IP: {}", username, ipAddress);
             throw new BadRequestException("Usuario inactivo");
         }
 
-        // DEBUG: Mostrar información de depuración (opcional, puedes comentarlo después de pruebas)
-        System.out.println("=== DEBUG AUTENTICACIÓN ===");
-        System.out.println("Usuario recibido: [" + request.getUsername() + "]");
-        System.out.println("Contraseña recibida: [" + request.getPassword() + "]");
-        System.out.println("Longitud de la contraseña: " + (request.getPassword() != null ? request.getPassword().length() : "null"));
-        System.out.println("Hash en BD: " + usuario.getPassword());
-        System.out.println("Hash de la entrada: " + this.cifrarService.encriptarPassword(request.getPassword()));
-        System.out.println("============================");
+        // Validar contraseña
+        boolean passwordOk = usuario.getPassword().equals(cifrarService.encriptarPassword(password));
 
-        boolean passwordOk;
-        if (passwordEncoder != null) {
-            passwordOk = passwordEncoder.matches(request.getPassword(), usuario.getPassword());
-        } else {
-            passwordOk = usuario.getPassword().equals(this.cifrarService.encriptarPassword(request.getPassword()));
-        }
-        
         if (!passwordOk) {
-            // REGISTRAR INTENTO FALLIDO (NUEVO)
-            loginAttemptService.registrarIntentoFallido(request.getUsername(), "N/A", "Sistema");
+            loginAttemptService.registrarIntentoFallido(username, ipAddress, userAgent);
+            auditoriaService.registrarEvento(
+                    username,
+                    AuditoriaServiceImpl.MOTIVO_LOGIN_FALLIDO,
+                    false,
+                    "Credenciales inválidas",
+                    ipAddress,
+                    userAgent
+            );
             throw new BadRequestException("Usuario o contraseña incorrectos");
         }
 
-        // LOGIN EXITOSO - RESETEAR INTENTOS FALLIDOS (NUEVO)
-        loginAttemptService.resetearIntentosFallidos(request.getUsername());
-        
-        // Registrar auditoría de login exitoso
+        // Login exitoso
+        loginAttemptService.resetearIntentosFallidos(username);
         auditoriaService.registrarEvento(
-                request.getUsername(),
+                username,
                 AuditoriaServiceImpl.MOTIVO_LOGIN_EXITOSO,
                 true,
                 null,
-                "N/A",
-                "Sistema"
+                ipAddress,
+                userAgent
         );
 
-        // Generar y devolver un JWT
+        // Generar JWT y sesión
         AutenticatorRs rta = new AutenticatorRs();
         String token = jwtUtil.generateToken(usuario);
         rta.setToken(token);
-
-        // Crear la sesión del usuario autenticado
         crearSesionUsuario(usuario, token);
-        
-        log.info("✅ Login exitoso - Usuario: {}", request.getUsername());
-        
+
+        log.info("✅ Login exitoso - Usuario: {}, IP: {}", username, ipAddress);
         return rta;
     }
 

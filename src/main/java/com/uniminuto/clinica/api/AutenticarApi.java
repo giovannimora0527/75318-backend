@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/auth")
 public interface AutenticarApi {
     @PostMapping("/login")
-    ResponseEntity<AutenticatorRs> autenticar(@Valid @RequestBody AuthenticatorRq request) throws BadRequestException;
+    ResponseEntity<AutenticatorRs> autenticar(@Valid @RequestBody AuthenticatorRq request,
+                                              HttpServletRequest httpRequest) throws BadRequestException;
 
 
     @PostMapping("/recuperar-password")

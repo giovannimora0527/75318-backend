@@ -10,7 +10,12 @@ import javax.mail.MessagingException;
 
 public interface AutenticarService {
 
-    AutenticatorRs autenticar(AuthenticatorRq request) throws BadRequestException;
+    // ✅ CORREGIDO: Firma limpia y válida
+    AutenticatorRs autenticar(
+            AuthenticatorRq request,
+            String ipAddress,
+            String userAgent
+    ) throws BadRequestException;
 
     RespuestaRs recuperarPassword(
             RecuperarPasswordRq request,
