@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
- * @author lmora
+ * Servicio corregido para permitir actualización parcial (sin obligar password)
  */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -35,67 +34,75 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario encontrarPorNombre(String nombreUsuario)
-            throws BadRequestException {
-        Optional<Usuario> optUser = this.usuarioRepository
-                .findByUsername(nombreUsuario);
+    public Usuario encontrarPorNombre(String nombreUsuario) throws BadRequestException {
+        Optional<Usuario> optUser = this.usuarioRepository.findByUsername(nombreUsuario);
         if (!optUser.isPresent()) {
             throw new BadRequestException("No existe el usuario");
         }
-
         return optUser.get();
     }
 
     @Override
     public List<Usuario> buscarPorEstado(Integer estado) {
-        boolean activo = estado == 1 ? true : false;
+        boolean activo = estado == 1;
         return this.usuarioRepository.findByActivo(activo);
     }
 
     @Override
-    public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo)
-            throws BadRequestException {
-        // Paso 1. Validar que los campos llegue bien
-        this.validarCampos(usuarioNuevo);
-        // Paso 2. Consulto si existe el usuario por username
+    public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException {
+        
+        // 1. Validamos solo username y rol (Quitamos la validación de pass de aquí)
+        this.validarCamposBasicos(usuarioNuevo);
+        
         Optional<Usuario> optUser = this.usuarioRepository
                 .findByUsername(usuarioNuevo.getUsername().toLowerCase());
+        
+        Usuario usuarioAGuardar;
+        String mensaje;
+
         if (optUser.isPresent()) {
-            // Paso 3. Si existe lanzo error que ya existe el usuario
-            throw new BadRequestException("El usuario ya existe.");
+            // ===================== MODO EDICIÓN =====================
+            usuarioAGuardar = optUser.get();
+            mensaje = "Usuario actualizado correctamente.";
+
+            // LÓGICA INTELIGENTE: Solo cambiamos la contraseña si el usuario escribió algo nuevo.
+            // Si viene null o vacía, NO la tocamos (mantenemos la vieja).
+            if (usuarioNuevo.getPass() != null && !usuarioNuevo.getPass().trim().isEmpty()) {
+                usuarioAGuardar.setPassword(this.encriptarPassword(usuarioNuevo.getPass()));
+            }
+            
+        } else {
+            // ===================== MODO CREACIÓN =====================
+            // Aquí SÍ es obligatoria la contraseña
+            if (usuarioNuevo.getPass() == null || usuarioNuevo.getPass().trim().isEmpty()) {
+                throw new BadRequestException("El campo pass es obligatorio para usuarios nuevos.");
+            }
+
+            usuarioAGuardar = new Usuario();
+            usuarioAGuardar.setActivo(true);
+            usuarioAGuardar.setFechaCreacion(LocalDateTime.now());
+            usuarioAGuardar.setPassword(this.encriptarPassword(usuarioNuevo.getPass()));
+            mensaje = "Usuario creado correctamente.";
         }
-        // Paso 4. Creo el usuario y seteo los campos que lleguen del post
-        Usuario nuevo = new Usuario();
-        nuevo.setActivo(true);
-        nuevo.setFechaCreacion(LocalDateTime.now());
-        nuevo.setPassword(this.encriptarPassword(usuarioNuevo.getPass()));
-        nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
-        nuevo.setUsername(usuarioNuevo.getUsername().toLowerCase());
 
-        this.usuarioRepository.save(nuevo);
+        // Campos comunes
+        usuarioAGuardar.setUsername(usuarioNuevo.getUsername().toLowerCase());
+        usuarioAGuardar.setRol(usuarioNuevo.getRol().toUpperCase());
 
-        // Paso 5. Devuelve respuesta ok
+        this.usuarioRepository.save(usuarioAGuardar);
+
         RespuestaRs rta = new RespuestaRs();
-        rta.setMensaje("El usuario se ha guardado correctamente.");
+        rta.setMensaje(mensaje);
         rta.setStatus(200);
         return rta;
     }
 
-    private void validarCampos(UsuarioRq usuarioNuevo)
-            throws BadRequestException {
-        if (usuarioNuevo.getUsername() == null
-                || usuarioNuevo.getUsername().isBlank()
-                || usuarioNuevo.getUsername().isEmpty()) {
+    // Renombrado a "Basicos" porque ya no valida password
+    private void validarCamposBasicos(UsuarioRq usuarioNuevo) throws BadRequestException {
+        if (usuarioNuevo.getUsername() == null || usuarioNuevo.getUsername().isBlank()) {
             throw new BadRequestException("El campo username es obligatorio.");
         }
-        if (usuarioNuevo.getPass() == null
-                || usuarioNuevo.getPass().isBlank()
-                || usuarioNuevo.getPass().isEmpty()) {
-            throw new BadRequestException("El campo pass es obligatorio.");
-        }
-        if (usuarioNuevo.getRol() == null
-                || usuarioNuevo.getRol().isBlank()
-                || usuarioNuevo.getRol().isEmpty()) {
+        if (usuarioNuevo.getRol() == null || usuarioNuevo.getRol().isBlank()) {
             throw new BadRequestException("El campo rol es obligatorio.");
         }
     }
@@ -103,19 +110,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     private String encriptarPassword(String passAEncriptar) {
         String algoritmo = "MD5";
         try {
-            MessageDigest md = MessageDigest.getInstance(algoritmo); // Ej: "SHA-256", "MD5"
+            MessageDigest md = MessageDigest.getInstance(algoritmo);
             byte[] hashBytes = md.digest(passAEncriptar.getBytes());
-
-            // Convertir a hexadecimal
             StringBuilder sb = new StringBuilder();
             for (byte b : hashBytes) {
                 sb.append(String.format("%02x", b));
             }
             return sb.toString();
-
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algoritmo no soportado: " + algoritmo, e);
         }
     }
-
 }
