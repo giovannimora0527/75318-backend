@@ -6,5 +6,5 @@ import lombok.Data;
 public class LoginRq {
     private String username;
     private String password;
-    private String ip;
+    private String ip = "N/A";
 }

@@ -10,33 +10,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/paciente") // Debe ser igual al de la interfaz
 public class PacienteApiController implements PacienteApi {
 
     @Autowired
     private PacienteService pacienteService;
 
-    @GetMapping
+    // /paciente/listar
+    @Override
     public ResponseEntity<List<Paciente>> listarPacientes() {
         return ResponseEntity.ok(pacienteService.listarPacientes());
     }
 
-    @GetMapping("/{numeroDocumento}")
-    public ResponseEntity<Paciente> findByNumeroDocumento(@PathVariable String numeroDocumento) {
-        return ResponseEntity.ok(pacienteService.encontrarPorNumeroDocumento(numeroDocumento));
-    }
-
-    
-    public ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoAsc() {
-        return ResponseEntity.ok(pacienteService.listarPacientesPorFechaNacimientoDesc());
-    }
-
+    // /paciente/buscar?numeroDocumento=xxxx
     @Override
-    public ResponseEntity<Paciente> buscarPorNumeroDocumento(String numeroDocumento) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public ResponseEntity<Paciente> buscarPorNumeroDocumento(@RequestParam String numeroDocumento) {
+        return ResponseEntity.ok(
+                pacienteService.encontrarPorNumeroDocumento(numeroDocumento)
+        );
     }
 
+    // /paciente/fechaNacimiento
     @Override
     public ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoDesc() {
-        return ResponseEntity.ok(pacienteService.listarPacientesPorFechaNacimientoDesc());
+        return ResponseEntity.ok(
+                pacienteService.listarPacientesPorFechaNacimientoDesc()
+        );
     }
 }

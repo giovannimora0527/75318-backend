@@ -3,7 +3,9 @@ package com.uniminuto.clinica.service.impl;
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.model.UsuarioRq;
 import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.model.AuditLog;
 import com.uniminuto.clinica.repository.UsuarioRepository;
+import com.uniminuto.clinica.service.AuditLogService;
 import com.uniminuto.clinica.service.UsuarioService;
 
 import java.time.LocalDateTime;
@@ -27,6 +29,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     @Value("${app.login.bloqueo.minutos:5}")
     private int minutosBloqueo;
 
@@ -35,6 +40,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
+    // --------------------------------------
+    // UTILIDAD PARA REGISTRAR AUDITORÍA
+    // --------------------------------------
+    private void registrarAuditoria(String username, String eventType, String descripcion, String ip) {
+        AuditLog logEntry = new AuditLog();
+        logEntry.setUsername(username);
+        logEntry.setEventType(eventType);
+        logEntry.setDescription(descripcion);
+        logEntry.setTimestamp(LocalDateTime.now());
+        logEntry.setIp(ip);
+        auditLogService.saveLog(logEntry);
+    }
+
+    // --------------------------------------
+    // SERVICIOS
+    // --------------------------------------
     @Override
     public List<Usuario> listarTodosLosUsuarios() {
         return usuarioRepository.findAll();
@@ -42,12 +63,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<Usuario> encontrarPorRol(String rol) {
+        if (rol == null || rol.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol no puede ser nulo");
+        }
         return usuarioRepository.findByRol(rol.toUpperCase());
     }
 
     @Override
     public Usuario encontrarPorNombre(String nombreUsuario) {
-        return usuarioRepository.findByUsername(nombreUsuario.toLowerCase())
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El username no puede ser nulo");
+        }
+        final String nombreFinal = nombreUsuario.toLowerCase();
+        return usuarioRepository.findByUsername(nombreFinal)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado"));
     }
 
@@ -59,88 +87,149 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) {
-        if (usuarioRepository.existsByUsername(usuarioNuevo.getUsername().toLowerCase())) {
+        // Validaciones de campos obligatorios
+        if (usuarioNuevo == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no puede ser nulo");
+        }
+        if (usuarioNuevo.getUsername() == null || usuarioNuevo.getUsername().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El username es obligatorio");
+        }
+        if (usuarioNuevo.getRol() == null || usuarioNuevo.getRol().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol es obligatorio");
+        }
+        if (usuarioNuevo.getPassword() == null || usuarioNuevo.getPassword().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña es obligatoria");
+        }
+
+        final String usernameLower = usuarioNuevo.getUsername().toLowerCase();
+
+        if (usuarioRepository.existsByUsername(usernameLower)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario ya existe.");
         }
 
         Usuario nuevo = new Usuario();
-        nuevo.setUsername(usuarioNuevo.getUsername().toLowerCase());
+        nuevo.setUsername(usernameLower);
         nuevo.setFechaCreacion(LocalDateTime.now());
         nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
-        nuevo.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword())); // ✅ Usando PasswordEncoder
+        nuevo.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
         nuevo.setActivo(true);
         nuevo.setIntentosFallidos(0);
         nuevo.setBloqueadoHasta(null);
 
+        log.info("Guardando nuevo usuario: {}", nuevo.getUsername());
+
         usuarioRepository.save(nuevo);
+
+        registrarAuditoria(
+                nuevo.getUsername(),
+                "CREATE_USER",
+                "Se creó un nuevo usuario",
+                null
+        );
 
         return new RespuestaRs(200, "Usuario creado con éxito");
     }
 
     @Override
     public RespuestaRs actualizarUsuario(UsuarioRq usuarioRq) {
+        if (usuarioRq == null || usuarioRq.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario o id no pueden ser nulos");
+        }
+        if (usuarioRq.getUsername() == null || usuarioRq.getUsername().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El username es obligatorio");
+        }
+        if (usuarioRq.getRol() == null || usuarioRq.getRol().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol es obligatorio");
+        }
+
         Usuario usuario = usuarioRepository.findById(usuarioRq.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado"));
 
         usuario.setUsername(usuarioRq.getUsername().toLowerCase());
-        if (usuarioRq.getPassword() != null && !usuarioRq.getPassword().isEmpty()) {
-            usuario.setPassword(passwordEncoder.encode(usuarioRq.getPassword())); // ✅ Actualiza hash con PasswordEncoder
+        if (usuarioRq.getPassword() != null && !usuarioRq.getPassword().trim().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(usuarioRq.getPassword()));
         }
         usuario.setRol(usuarioRq.getRol().toUpperCase());
-        usuario.setActivo(usuarioRq.isActivo()); // Cambiado de isActivo() a getActivo()
+        usuario.setActivo(usuarioRq.isActivo());
+
+        log.info("Actualizando usuario: {}", usuario.getUsername());
 
         usuarioRepository.save(usuario);
+
+        registrarAuditoria(
+                usuario.getUsername(),
+                "UPDATE_USER",
+                "El usuario fue actualizado",
+                null
+        );
+
         return new RespuestaRs(200, "Usuario actualizado con éxito");
     }
 
-@Override
-public RespuestaRs recuperarPassword(String username) {
-    if (username == null || username.trim().isEmpty()) {
-        throw new IllegalArgumentException("El username no puede estar vacío");
-    }
-
-    // Solo dentro del ifPresent se declara 'usuario'
-    usuarioRepository.findByUsername(username.toLowerCase()).ifPresent(usuario -> {
-        usuario.setTempPasswordHash(passwordEncoder.encode("temporal123"));
-        usuario.setTempPasswordExpira(LocalDateTime.now().plusHours(1));
-        usuarioRepository.save(usuario);
-    });
-
-    // Siempre devuelve el mismo mensaje
-    return new RespuestaRs(200, "Se ha enviado un correo para restablecer la contraseña");
-}
-
-
     @Override
-public void login(String username, String password, String ip) {
-
-    Usuario usuario = usuarioRepository.findByUsername(username.toLowerCase())
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-    if (usuario.getBloqueadoHasta() != null && usuario.getBloqueadoHasta().isAfter(LocalDateTime.now())) {
-        log.warn("Intento de login de usuario {} desde IP {} - USUARIO BLOQUEADO hasta {}", username, ip, usuario.getBloqueadoHasta());
-        throw new RuntimeException("Usuario bloqueado hasta " + usuario.getBloqueadoHasta());
-    }
-
-    if (!passwordEncoder.matches(password, usuario.getPassword())) {
-        usuario.setIntentosFallidos(usuario.getIntentosFallidos() + 1);
-
-        if (usuario.getIntentosFallidos() >= intentosMaximos) {
-            usuario.setBloqueadoHasta(LocalDateTime.now().plusMinutes(minutosBloqueo));
-            usuario.setIntentosFallidos(0);
-            log.warn("Usuario {} bloqueado temporalmente hasta {}", username, usuario.getBloqueadoHasta());
-        } else {
-            log.info("Intento fallido {} de {} para usuario {}", usuario.getIntentosFallidos(), intentosMaximos, username);
+    public RespuestaRs recuperarPassword(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("El username no puede estar vacío");
         }
 
-        usuarioRepository.save(usuario);
-        throw new RuntimeException("Credenciales inválidas");
+        final String usernameFinal = username.toLowerCase();
+
+        usuarioRepository.findByUsername(usernameFinal).ifPresent(usuario -> {
+            usuario.setTempPasswordHash(passwordEncoder.encode("temporal123"));
+            usuario.setTempPasswordExpira(LocalDateTime.now().plusHours(1));
+            usuarioRepository.save(usuario);
+
+            registrarAuditoria(
+                    usernameFinal,
+                    "RECOVERY_ATTEMPT",
+                    "Intento de recuperación de contraseña",
+                    null
+            );
+        });
+
+        return new RespuestaRs(200, "Se ha enviado un correo para restablecer la contraseña");
     }
 
-    usuario.setIntentosFallidos(0);
-    usuario.setBloqueadoHasta(null);
-    usuarioRepository.save(usuario);
+    // ==========================
+    // LOGIN JWT
+    // ==========================
+    @Override
+    public Usuario login(String username, String password, String ip) {
+        final String ipFinal = (ip != null) ? ip : "N/A";
+        final String usernameFinal = username.toLowerCase();
 
-    log.info("Usuario {} ha iniciado sesión correctamente desde IP {}", username, ip);
-}
+        Usuario usuario = usuarioRepository.findByUsername(usernameFinal)
+                .orElseThrow(() -> {
+                    registrarAuditoria(usernameFinal, "LOGIN_FAIL", "Usuario no encontrado", ipFinal);
+                    return new RuntimeException("Usuario no encontrado");
+                });
+
+        if (usuario.getBloqueadoHasta() != null && usuario.getBloqueadoHasta().isAfter(LocalDateTime.now())) {
+            registrarAuditoria(usernameFinal, "LOGIN_BLOCKED", "Intento de login con usuario bloqueado", ipFinal);
+            throw new RuntimeException("Usuario bloqueado hasta " + usuario.getBloqueadoHasta());
+        }
+
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+            usuario.setIntentosFallidos(usuario.getIntentosFallidos() + 1);
+            if (usuario.getIntentosFallidos() >= intentosMaximos) {
+                usuario.setBloqueadoHasta(LocalDateTime.now().plusMinutes(minutosBloqueo));
+                usuario.setIntentosFallidos(0);
+                registrarAuditoria(usernameFinal, "LOGIN_BLOCKED",
+                        "Usuario bloqueado por superar los intentos máximos", ipFinal);
+            } else {
+                registrarAuditoria(usernameFinal, "LOGIN_FAIL", "Contraseña incorrecta", ipFinal);
+            }
+            usuarioRepository.save(usuario);
+            throw new RuntimeException("Credenciales inválidas");
+        }
+
+        // Login exitoso
+        usuario.setIntentosFallidos(0);
+        usuario.setBloqueadoHasta(null);
+        usuarioRepository.save(usuario);
+
+        registrarAuditoria(usernameFinal, "LOGIN_SUCCESS", "Inicio de sesión exitoso", ipFinal);
+
+        return usuario;
+    }
 }

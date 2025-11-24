@@ -22,6 +22,5 @@ public interface UsuarioService {
     
     RespuestaRs recuperarPassword(String username);
     
-    void login(String email, String password, String ip);
-
+    Usuario login(String email, String password, String ip);
 }

@@ -2,9 +2,11 @@ package com.uniminuto.clinica.controller;
 
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.model.UsuarioRq;
-import com.uniminuto.clinica.model.RespuestaRs;
-import com.uniminuto.clinica.service.UsuarioService;
 import com.uniminuto.clinica.model.LoginRq;
+import com.uniminuto.clinica.model.LoginRs;
+import com.uniminuto.clinica.service.UsuarioService;
+import com.uniminuto.clinica.service.JwtService;
+import com.uniminuto.clinica.model.RespuestaRs;
 
 
 import java.util.List;
@@ -21,6 +23,9 @@ public class UsuarioApiController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private JwtService jwtService;
 
     // ================================
     // LISTAR TODOS
@@ -58,7 +63,7 @@ public class UsuarioApiController {
     // CREAR USUARIO
     // ================================
     @PostMapping
-    public ResponseEntity<RespuestaRs> crearUsuario(@RequestBody UsuarioRq usuarioRq) {
+    public ResponseEntity<?> crearUsuario(@RequestBody UsuarioRq usuarioRq) {
         return ResponseEntity.ok(usuarioService.guardarUsuario(usuarioRq));
     }
 
@@ -66,7 +71,7 @@ public class UsuarioApiController {
     // ACTUALIZAR USUARIO
     // ================================
     @PutMapping("/{id}")
-    public ResponseEntity<RespuestaRs> actualizar(
+    public ResponseEntity<?> actualizar(
             @PathVariable Long id,
             @RequestBody UsuarioRq usuarioRq
     ) {
@@ -78,22 +83,24 @@ public class UsuarioApiController {
     // RECUPERACIÓN DE CONTRASEÑA
     // ================================
     @PostMapping("/recuperar-password")
-    public ResponseEntity<RespuestaRs> recuperarPassword(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> recuperarPassword(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         return ResponseEntity.ok(usuarioService.recuperarPassword(username));
     }
-    
+
     // ================================
-// LOGIN CON CONTROL DE INTENTOS
-// ================================
+    // LOGIN CON JWT
 @PostMapping("/login")
-public ResponseEntity<RespuestaRs> login(@RequestBody LoginRq request) {
+public ResponseEntity<?> login(@RequestBody LoginRq request) {
     try {
-        usuarioService.login(request.getUsername(), request.getPassword(), request.getIp());
-        return ResponseEntity.ok(new RespuestaRs(200, "Login exitoso"));
+        Usuario usuario = usuarioService.login(request.getUsername(), request.getPassword(), request.getIp());
+        return ResponseEntity.ok(usuario); // solo devuelve el usuario
     } catch (RuntimeException e) {
-        return ResponseEntity.status(401).body(new RespuestaRs(401, e.getMessage()));
+        return ResponseEntity.status(401).body(e.getMessage());
     }
 }
+
+
+
 
 }
