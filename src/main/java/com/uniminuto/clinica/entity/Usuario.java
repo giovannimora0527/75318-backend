@@ -10,18 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
-/**
- *
- * @author lmora
- */
 @Data
 @Entity
 @Table(name="usuario")
 public class Usuario implements Serializable {
     
-    /**
-     * Id serializable.
-     */
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -43,5 +36,17 @@ public class Usuario implements Serializable {
     
     @Column(name = "activo")
     private boolean activo;
+
+    @Column(name = "email")
+    private String email;
     
+    // NUEVOS CAMPOS PARA CONTROL DE INTENTOS
+    @Column(name = "intentos_fallidos")
+    private Integer intentosFallidos = 0;
+    
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+    
+    @Column(name = "cuenta_bloqueada")
+    private Boolean cuentaBloqueada = false;
 }
