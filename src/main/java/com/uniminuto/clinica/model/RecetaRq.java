@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class RecetaRq {
 
+
     private Long id;
     /**
      * Identificador de la cita asociada a la receta.
