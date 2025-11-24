@@ -66,16 +66,33 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Override
     public RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
+
         // Validar que el ID esté presente
         if (recetaRq.getId() == null) {
             throw new BadRequestException("El ID de la receta es obligatorio para actualizar.");
         }
 
         // Recuperar la entidad existente
+
         Optional<Receta> optReceta = this.recetaRepository.findById(recetaRq.getId());
         if (optReceta.isEmpty()) {
             throw new BadRequestException("La receta con ID " + recetaRq.getId() + " no existe.");
         }
+
+
+        Receta recetaActual = optReceta.get();
+        if (!recetaActual.getMedicamento().getId().equals(recetaRq.getMedicamentoId())) {
+            Optional<Medicamento> optMedicamento = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
+            if (optMedicamento.isEmpty()) {
+                throw new BadRequestException("El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe.");
+            }
+            recetaActual.setMedicamento(optMedicamento.get());
+        }
+
+        recetaActual.setDosis(recetaRq.getDosis());
+        recetaActual.setIndicaciones(recetaRq.getIndicaciones());
+        recetaActual.setFechaActualizacionRegistro(LocalDateTime.now());
+        this.recetaRepository.save(recetaActual);
         Receta recetaExistente = optReceta.get();
 
         // Validaciones de existencia de cita y medicamento (reutilizable)
