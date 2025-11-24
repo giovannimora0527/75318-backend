@@ -3,11 +3,13 @@ package com.uniminuto.clinica.service.impl;
 import com.uniminuto.clinica.entity.Especializacion;
 import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.model.MedicoRq;
-import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.repository.EspecializacionRepository;
+import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,10 @@ public class MedicoServiceImpl implements MedicoService {
     @Autowired
     private EspecializacionService especializacionService;
 
+
+    @Autowired
+    private EspecializacionRepository especializacionRepository;
+
     @Override
     public List<Medico> listarMedicos() {
         return this.medicoRepository.findAll();
@@ -47,13 +53,21 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public List<Medico> buscarPorEspecialidad(String codigo)
             throws BadRequestException {
-        try {
-            Especializacion e = this.especializacionService
-                    .buscarEspecializacionPorCod(codigo);
-            return this.medicoRepository.findByEspecializacion(e);
-        } catch (BadRequestException e) {
-            throw e;
-        }
+        Especializacion e = this.especializacionService
+                .buscarEspecializacionPorCod(codigo);
+        return this.medicoRepository.findByEspecializacion(e);
+    }
+
+    private Medico convertToRqToEntidad(MedicoRq medicoRq, Especializacion especialidad) {
+        Medico medico = new Medico();
+        medico.setNombres(medicoRq.getNombres());
+        medico.setApellidos(medicoRq.getApellidos());
+        medico.setDocumento(medicoRq.getDocumento());
+        medico.setTipoDocumento(medicoRq.getTipoDocumento());
+        medico.setRegistroProfesional(medicoRq.getRegistroProfesional());
+        medico.setEspecializacion(especialidad);
+        medico.setTelefono(medicoRq.getTelefono());
+        return medico;
     }
 
 
@@ -72,7 +86,7 @@ public class MedicoServiceImpl implements MedicoService {
         }
 
         Especializacion especializacion = this.especializacionService
-                .buscarEspecializacionPorId(medicoNuevo.getEspecializacionId());
+                .buscarEspecializacionPorId(medicoNuevo.getEspecializacion());
 
         // Paso 4. Creo el medico y seteo los campos que lleguen del post
         Medico nuevo = new Medico();
@@ -109,7 +123,7 @@ public class MedicoServiceImpl implements MedicoService {
 
         // Paso 3. ✅ Obtener la especialización si cambió
         Especializacion especializacion = this.especializacionService
-                .buscarEspecializacionPorId(medicoNuevo.getEspecializacionId());
+                .buscarEspecializacionPorId(medicoNuevo.getEspecializacion());
 
         // Paso 4. Actualizar campos
         medicoActualizar.setTipoDocumento(medicoNuevo.getTipoDocumento().toUpperCase());
@@ -152,7 +166,7 @@ public class MedicoServiceImpl implements MedicoService {
         if (medicoNuevo.getRegistroProfesional() == null || medicoNuevo.getRegistroProfesional().isBlank()) {
             throw new BadRequestException("El campo RegistroProfesional es obligatorio.");
         }
-        if (medicoNuevo.getEspecializacionId() == null) {
+        if (medicoNuevo.getEspecializacion() == null) {
             throw new BadRequestException("El campo EspecializacionId es obligatorio.");
         }
     }
