@@ -40,6 +40,10 @@ public interface RecetaApi {
            @RequestBody @Valid RecetaRq recetaRq
     ) throws BadRequestException;
 
+    /**
+     * Api para acualizar una receta en el sistema.
+     * @return respuesta del servicio.
+     */
     //TODO: actualizar receta
     @RequestMapping(value = "/actualizar",
             produces = {"application/json"},
