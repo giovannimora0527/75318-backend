@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,11 +43,18 @@ public interface CitaApi {
             ) throws BadRequestException;
 
     /**
-     * Api para actualizar una cita existente.
-     * @param citaRq cita con datos actualizados.
-     * @return Respuesta del servicio.
-     * @throws BadRequestException excepcion.
+<<<<<<< HEAD
+     * Api para listar todas las citas del sistema.
+     * @return listado de citas.
      */
+    @RequestMapping(value = "/listar-citas-paciente",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Cita>> listarCitasPorPaciente(
+            @RequestParam Integer pacienteIds
+    ) throws BadRequestException;
+
     @RequestMapping(value = "/actualizar",
             produces = {"application/json"},
             consumes = {"application/json"},
