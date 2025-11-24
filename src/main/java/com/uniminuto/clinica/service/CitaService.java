@@ -23,6 +23,13 @@ public interface CitaService {
      */
     RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException;
 
+    /**
+     * Lista las citas por paciente.
+     * @param pacienteId ID del paciente.
+     * @return Lista de citas del paciente.
+     * @throws BadRequestException excepcion.
+     */
+    List<Cita> listarCitasporPaciente(Integer pacienteId) throws BadRequestException;
     //Acutalizar cita
     RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException;
 }
