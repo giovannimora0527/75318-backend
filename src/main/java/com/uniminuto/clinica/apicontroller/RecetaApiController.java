@@ -36,8 +36,7 @@ public class RecetaApiController implements RecetaApi {
 
 
     @Override
-    public ResponseEntity<RespuestaRs> actualizarReceta(@RequestBody @Valid RecetaRq recetaRq)
-            throws BadRequestException {
+    public ResponseEntity<RespuestaRs> actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
         return ResponseEntity.ok(this.recetaService.actualizarReceta(recetaRq));
     }
 }
