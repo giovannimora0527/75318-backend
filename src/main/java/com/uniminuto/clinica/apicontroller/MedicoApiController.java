@@ -34,7 +34,7 @@ public class MedicoApiController implements MedicoApi {
                 .buscarPorEspecialidad(codigo));
     }
 
-    @Override
+
     public ResponseEntity<Medico> buscarMedicoPorDocumento(String documento)
             throws BadRequestException {
         return ResponseEntity.ok(medicoService.buscarMedicoPorDocumento(documento));
