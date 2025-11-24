@@ -34,6 +34,9 @@ public class CitaApiController implements CitaApi {
     }
 
     @Override
+    public ResponseEntity<List<Cita>> listarCitasPorPaciente(Integer pacienteIds) throws BadRequestException {
+        return ResponseEntity.ok(this.citaService.listarCitasporPaciente(pacienteIds));
+    }
     public ResponseEntity<RespuestaRs> actualizarCita(@RequestBody @Valid CitaRq citaRq)
             throws BadRequestException {
         return ResponseEntity.ok(this.citaService.actualizarCita(citaRq));
