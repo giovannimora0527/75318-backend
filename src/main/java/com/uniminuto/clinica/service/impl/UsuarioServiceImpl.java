@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
@@ -85,51 +86,36 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findByActivo(activo);
     }
 
-    @Override
-    public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) {
-        // Validaciones de campos obligatorios
-        if (usuarioNuevo == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no puede ser nulo");
-        }
-        if (usuarioNuevo.getUsername() == null || usuarioNuevo.getUsername().trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El username es obligatorio");
-        }
-        if (usuarioNuevo.getRol() == null || usuarioNuevo.getRol().trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol es obligatorio");
-        }
-        if (usuarioNuevo.getPassword() == null || usuarioNuevo.getPassword().trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña es obligatoria");
-        }
+   @Override
+public RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) {
 
-        final String usernameLower = usuarioNuevo.getUsername().toLowerCase();
+    final String usernameLower = usuarioNuevo.getUsername().toLowerCase();
 
-        if (usuarioRepository.existsByUsername(usernameLower)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario ya existe.");
-        }
-
-        Usuario nuevo = new Usuario();
-        nuevo.setUsername(usernameLower);
-        nuevo.setFechaCreacion(LocalDateTime.now());
-        nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
-        nuevo.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
-        nuevo.setActivo(true);
-        nuevo.setIntentosFallidos(0);
-        nuevo.setBloqueadoHasta(null);
-
-        log.info("Guardando nuevo usuario: {}", nuevo.getUsername());
-
-        usuarioRepository.save(nuevo);
-
-        registrarAuditoria(
-                nuevo.getUsername(),
-                "CREATE_USER",
-                "Se creó un nuevo usuario",
-                null
-        );
-
-        return new RespuestaRs(200, "Usuario creado con éxito");
+    if (usuarioRepository.existsByUsername(usernameLower)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario ya existe.");
     }
 
+    Usuario nuevo = new Usuario();
+    nuevo.setUsername(usernameLower);
+    nuevo.setEmail(usuarioNuevo.getEmail()); // ✅ ahora seteamos email
+    nuevo.setFechaCreacion(LocalDateTime.now());
+    nuevo.setRol(usuarioNuevo.getRol().toUpperCase());
+    nuevo.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
+    nuevo.setActivo(true);
+    nuevo.setIntentosFallidos(0);
+    nuevo.setBloqueadoHasta(null);
+
+    usuarioRepository.save(nuevo);
+
+    registrarAuditoria(
+            nuevo.getUsername(),
+            "CREATE_USER",
+            "Se creó un nuevo usuario",
+            null
+    );
+
+    return new RespuestaRs(200, "Usuario creado con éxito");
+}
     @Override
     public RespuestaRs actualizarUsuario(UsuarioRq usuarioRq) {
         if (usuarioRq == null || usuarioRq.getId() == null) {
@@ -146,6 +132,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado"));
 
         usuario.setUsername(usuarioRq.getUsername().toLowerCase());
+        usuario.setEmail(usuarioRq.getEmail());
         if (usuarioRq.getPassword() != null && !usuarioRq.getPassword().trim().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioRq.getPassword()));
         }

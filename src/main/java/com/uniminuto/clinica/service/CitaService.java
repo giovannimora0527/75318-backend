@@ -1,4 +1,5 @@
 package com.uniminuto.clinica.service;
+import com.uniminuto.clinica.model.CitaRespDTO;
 
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Paciente;
@@ -10,4 +11,5 @@ public interface CitaService {
     List<Cita> obtenerTodas();
     Cita obtenerPorId(Long id);
     List<Cita> listarCitasPorFechaHoraDesc();
+    List<CitaRespDTO> listarCitasConNombres();
 }

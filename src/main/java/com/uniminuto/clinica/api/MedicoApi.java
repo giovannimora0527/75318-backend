@@ -1,34 +1,25 @@
 package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Medico;
+import com.uniminuto.clinica.model.RespuestaRs;
 import java.util.List;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-/**
- *
- * @author lmora
- */
 @CrossOrigin(origins = "*")
 @RequestMapping("/medico")
 public interface MedicoApi {
-    
-    @RequestMapping(value = "/listar",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
+
+    @GetMapping("/listar")
     ResponseEntity<List<Medico>> listarMedicos();
-    
-    
-    @RequestMapping(value = "/listar-x-cod-esp",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
-      @RequestParam String codigo
-    ) throws BadRequestException;
+
+    @PostMapping("/guardar")
+    ResponseEntity<RespuestaRs> guardarMedico(@RequestBody Medico medico);
+
+    @PutMapping("/actualizar")
+    ResponseEntity<RespuestaRs> actualizarMedico(@RequestBody Medico medico);
+
+    @GetMapping("/especialidad/{codigo}")
+    ResponseEntity<List<Medico>> listarMedicosporEspecialidad(@PathVariable String codigo);
 }

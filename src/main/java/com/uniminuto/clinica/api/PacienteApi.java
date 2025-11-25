@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,5 +40,12 @@ public interface PacienteApi {
             method = RequestMethod.GET
     )
     ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoDesc();
+    
+    @PostMapping("/guardar")
+    ResponseEntity<Paciente> guardarPaciente(@RequestBody Paciente paciente);
+
+    @PutMapping("/actualizar/{id}")
+    ResponseEntity<Paciente> actualizarPaciente(@PathVariable Long id, @RequestBody Paciente paciente);
+
 
 }

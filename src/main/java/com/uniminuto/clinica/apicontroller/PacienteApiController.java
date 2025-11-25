@@ -37,4 +37,15 @@ public class PacienteApiController implements PacienteApi {
                 pacienteService.listarPacientesPorFechaNacimientoDesc()
         );
     }
+    
+    @PostMapping("/guardar")
+public ResponseEntity<Paciente> guardarPaciente(@RequestBody Paciente paciente) {
+    return ResponseEntity.ok(pacienteService.guardarPaciente(paciente));
+}
+
+@PutMapping("/actualizar/{id}")
+public ResponseEntity<Paciente> actualizarPaciente(@PathVariable Long id, @RequestBody Paciente paciente) {
+    return ResponseEntity.ok(pacienteService.actualizarPaciente(id, paciente));
+}
+
 }

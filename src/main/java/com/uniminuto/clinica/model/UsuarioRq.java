@@ -9,4 +9,5 @@ public class UsuarioRq {
     private String password;
     private String rol;
     private boolean activo;
+    private String email;
 }

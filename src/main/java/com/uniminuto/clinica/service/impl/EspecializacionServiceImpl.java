@@ -5,9 +5,10 @@ import com.uniminuto.clinica.repository.EspecializacionRepository;
 import com.uniminuto.clinica.service.EspecializacionService;
 import java.util.List;
 import java.util.Optional;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EspecializacionServiceImpl implements EspecializacionService {
@@ -21,14 +22,14 @@ public class EspecializacionServiceImpl implements EspecializacionService {
     }
 
     @Override
-    public Especializacion buscarEspecializacionPorCod(String codigo)
-            throws BadRequestException {
-        Optional<Especializacion> optEspc = this.repo
-                .findByCodigoEspecializacion(codigo);
-        if (!optEspc.isPresent()) {
-            throw new BadRequestException("No se encuentra la especialización");
-        }
-        return optEspc.get();
+    public Especializacion buscarEspecializacionPorCod(String codigo) {
+        return repo.findByCodigoEspecializacion(codigo)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "No se encuentra la especialización"
+                        )
+                );
     }
 
     @Override
@@ -40,9 +41,14 @@ public class EspecializacionServiceImpl implements EspecializacionService {
                 existente.setCodigoEspecializacion(especializacion.getCodigoEspecializacion());
                 return repo.save(existente);
             })
-            .orElseThrow(() -> new RuntimeException("Especialización no encontrada con id: " + id));
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Especialización no encontrada con id: " + id
+                )
+            );
     }
-    
+
     @Override
     public Especializacion crear(Especializacion especializacion) {
         return repo.save(especializacion);

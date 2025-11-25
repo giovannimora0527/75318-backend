@@ -7,5 +7,7 @@ public interface PacienteService {
     List<Paciente> listarPacientes();
     Paciente encontrarPorNumeroDocumento(String numeroDocumento);
     List<Paciente> listarPacientesPorFechaNacimientoDesc();
+    Paciente guardarPaciente(Paciente paciente);
+    Paciente actualizarPaciente(Long id, Paciente paciente);
     
 }

@@ -1,5 +1,5 @@
 package com.uniminuto.clinica.apicontroller;
-
+import com.uniminuto.clinica.model.CitaRespDTO;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.service.CitaService;
 import com.uniminuto.clinica.repository.PacienteRepository;
@@ -58,10 +58,16 @@ public class CitaApiController {
         }
     }
 
-    @GetMapping("/listar")
-    public List<Cita> listarCitas() {
-        return citaService.obtenerTodas();
+@GetMapping("/listar")
+public ResponseEntity<List<CitaRespDTO>> listarCitas() {
+    try {
+        List<CitaRespDTO> citas = citaService.listarCitasConNombres();
+        return ResponseEntity.ok(citas);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+}
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Cita> obtenerCitaPorId(@PathVariable Long id) {

@@ -23,9 +23,32 @@ public class PacienteServiceImpl implements PacienteService {
         return pacienteRepository.findByNumeroDocumento(numeroDocumento)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
     }
-    
+
     @Override
     public List<Paciente> listarPacientesPorFechaNacimientoDesc() {
         return pacienteRepository.findAllByOrderByFechaNacimientoDesc();
     }
+
+    @Override
+    public Paciente guardarPaciente(Paciente paciente) {
+        return pacienteRepository.save(paciente);
+    }
+
+    @Override
+    public Paciente actualizarPaciente(Long id, Paciente paciente) {
+        Paciente p = pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        // Actualizamos los campos
+        p.setNombres(paciente.getNombres());
+        p.setApellidos(paciente.getApellidos());
+        p.setTipoDocumento(paciente.getTipoDocumento());
+        p.setNumeroDocumento(paciente.getNumeroDocumento());
+        p.setFechaNacimiento(paciente.getFechaNacimiento());
+        p.setGenero(paciente.getGenero());
+        p.setTelefono(paciente.getTelefono());
+        p.setDireccion(paciente.getDireccion());
+        p.setEdad(paciente.getEdad());
+        return pacienteRepository.save(p);
+    }
 }
+
