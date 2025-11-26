@@ -65,7 +65,7 @@ public class AuditoriaLoginServiceImpl implements AuditoriaLoginService {
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
 
-            if (usuario.isBloqueado() && usuario.getFechaDesbloqueo() != null) {
+            if (Boolean.TRUE.equals(usuario.getBloqueado()) && usuario.getFechaDesbloqueo() != null) {
                 if (LocalDateTime.now().isAfter(usuario.getFechaDesbloqueo())) {
                     usuario.setBloqueado(false);
                     usuario.setIntentosFallidos(0);

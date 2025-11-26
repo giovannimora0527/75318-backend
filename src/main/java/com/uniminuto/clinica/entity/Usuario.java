@@ -38,12 +38,16 @@ public class Usuario implements Serializable {
     @Column(name = "intentos_fallidos")
     private int intentosFallidos = 0;
 
-    @Column(name = "bloqueado")
-    private boolean bloqueado = false;
+    @Column(name = "bloqueado_hasta")
+    private Boolean bloqueado;
+
 
     @Column(name = "fecha_bloqueo")
     private LocalDateTime fechaBloqueo;
 
     @Column(name = "fecha_desbloqueo")
     private LocalDateTime fechaDesbloqueo;
+
+    @Transient
+    private String token;
 }
