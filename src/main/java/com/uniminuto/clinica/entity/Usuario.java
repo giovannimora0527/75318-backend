@@ -2,53 +2,48 @@ package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.Data;
 
-/**
- *
- * @author lmora
- */
 @Data
 @Entity
 @Table(name="usuario")
 public class Usuario implements Serializable {
-    
-    /**
-     * Id serializable.
-     */
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
-    
-    @Column(name = "username")
+
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
-    
-    @Column(name = "password_hash")
+
+    @Column(name = "password_hash", nullable = false)
     private String password;
-    
-    @Column(name = "rol")
+
+    @Column(name = "rol", nullable = false)
     private String rol;
-    
+
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
-    
+
     @Column(name = "activo")
     private boolean activo;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    private Integer intentosFallidos = 0;
+    // Campos para control de login
+    @Column(name = "intentos_fallidos")
+    private int intentosFallidos = 0;
 
-    private LocalDateTime bloqueadoHasta;
+    @Column(name = "bloqueado")
+    private boolean bloqueado = false;
 
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+
+    @Column(name = "fecha_desbloqueo")
+    private LocalDateTime fechaDesbloqueo;
 }

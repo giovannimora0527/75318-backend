@@ -1,11 +1,10 @@
 package com.uniminuto.clinica.service;
 
+import com.uniminuto.clinica.model.AuthenticatorRq;
+import com.uniminuto.clinica.model.AuthenticatorRs;
+import org.apache.coyote.BadRequestException;
+
 public interface AuthenticationService {
 
-    /**
-     * Realiza el proceso de login.
-     * @param username nombre del usuario.
-     * @param password contraseña ingresada.
-     */
-    void login(String username, String password);
+    AuthenticatorRs autenticar(AuthenticatorRq request) throws BadRequestException;
 }

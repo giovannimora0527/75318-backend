@@ -8,6 +8,8 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 /**
  *
  * @author lmora
@@ -20,7 +22,7 @@ public interface UsuarioApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Usuario>> listarUsuarios();
+    ResponseEntity<List<Usuario>> listarUsuarios() throws BadRequestException;
     
     
     
@@ -30,7 +32,7 @@ public interface UsuarioApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuariosPorRol(
        @RequestParam String rol
-    );
+    ) throws BadRequestException;
     
     
     @RequestMapping(value = "/buscar-nombre",
@@ -58,7 +60,7 @@ public interface UsuarioApi {
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuario(
        @RequestBody UsuarioRq usuarioNuevo
-    ) throws BadRequestException;
+    ) throws BadRequestException, MessagingException;
 
     /**
      * Actualizar usuario.

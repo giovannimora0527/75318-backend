@@ -1,14 +1,17 @@
 package com.uniminuto.clinica.model;
 
-public class RecuperarPasswordRequest {
-    private String email;
+import javax.validation.constraints.NotBlank;
 
-    public String getEmail() {
-        return email;
+public class RecuperarPasswordRequest {
+    @NotBlank(message = "El username es obligatorio.")
+    private String username;
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
 

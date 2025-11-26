@@ -1,14 +1,17 @@
 package com.uniminuto.clinica.repository;
 
-import com.uniminuto.clinica.entity.PasswordResetToken;
+import com.uniminuto.clinica.entity.RecuperarPasswordAuditoria;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Repository
-public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
+public interface PasswordResetTokenRepository extends JpaRepository<RecuperarPasswordAuditoria, Long> {
 
-    Optional<PasswordResetToken> findByToken(String token);
+    // NUEVA CONSULTA
+    @Query("SELECT COUNT(a) FROM RecuperarPasswordAuditoria a WHERE a.username = :username AND a.tipoAuditoria = 'LOGIN' AND a.description LIKE 'Intento fallido%' AND a.transaccionFecha > :fechaLimite")
+    long countIntentosFallidosLoginRecientes(@Param("username") String username, @Param("fechaLimite") LocalDateTime fechaLimite);
 }
-

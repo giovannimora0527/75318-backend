@@ -26,8 +26,7 @@ public class CitaApiController implements CitaApi {
     private CitaService citaService;
 
     @Override
-    public ResponseEntity<List<Cita>> listarCitas()
-    {        checkRole();
+    public ResponseEntity<List<Cita>> listarCitas() throws BadRequestException {        checkRole();
         return ResponseEntity.ok(this.citaService.listarCitas());
     }
 

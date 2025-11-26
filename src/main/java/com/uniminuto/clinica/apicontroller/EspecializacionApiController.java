@@ -2,7 +2,6 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.EspecializacionApi;
 import com.uniminuto.clinica.entity.Especializacion;
-import com.uniminuto.clinica.model.CitaRq;
 import com.uniminuto.clinica.model.EspecializacionRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.EspecializacionService;
@@ -17,6 +16,7 @@ import javax.validation.Valid;
 
 import static com.uniminuto.clinica.security.RoleChecker.checkRole;
 
+
 /**
  *
  * @author lmora
@@ -28,7 +28,7 @@ public class EspecializacionApiController implements EspecializacionApi {
     private EspecializacionService especializacionService;
 
     @Override
-    public ResponseEntity<List<Especializacion>> listarEspecializaciones() {
+    public ResponseEntity<List<Especializacion>> listarEspecializaciones() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.especializacionService.listarTodo());
     }

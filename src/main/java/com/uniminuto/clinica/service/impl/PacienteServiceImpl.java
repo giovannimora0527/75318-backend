@@ -5,6 +5,7 @@ import com.uniminuto.clinica.model.PacienteRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.PacienteRepository;
 import com.uniminuto.clinica.repository.UsuarioRepository;
+import com.uniminuto.clinica.service.AuditoriaLoginService;
 import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.PacienteService;
 
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.uniminuto.clinica.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,19 +22,16 @@ import org.springframework.stereotype.Service;
  * @author lmora
  */
 @Service
+@RequiredArgsConstructor
 public class PacienteServiceImpl implements PacienteService {
 
-    @Autowired
     private PacienteRepository pacienteRepository;
 
-    @Autowired
     private UsuarioService usuarioService;
 
 
-    @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
     private AuditoriaService auditoriaService;
 
     @Override
@@ -77,13 +75,11 @@ public class PacienteServiceImpl implements PacienteService {
         Paciente pacienteGuardar = this.convertToRqToEntidad(pacienteRq, optEsp.get());
         pacienteGuardar = this.pacienteRepository.save(pacienteGuardar);
         // Registrar auditoria
-        auditoriaService.registrarAuditoria(
-                "paciente",
-                pacienteGuardar.getId(),
-                "INSERT",
-                null,
-                pacienteGuardar,
-                "Registro de paciente creado"
+        auditoriaService.registrar(
+                pacienteGuardar.getNombres(),
+                "CREAR_USUARIO",
+                "Se creó el usuario con username: " + pacienteGuardar.getNombres(),
+                "127.0.0.1"  // aquí puedes poner la IP real del request
         );
         RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Paciente guardado exitosamente");
@@ -149,13 +145,11 @@ public class PacienteServiceImpl implements PacienteService {
         String valoresDespues = actualizado.toString();
 
         // 6. Registrar Auditoría
-        auditoriaService.registrarAuditoria(
-                "paciente",
-                actualizado.getId(),
-                "UPDATE",
-                valoresAntes,
-                valoresDespues,
-                "Paciente actualizado"
+        auditoriaService.registrar(
+                actualizado.getNombres(),
+                "ACTUALIZAR_USUARIO",
+                "Se actualizó el usuario con ID: " + actualizado.getId(),
+                "127.0.0.1"
         );
 
         // Respuesta
@@ -184,13 +178,11 @@ public class PacienteServiceImpl implements PacienteService {
         pacienteRepository.delete(paciente);
 
         // Auditoría
-        auditoriaService.registrarAuditoria(
-                "paciente",
-                paciente.getId(),
-                "DELETE",
-                valoresAntes,
-                null,
-                "Paciente eliminado"
+        auditoriaService.registrar(
+                paciente.getNombres(),
+                "ACTUALIZAR_USUARIO",
+                "Se actualizó el usuario con ID: " + paciente.getId(),
+                "127.0.0.1"
         );
 
         // Respuesta

@@ -21,7 +21,7 @@ public class MedicamentoApiController implements MedicamentoApi {
     private MedicamentoService medicamentoService;
 
     @Override
-    public ResponseEntity<List<Medicamento>> listarMedicamentos() {
+    public ResponseEntity<List<Medicamento>> listarMedicamentos() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.medicamentoService.listarMedicamentos());
     }

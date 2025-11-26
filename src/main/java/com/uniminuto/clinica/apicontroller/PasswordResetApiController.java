@@ -1,34 +1,21 @@
-package com.uniminuto.clinica.api.controller;
+package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.PasswordResetApi;
-import com.uniminuto.clinica.service.PasswordResetService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import com.uniminuto.clinica.model.RecuperarPasswordRequest;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.service.RecuperarPasswordService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/password")
 public class PasswordResetApiController implements PasswordResetApi {
 
-    private final PasswordResetService passwordResetService;
+    @Autowired
+    private RecuperarPasswordService recuperarPasswordService;
 
     @Override
-    @PostMapping("/enviar-token")
-    public void enviarToken(@RequestParam String username) {
-        passwordResetService.enviarToken(username);
-    }
-
-    @Override
-    @GetMapping("/validar")
-    public boolean validarToken(@RequestParam String token) {
-        return passwordResetService.validarToken(token);
-    }
-
-    @Override
-    @PostMapping("/actualizar")
-    public void actualizarPassword(
-            @RequestParam String token,
-            @RequestParam String nuevaPassword) {
-        passwordResetService.actualizarPassword(token, nuevaPassword);
+    public ResponseEntity<RespuestaRs> recuperarPassword(RecuperarPasswordRequest request) {
+        return ResponseEntity.ok(recuperarPasswordService.recuperarPassword(request));
     }
 }

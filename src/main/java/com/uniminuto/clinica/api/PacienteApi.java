@@ -26,7 +26,7 @@ public interface PacienteApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Paciente>> listarPacientes();
+    ResponseEntity<List<Paciente>> listarPacientes() throws BadRequestException;
 
 
     @RequestMapping(value = "/buscar-paciente-documento",
@@ -49,7 +49,7 @@ public interface PacienteApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPacientesXOrden(
             @RequestParam String orden
-    );
+    ) throws BadRequestException;
 
     @RequestMapping(value = "/guardar",
             produces = {"application/json"},

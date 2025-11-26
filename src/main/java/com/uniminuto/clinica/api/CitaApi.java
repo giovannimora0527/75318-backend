@@ -22,7 +22,7 @@ public interface CitaApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Cita>> listarCitas();
+    ResponseEntity<List<Cita>> listarCitas() throws BadRequestException;
 
     /**
      * Api para guardar una cita nueva.

@@ -26,7 +26,7 @@ public interface EmailService {
      * @throws BadRequestException excepcion.
      * @throws MessagingException excepcion.
      */
-    void enviarCorreo(String to, String subject, String body)
+    void enviarCorreo(String to, String subject, String body, String from)
             throws BadRequestException, MessagingException;
 
     /**

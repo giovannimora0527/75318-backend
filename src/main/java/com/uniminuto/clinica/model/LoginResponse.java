@@ -1,26 +1,20 @@
 package com.uniminuto.clinica.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginResponse {
+
     private String token;
-    private String role;
-
-    public LoginResponse(String token, String rol) {
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    private String rol;
+    private String username;
+    private String nombre;
 }
-// Getters
+
+
+
+

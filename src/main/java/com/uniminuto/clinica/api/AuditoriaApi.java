@@ -1,21 +1,20 @@
 package com.uniminuto.clinica.api;
 
-import com.uniminuto.clinica.entity.Auditoria;
-import com.uniminuto.clinica.model.AuditoriaRq;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.uniminuto.clinica.entity.RecuperarPasswordAuditoria;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
-@RequestMapping("/clinica/auditoria")
+@RequestMapping("/auditoria")
 public interface AuditoriaApi {
 
-    @GetMapping
-    ResponseEntity<Page<Auditoria>> listarAuditoria(
-            @RequestParam(required = false) String usuarioFiltro,
-            @RequestParam(required = false) String tipoEventoFiltro,
-            @RequestParam(required = false) String fechaFiltro,
-            Pageable pageable
-    );
+    @RequestMapping(value = "/listar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<RecuperarPasswordAuditoria>> listarTodosLosRegistros();
 }

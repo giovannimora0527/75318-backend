@@ -22,7 +22,7 @@ public class HistoriaApiController implements HistoriaApi {
     private HistoriaService historiaService;
 
     @Override
-    public ResponseEntity<List<Historia>> listarHistorias() {
+    public ResponseEntity<List<Historia>> listarHistorias() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.historiaService.listarTodasLasHistorias());
     }

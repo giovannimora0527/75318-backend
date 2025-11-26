@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "session")
-public class Session implements Serializable {
+public class    Session implements Serializable {
 
     /** Identificador único de la sesión */
     @Id

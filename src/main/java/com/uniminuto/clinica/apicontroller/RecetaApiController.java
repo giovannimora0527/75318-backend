@@ -27,7 +27,7 @@ public class RecetaApiController implements RecetaApi {
     private RecetaService recetaService;
 
     @Override
-    public ResponseEntity<List<Receta>> listarRecetas() {
+    public ResponseEntity<List<Receta>> listarRecetas() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.recetaService.listarTodasLasRecetas());
     }

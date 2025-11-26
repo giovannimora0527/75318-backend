@@ -22,7 +22,7 @@ public interface RecetaApi {
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Receta>> listarRecetas();
+    ResponseEntity<List<Receta>> listarRecetas() throws BadRequestException;
 
 
     /**

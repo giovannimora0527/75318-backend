@@ -24,7 +24,7 @@ public interface EspecializacionApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Especializacion>> listarEspecializaciones();
+    ResponseEntity<List<Especializacion>> listarEspecializaciones() throws BadRequestException;
     
     
     @RequestMapping(value = "/buscar-por-codigo",

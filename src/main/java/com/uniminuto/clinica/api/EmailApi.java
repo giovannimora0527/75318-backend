@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.mail.MessagingException;
 
-    @CrossOrigin(origins = "*")
-    @RequestMapping("/email")
-    public interface EmailApi {
+@CrossOrigin(origins = "*")
+@RequestMapping("/email")
+public interface EmailApi {
 
-        @RequestMapping(value = "/test",
-                produces = {"application/json"},
-                consumes = {"application/json"},
-                method = RequestMethod.GET)
-        ResponseEntity<RespuestaRs> testEmail() throws BadRequestException, MessagingException;
-    }
+    @RequestMapping(value = "/test",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<RespuestaRs> testEmail() throws BadRequestException, MessagingException;
+}

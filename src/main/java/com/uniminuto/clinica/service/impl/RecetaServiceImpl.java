@@ -3,7 +3,6 @@ package com.uniminuto.clinica.service.impl;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Medicamento;
 import com.uniminuto.clinica.entity.Receta;
-import com.uniminuto.clinica.model.CitaRq;
 import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.CitaRepository;

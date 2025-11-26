@@ -16,7 +16,7 @@ public interface HistoriaApi {
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Historia>> listarHistorias();
+    ResponseEntity<List<Historia>> listarHistorias() throws BadRequestException;
 
 
     @RequestMapping(value = "/guardar",

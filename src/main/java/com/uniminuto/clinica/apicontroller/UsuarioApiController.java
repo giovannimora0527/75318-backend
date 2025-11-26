@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
+
 import static com.uniminuto.clinica.security.RoleChecker.checkRole;
 
 /**
@@ -25,13 +27,13 @@ public class UsuarioApiController implements UsuarioApi {
     private UsuarioService usuarioService;
 
     @Override
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
+    public ResponseEntity<List<Usuario>> listarUsuarios() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.usuarioService.listarTodosLosUsuarios());
     }
 
     @Override
-    public ResponseEntity<List<Usuario>> listarUsuariosPorRol(String rol) {
+    public ResponseEntity<List<Usuario>> listarUsuariosPorRol(String rol) throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(this.usuarioService.encontrarPorRol(rol));
     }
@@ -52,7 +54,7 @@ public class UsuarioApiController implements UsuarioApi {
 
     @Override
     public ResponseEntity<RespuestaRs> guardarUsuario(UsuarioRq usuarioNuevo)
-            throws BadRequestException {
+            throws BadRequestException, MessagingException {
         checkRole("ADMINISTRADOR");
         return ResponseEntity.ok(this.usuarioService.guardarUsuario(usuarioNuevo));
     }

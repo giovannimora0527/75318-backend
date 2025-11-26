@@ -26,7 +26,7 @@ public interface MedicoApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Medico>> listarMedicos();
+    ResponseEntity<List<Medico>> listarMedicos() throws BadRequestException;
 
 
     @RequestMapping(value = "/listar-x-cod-esp",

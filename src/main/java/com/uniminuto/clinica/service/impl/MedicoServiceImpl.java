@@ -4,6 +4,7 @@ import com.uniminuto.clinica.entity.*;
 import com.uniminuto.clinica.model.*;
 import com.uniminuto.clinica.repository.EspecializacionRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
+import com.uniminuto.clinica.service.AuditoriaLoginService;
 import com.uniminuto.clinica.service.AuditoriaService;
 import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
@@ -71,13 +72,11 @@ public class MedicoServiceImpl implements MedicoService {
         Medico medicoGuardar = this.convertToRqToEntidad(medicoRq, optEsp.get());
         medicoGuardar = this.medicoRepository.save(medicoGuardar);
         // Registrar auditoria
-        auditoriaService.registrarAuditoria(
-                "medico",
-                medicoGuardar.getId(),
-                "INSERT",
-                null,
-                medicoGuardar,
-                "Registro de medico creado"
+        auditoriaService.registrar(
+                medicoGuardar.getNombres(),
+                "CREAR_USUARIO",
+                "Se creó el usuario con username: " + medicoGuardar.getNombres(),
+                "127.0.0.1"  // aquí puedes poner la IP real del request
         );        RespuestaRs rta = new RespuestaRs();
         rta.setMensaje("Médico guardado exitosamente");
         rta.setStatus(200);
@@ -140,13 +139,11 @@ public class MedicoServiceImpl implements MedicoService {
         String valoresDespues = actualizado.toString();
 
         // 6. Registrar Auditoría
-        auditoriaService.registrarAuditoria(
-                "medico",
-                actualizado.getId(),
-                "UPDATE",
-                valoresAntes,
-                valoresDespues,
-                "Medico actualizado"
+        auditoriaService.registrar(
+                actualizado.getNombres(),
+                "ACTUALIZAR_USUARIO",
+                "Se actualizó el usuario con ID: " + actualizado.getId(),
+                "127.0.0.1"
         );
 
         // Respuesta
@@ -175,14 +172,13 @@ public class MedicoServiceImpl implements MedicoService {
         medicoRepository.delete(medico);
 
         // Auditoría
-        auditoriaService.registrarAuditoria(
-                "medico",
-                medico.getId(),
-                "DELETE",
-                valoresAntes,
-                null,
-                "Medico eliminado"
+        auditoriaService.registrar(
+                medico.getNombres(),
+                "ELIMINAR_USUARIO",
+                "Se eliminó el usuario con ID: " + idMedico,
+                "127.0.0.1"  // puedes reemplazarlo con la IP real si la tienes
         );
+
 
         // Respuesta
         RespuestaRs rta = new RespuestaRs();

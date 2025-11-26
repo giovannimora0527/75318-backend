@@ -6,6 +6,8 @@ import com.uniminuto.clinica.model.UsuarioRq;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 
+import javax.mail.MessagingException;
+
 /**
  *
  * @author lmora
@@ -19,14 +21,12 @@ public interface UsuarioService {
   
   List<Usuario> buscarPorEstado(Integer estado);
   
-  RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
+  RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException, MessagingException;
 
   RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
 
     RespuestaRs eliminarUsuario(Long idUsuario) throws BadRequestException;
 
     Usuario getUsuarioLogeado();
-
-    Usuario login(String nombreUsuario, String password);
 
 }

@@ -17,7 +17,7 @@ public interface MedicamentoApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Medicamento>> listarMedicamentos();
+    ResponseEntity<List<Medicamento>> listarMedicamentos() throws BadRequestException;
 
 
     @RequestMapping(value = "/guardar",

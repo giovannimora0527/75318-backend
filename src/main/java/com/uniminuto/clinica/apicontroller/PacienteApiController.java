@@ -25,7 +25,7 @@ public class PacienteApiController implements PacienteApi {
     private PacienteService pacienteService;
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientes() {
+    public ResponseEntity<List<Paciente>> listarPacientes() throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(pacienteService.encontrarTodosLosPacientes());
     }
@@ -38,7 +38,7 @@ public class PacienteApiController implements PacienteApi {
     }
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesXOrden(String orden) {
+    public ResponseEntity<List<Paciente>> listarPacientesXOrden(String orden) throws BadRequestException {
         checkRole();
         return ResponseEntity.ok(pacienteService.listarOrdenadoPorNombres(orden.equals("asc")));
     }
